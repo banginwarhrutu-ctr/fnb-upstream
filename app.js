@@ -10,7 +10,7 @@
 
 /* ── CONFIG ────────────────────────────────────────────────── */
 // Placeholder — replace with your published Google Sheet CSV URL
-const SHEETS_CSV_URL = 'YOUR_GOOGLE_SHEETS_CSV_URL_HERE';
+const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSe5-bX7l8sm2e0exiHRDcl3KVcMK-SEhIH4gVvHh1KA5sr42H27xjWpClCQYCQ4N4lj0YXiHZagF4r/pub?gid=295689724&single=true&output=csv';
 
 // localStorage key — once a user unlocks, we remember it
 const UNLOCK_KEY = 'fnb_upstream_unlocked';
