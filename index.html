@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F&B Upstream — India's CM Database for Food Founders</title>
+  <style>
+    /* ── Reset & base ───────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #fafaf8;
+      --surface:  #ffffff;
+      --border:   #e5e5e0;
+      --text:     #1a1a18;
+      --muted:    #6b6b66;
+      --accent:   #1a6b3c;
+      --accent-h: #145730;
+      --red:      #c0392b;
+      --radius:   10px;
+      --font:     'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ─────────────────────────────────── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ─────────────────────────────────────── */
+    nav {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand span {
+      color: var(--accent);
+    }
+
+    /* ── Hero ────────────────────────────────────── */
+    .hero {
+      padding: 72px 0 48px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: #e8f4ee;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--accent-h); }
+
+    /* ── Stats bar ───────────────────────────────── */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      padding: 24px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── CM section ──────────────────────────────── */
+    .cm-section {
+      padding: 56px 0 80px;
+    }
+    .cm-section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .cm-section-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .cm-count {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Table wrapper with lock overlay ─────────── */
+    .table-wrap {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    /* Lock overlay — shown when not unlocked */
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(
+        to bottom,
+        rgba(250,250,248,0) 0%,
+        rgba(250,250,248,0.6) 25%,
+        rgba(250,250,248,0.96) 55%,
+        rgba(250,250,248,1) 100%
+      );
+    }
+    .lock-overlay.hidden { display: none; }
+
+    .lock-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    .lock-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .lock-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .lock-card p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Table blur when locked */
+    #cm-table-container {
+      overflow-x: auto;
+    }
+    .table-locked #cm-table-container {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── Table styles ────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    thead {
+      background: #f5f5f2;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9f9f7; }
+
+    .td-name { font-weight: 600; white-space: nowrap; }
+    .td-location { white-space: nowrap; color: var(--muted); }
+    .td-website a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .td-website a:hover { text-decoration: underline; }
+    .td-moq { white-space: nowrap; }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      background: #f0f0ec;
+      color: var(--muted);
+      border-radius: 4px;
+      padding: 2px 7px;
+      margin: 2px 2px 2px 0;
+      white-space: nowrap;
+    }
+    .badge.cert {
+      background: #e8f4ee;
+      color: var(--accent);
+    }
+
+    /* Table loading / empty state */
+    .table-placeholder {
+      padding: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── Modal ───────────────────────────────────── */
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #modal.active { display: flex; }
+
+    .modal-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 36px 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14);
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      padding: 4px 8px;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .modal-card .modal-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .input-field {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .input-field.has-error { border-color: var(--red); }
+    .input-field::placeholder { color: #b0b0aa; }
+
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 5px;
+    }
+    .field-error.show { display: block; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s;
+      font-family: var(--font);
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--accent-h); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Success state */
+    .success-state {
+      text-align: center;
+      padding: 24px 0 8px;
+    }
+    .success-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      background: #e8f4ee;
+      color: var(--accent);
+      border-radius: 50%;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .success-state h4 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .success-state p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Mobile ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hero { padding: 48px 0 32px; }
+      .stats { gap: 28px; }
+      .lock-card { padding: 24px 20px; }
+      .modal-card { padding: 28px 20px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="container">
+      <a class="nav-brand" href="/">F&amp;B <span>Upstream</span></a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-tag">Free for founders</div>
+      <h1>Find the right <em>contract manufacturer</em><br>for your F&amp;B brand</h1>
+      <p>Verified CMs across India — filtered by category, format, MOQ, and certifications. No cold calls to random Google results.</p>
+      <button class="btn-primary" onclick="openModal()">Get Full Access →</button>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-cms">—</div>
+        <div class="stat-label">Contract manufacturers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-states">—</div>
+        <div class="stat-label">States covered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-cats">—</div>
+        <div class="stat-label">Categories</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CM table -->
+  <section class="cm-section">
+    <div class="container">
+      <div class="cm-section-header">
+        <h2>Contract Manufacturer Database</h2>
+        <span class="cm-count" id="cm-count-label"></span>
+      </div>
+
+      <div class="table-wrap table-locked" id="table-wrap">
+
+        <!-- Lock overlay (hidden after unlock) -->
+        <div class="lock-overlay" id="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-icon">🔒</div>
+            <h3>Unlock the full database</h3>
+            <p>Tell us who you are — takes 30 seconds. You'll get instant access to all CMs with full details.</p>
+            <button class="btn-primary" onclick="openModal()">Get Access →</button>
+          </div>
+        </div>
+
+        <!-- Table (blurred until unlocked) -->
+        <div id="cm-table-container">
+          <div class="table-placeholder" id="table-loading">Loading CMs…</div>
+          <table id="cm-table" style="display:none;">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Categories</th>
+                <th>Formats</th>
+                <th>MOQ</th>
+                <th>Certifications</th>
+                <th>Equipment</th>
+                <th>Website</th>
+              </tr>
+            </thead>
+            <tbody id="cm-tbody"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /table-wrap -->
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h3>Get full access</h3>
+      <p class="modal-sub">Free — takes 30 seconds. We may reach out to learn more about your brand.</p>
+
+      <form id="access-form" class="access-form" onsubmit="handleSubmit(event, this)">
+
+        <div class="form-group">
+          <label class="form-label" for="name">Your name</label>
+          <input class="input-field" type="text" id="name" name="name" placeholder="Asha Kumar" autocomplete="name" />
+          <div class="field-error" data-error="name"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="company">Brand / company</label>
+          <input class="input-field" type="text" id="company" name="company" placeholder="e.g. Nutri Bites" autocomplete="organization" />
+          <div class="field-error" data-error="company"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="linkedin">LinkedIn URL</label>
+          <input class="input-field" type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/yourprofile" autocomplete="url" />
+          <div class="field-error" data-error="linkedin"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="contact">WhatsApp / phone</label>
+          <input class="input-field" type="tel" id="contact" name="contact" placeholder="10-digit number" autocomplete="tel" />
+          <div class="field-error" data-error="contact"></div>
+        </div>
+
+        <button type="submit" class="btn-submit">Unlock Database →</button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>F&amp;B Upstream · Built for Indian food founders</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
