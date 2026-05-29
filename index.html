@@ -3,41 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>F&B Upstream — India's CM Database for Food Founders</title>
+  <title>First Batch Club — India's CM Database for Food Founders</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-serif-display@5/index.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5/index.min.css" />
   <style>
-    /* ── Reset & base ───────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #fafaf8;
-      --surface:  #ffffff;
-      --border:   #e5e5e0;
-      --text:     #1a1a18;
-      --muted:    #6b6b66;
-      --accent:   #1a6b3c;
-      --accent-h: #145730;
-      --red:      #c0392b;
-      --radius:   10px;
-      --font:     'Inter', system-ui, -apple-system, sans-serif;
+      --bg:          #F4F0E6;
+      --surface:     #FDFAF3;
+      --border:      #DDD8C8;
+      --ink:         #17140C;
+      --mid:         #4A4535;
+      --muted:       #8C8672;
+      --teal:        #1A7070;
+      --teal-h:      #145858;
+      --teal-light:  #E4F2F2;
+      --red:         #c0392b;
+      --radius:      8px;
+      --serif:       'DM Serif Display', Georgia, serif;
+      --sans:        'DM Sans', -apple-system, Helvetica, sans-serif;
     }
 
     body {
       background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
+      color: var(--ink);
+      font-family: var(--sans);
       font-size: 15px;
       line-height: 1.6;
       min-height: 100vh;
     }
 
-    /* ── Layout ─────────────────────────────────── */
     .container {
       max-width: 960px;
       margin: 0 auto;
       padding: 0 24px;
     }
 
-    /* ── Nav ─────────────────────────────────────── */
+    /* ── Nav ── */
     nav {
       border-bottom: 1px solid var(--border);
       padding: 18px 0;
@@ -48,84 +52,88 @@
       justify-content: space-between;
     }
     .nav-brand {
-      font-size: 15px;
+      font-family: var(--sans);
+      font-size: 14px;
       font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink);
       text-decoration: none;
     }
-    .nav-brand span {
-      color: var(--accent);
-    }
+    .nav-brand span { color: var(--teal); }
 
-    /* ── Hero ────────────────────────────────────── */
+    /* ── Hero ── */
     .hero {
       padding: 72px 0 48px;
       text-align: center;
     }
     .hero-tag {
       display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
-      background: #e8f4ee;
-      padding: 4px 12px;
+      color: var(--teal);
+      background: var(--teal-light);
+      padding: 4px 14px;
       border-radius: 20px;
       margin-bottom: 20px;
     }
     .hero h1 {
-      font-size: clamp(28px, 5vw, 44px);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      line-height: 1.12;
       margin-bottom: 16px;
-      color: var(--text);
+      color: var(--ink);
     }
     .hero h1 em {
-      font-style: normal;
-      color: var(--accent);
+      font-style: italic;
+      color: var(--teal);
     }
     .hero p {
-      font-size: 17px;
-      color: var(--muted);
-      max-width: 520px;
+      font-size: 16px;
+      color: var(--mid);
+      max-width: 500px;
       margin: 0 auto 32px;
+      line-height: 1.7;
     }
+
+    /* ── Buttons ── */
     .btn-primary {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 15px;
+      background: var(--teal-light);
+      color: var(--ink);
+      font-size: 14px;
       font-weight: 600;
-      padding: 13px 28px;
+      padding: 12px 26px;
       border-radius: var(--radius);
-      border: none;
+      border: 1.5px solid var(--teal);
       cursor: pointer;
       text-decoration: none;
+      font-family: var(--sans);
       transition: background 0.15s;
     }
-    .btn-primary:hover { background: var(--accent-h); }
+    .btn-primary:hover { background: #cde9e9; }
 
-    /* ── Stats bar ───────────────────────────────── */
+    /* ── Stats ── */
     .stats {
       display: flex;
       justify-content: center;
       gap: 48px;
-      padding: 24px 0 56px;
+      padding: 24px 0 52px;
       border-bottom: 1px solid var(--border);
     }
-    .stat {
-      text-align: center;
-    }
+    .stat { text-align: center; }
     .stat-num {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.03em;
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
     }
     .stat-label {
       font-size: 12px;
@@ -133,27 +141,107 @@
       margin-top: 2px;
     }
 
-    /* ── CM section ──────────────────────────────── */
-    .cm-section {
-      padding: 56px 0 80px;
-    }
+    /* ── CM Section ── */
+    .cm-section { padding: 52px 0 80px; }
     .cm-section-header {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .cm-section-header h2 {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--ink);
     }
-    .cm-count {
+    .cm-count { font-size: 13px; color: var(--muted); }
+
+    /* ── Filters ── */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-dropdown { position: relative; display: inline-block; }
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      background: var(--surface);
+      color: var(--mid);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: border-color 0.15s, color 0.15s;
+      user-select: none;
+    }
+    .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .filter-btn.active { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+    .filter-badge {
+      background: var(--teal);
+      color: var(--teal-light);
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .filter-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px;
+      min-width: 200px;
+      z-index: 20;
+      box-shadow: 0 4px 16px rgba(23,20,12,0.08);
+    }
+    .filter-panel.open { display: block; }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
       font-size: 13px;
-      color: var(--muted);
+      color: var(--mid);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--sans);
+    }
+    .filter-item:hover { background: #EDE9DC; }
+    .filter-item.selected { color: var(--ink); font-weight: 500; }
+    .filter-checkbox {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .filter-item.selected .filter-checkbox {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+    .filter-item.selected .filter-checkbox::after {
+      content: '';
+      width: 7px;
+      height: 4px;
+      border-left: 1.5px solid var(--teal-light);
+      border-bottom: 1.5px solid var(--teal-light);
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
     }
 
-    /* ── Table wrapper with lock overlay ─────────── */
+    /* ── Table wrap ── */
     .table-wrap {
       position: relative;
       border: 1px solid var(--border);
@@ -161,8 +249,6 @@
       overflow: hidden;
       background: var(--surface);
     }
-
-    /* Lock overlay — shown when not unlocked */
     .lock-overlay {
       position: absolute;
       inset: 0;
@@ -172,109 +258,103 @@
       justify-content: center;
       background: linear-gradient(
         to bottom,
-        rgba(250,250,248,0) 0%,
-        rgba(250,250,248,0.6) 25%,
-        rgba(250,250,248,0.96) 55%,
-        rgba(250,250,248,1) 100%
+        rgba(244,240,230,0) 0%,
+        rgba(244,240,230,0.65) 28%,
+        rgba(244,240,230,0.98) 58%,
+        #F4F0E6 100%
       );
     }
     .lock-overlay.hidden { display: none; }
-
     .lock-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px 36px;
       text-align: center;
-      max-width: 380px;
+      max-width: 360px;
       width: 90%;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
     }
-    .lock-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-    }
+    .lock-icon { font-size: 26px; margin-bottom: 12px; }
     .lock-card h3 {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
       margin-bottom: 8px;
     }
     .lock-card p {
-      font-size: 14px;
-      color: var(--muted);
+      font-size: 13.5px;
+      color: var(--mid);
       margin-bottom: 20px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    /* Table blur when locked */
-    #cm-table-container {
-      overflow-x: auto;
-    }
+    #cm-table-container { overflow-x: auto; }
     .table-locked #cm-table-container {
       filter: blur(5px);
       pointer-events: none;
       user-select: none;
     }
 
-    /* ── Table styles ────────────────────────────── */
+    /* ── Table ── */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13.5px;
+      font-size: 13px;
     }
     thead {
-      background: #f5f5f2;
+      background: #EDE9DC;
       position: sticky;
       top: 0;
       z-index: 1;
     }
     th {
       text-align: left;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
-      padding: 12px 14px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
     td {
       padding: 13px 14px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #EAE6D8;
       vertical-align: top;
-      color: var(--text);
+      color: var(--ink);
     }
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f9f9f7; }
+    tr:hover td { background: #F0EDE3; }
 
-    .td-name { font-weight: 600; white-space: nowrap; }
-    .td-location { white-space: nowrap; color: var(--muted); }
+    .td-name { font-weight: 500; white-space: nowrap; }
+    .td-location { white-space: nowrap; color: var(--muted); font-size: 12.5px; }
     .td-website a {
-      color: var(--accent);
+      color: var(--teal);
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12.5px;
     }
     .td-website a:hover { text-decoration: underline; }
-    .td-moq { white-space: nowrap; }
 
     .badge {
       display: inline-block;
       font-size: 11px;
-      background: #f0f0ec;
-      color: var(--muted);
+      background: #EAE6D8;
+      color: var(--mid);
       border-radius: 4px;
       padding: 2px 7px;
       margin: 2px 2px 2px 0;
       white-space: nowrap;
     }
     .badge.cert {
-      background: #e8f4ee;
-      color: var(--accent);
+      background: var(--teal-light);
+      color: var(--teal-h);
+    }
+    .badge.type {
+      font-size: 10px;
+      letter-spacing: 0.03em;
     }
 
-    /* Table loading / empty state */
     .table-placeholder {
       padding: 48px;
       text-align: center;
@@ -282,12 +362,12 @@
       font-size: 14px;
     }
 
-    /* ── Modal ───────────────────────────────────── */
+    /* ── Modal ── */
     #modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.45);
+      background: rgba(23,20,12,0.45);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -297,12 +377,11 @@
 
     .modal-card {
       background: var(--surface);
-      border-radius: 14px;
+      border-radius: 12px;
       padding: 36px 36px 32px;
       width: 100%;
       max-width: 420px;
       position: relative;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.14);
     }
     .modal-close {
       position: absolute;
@@ -316,46 +395,46 @@
       line-height: 1;
       padding: 4px 8px;
     }
-    .modal-close:hover { color: var(--text); }
+    .modal-close:hover { color: var(--ink); }
 
     .modal-card h3 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 400;
       margin-bottom: 6px;
     }
-    .modal-card .modal-sub {
-      font-size: 14px;
-      color: var(--muted);
+    .modal-sub {
+      font-size: 13.5px;
+      color: var(--mid);
       margin-bottom: 24px;
+      line-height: 1.5;
     }
 
-    /* Form */
     .form-group { margin-bottom: 16px; }
     .form-label {
       display: block;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 500;
       color: var(--muted);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 6px;
     }
     .input-field {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 11px 14px;
+      border-radius: 6px;
+      padding: 11px 13px;
       font-size: 14px;
-      font-family: var(--font);
-      color: var(--text);
+      font-family: var(--sans);
+      color: var(--ink);
       background: var(--bg);
       outline: none;
       transition: border-color 0.15s;
     }
-    .input-field:focus { border-color: var(--accent); }
+    .input-field:focus { border-color: var(--teal); }
     .input-field.has-error { border-color: var(--red); }
-    .input-field::placeholder { color: #b0b0aa; }
+    .input-field::placeholder { color: #b5b09e; }
 
     .field-error {
       display: none;
@@ -367,22 +446,21 @@
 
     .btn-submit {
       width: 100%;
-      background: var(--accent);
-      color: #fff;
-      font-size: 15px;
+      background: var(--teal-light);
+      color: var(--ink);
+      font-size: 14px;
       font-weight: 600;
       padding: 13px;
-      border-radius: 8px;
-      border: none;
+      border-radius: 6px;
+      border: 1.5px solid var(--teal);
       cursor: pointer;
       margin-top: 4px;
+      font-family: var(--sans);
       transition: background 0.15s;
-      font-family: var(--font);
     }
-    .btn-submit:hover:not(:disabled) { background: var(--accent-h); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-submit:hover:not(:disabled) { background: #cde9e9; }
+    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
-    /* Success state */
     .success-state {
       text-align: center;
       padding: 24px 0 8px;
@@ -393,66 +471,62 @@
       justify-content: center;
       width: 52px;
       height: 52px;
-      background: #e8f4ee;
-      color: var(--accent);
+      background: var(--teal-light);
+      color: var(--teal);
       border-radius: 50%;
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 14px;
     }
     .success-state h4 {
-      font-size: 20px;
-      font-weight: 700;
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
       margin-bottom: 6px;
     }
-    .success-state p {
-      font-size: 14px;
-      color: var(--muted);
-    }
+    .success-state p { font-size: 14px; color: var(--mid); }
 
-    /* ── Footer ──────────────────────────────────── */
+    /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 24px 0;
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--muted);
     }
 
-    /* ── Mobile ──────────────────────────────────── */
+    /* ── Mobile ── */
     @media (max-width: 600px) {
       .hero { padding: 48px 0 32px; }
-      .stats { gap: 28px; }
+      .stats { gap: 24px; }
       .lock-card { padding: 24px 20px; }
       .modal-card { padding: 28px 20px 24px; }
+      .filters { gap: 6px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Nav -->
   <nav>
     <div class="container">
-      <a class="nav-brand" href="/">F&amp;B <span>Upstream</span></a>
+      <a class="nav-brand" href="/">First <span>Batch</span> Club</a>
     </div>
   </nav>
 
-  <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <div class="hero-tag">Free for founders</div>
-      <h1>Find the right <em>contract manufacturer</em><br>for your F&amp;B brand</h1>
-      <p>Verified CMs across India — filtered by category, format, MOQ, and certifications. No cold calls to random Google results.</p>
-      <button class="btn-primary" onclick="openModal()">Get Full Access →</button>
+      <div class="hero-tag">A founder's notes, made public</div>
+      <h1>Find your <em>contract manufacturer</em>.<br>Without the 9-month detour.</h1>
+      <p>My personal notes on CMs across India — from expos, referrals, and a lot of cold calls. Not exhaustive, not perfect. But it shouldn't have taken me this long to find this stuff, and it shouldn't take you that long either.</p>
+      <button class="btn-primary" onclick="openModal()">Get Access →</button>
     </div>
   </section>
 
-  <!-- Stats -->
   <div class="container">
     <div class="stats">
       <div class="stat">
         <div class="stat-num" id="stat-cms">—</div>
-        <div class="stat-label">Contract manufacturers</div>
+        <div class="stat-label">Manufacturers &amp; brands</div>
       </div>
       <div class="stat">
         <div class="stat-num" id="stat-states">—</div>
@@ -465,47 +539,64 @@
     </div>
   </div>
 
-  <!-- CM table -->
   <section class="cm-section">
     <div class="container">
       <div class="cm-section-header">
-        <h2>Contract Manufacturer Database</h2>
+        <h2>The list</h2>
         <span class="cm-count" id="cm-count-label"></span>
       </div>
 
-      <div class="table-wrap table-locked" id="table-wrap">
+      <!-- Filters -->
+      <div class="filters" id="filters-bar">
+        <div class="filter-dropdown" id="dd-type">
+          <div class="filter-btn" id="btn-type" onclick="toggleFilter('type')">
+            Type <span class="fchev">▾</span>
+          </div>
+          <div class="filter-panel" id="panel-type"></div>
+        </div>
+        <div class="filter-dropdown" id="dd-state">
+          <div class="filter-btn" id="btn-state" onclick="toggleFilter('state')">
+            State <span class="fchev">▾</span>
+          </div>
+          <div class="filter-panel" id="panel-state"></div>
+        </div>
+        <div class="filter-dropdown" id="dd-category">
+          <div class="filter-btn" id="btn-category" onclick="toggleFilter('category')">
+            Categories <span class="fchev">▾</span>
+          </div>
+          <div class="filter-panel" id="panel-category"></div>
+        </div>
+      </div>
 
-        <!-- Lock overlay (hidden after unlock) -->
+      <div class="table-wrap table-locked" id="table-wrap">
         <div class="lock-overlay" id="lock-overlay">
           <div class="lock-card">
             <div class="lock-icon">🔒</div>
-            <h3>Unlock the full database</h3>
-            <p>Tell us who you are — takes 30 seconds. You'll get instant access to all CMs with full details.</p>
+            <h3>Unlock the list</h3>
+            <p>Takes 30 seconds. Tell me who you are and it's yours — no spam, no newsletter.</p>
             <button class="btn-primary" onclick="openModal()">Get Access →</button>
           </div>
         </div>
 
-        <!-- Table (blurred until unlocked) -->
         <div id="cm-table-container">
-          <div class="table-placeholder" id="table-loading">Loading CMs…</div>
+          <div class="table-placeholder" id="table-loading">Loading…</div>
           <table id="cm-table" style="display:none;">
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Location</th>
                 <th>Categories</th>
                 <th>Formats</th>
-                <th>MOQ</th>
                 <th>Certifications</th>
-                <th>Equipment</th>
                 <th>Website</th>
+                <th>Notes</th>
               </tr>
             </thead>
             <tbody id="cm-tbody"></tbody>
           </table>
         </div>
-
-      </div><!-- /table-wrap -->
+      </div>
     </div>
   </section>
 
@@ -513,44 +604,37 @@
   <div id="modal">
     <div class="modal-card">
       <button class="modal-close" onclick="closeModal()">×</button>
-      <h3>Get full access</h3>
-      <p class="modal-sub">Free — takes 30 seconds. We may reach out to learn more about your brand.</p>
+      <h3>Get access</h3>
+      <p class="modal-sub">Free. Just so I know who's looking — I may reach out to connect.</p>
 
-      <form id="access-form" class="access-form" onsubmit="handleSubmit(event, this)">
-
+      <form id="access-form" onsubmit="handleSubmit(event, this)">
         <div class="form-group">
           <label class="form-label" for="name">Your name</label>
           <input class="input-field" type="text" id="name" name="name" placeholder="Asha Kumar" autocomplete="name" />
           <div class="field-error" data-error="name"></div>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="company">Brand / company</label>
           <input class="input-field" type="text" id="company" name="company" placeholder="e.g. Nutri Bites" autocomplete="organization" />
           <div class="field-error" data-error="company"></div>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="linkedin">LinkedIn URL</label>
           <input class="input-field" type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/yourprofile" autocomplete="url" />
           <div class="field-error" data-error="linkedin"></div>
         </div>
-
         <div class="form-group">
           <label class="form-label" for="contact">WhatsApp / phone</label>
           <input class="input-field" type="tel" id="contact" name="contact" placeholder="10-digit number" autocomplete="tel" />
           <div class="field-error" data-error="contact"></div>
         </div>
-
-        <button type="submit" class="btn-submit">Unlock Database →</button>
-
+        <button type="submit" class="btn-submit">Unlock the list →</button>
       </form>
     </div>
   </div>
 
-  <!-- Footer -->
   <footer>
-    <p>F&amp;B Upstream · Built for Indian food founders</p>
+    <p>First Batch Club · built for food founders · work in progress</p>
   </footer>
 
   <script src="app.js"></script>
