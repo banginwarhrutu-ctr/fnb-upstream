@@ -1,27 +1,35 @@
 /* ============================================================
-   FIRST BATCH CLUB — app.js
-   Handles: modal, form validation, Google Sheets CSV fetch,
-   CM table render, filters, localStorage unlock memory
+   FIRST BATCH — app.js (v2, multi-page)
+   Handles: nav, modal, form validation, Google Sheets CSV fetch,
+   CM table render, filters, localStorage unlock, intake form.
    ============================================================ */
 
 /* ── CONFIG ─────────────────────────────────────────────────── */
 const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjWC69O9Cdw3P5aFKhPaYgn0ln07MwChClXEha4ny_FbwX1iCpT4RE_GY6rAEWfaBAsijDdeh_ePlU/pub?gid=686969694&single=true&output=csv';
-const UNLOCK_KEY = 'fnb_upstream_unlocked';
+const UNLOCK_KEY = 'fnb_upstream_unlocked'; // kept from v1 so existing unlocks carry over
 
-// Active filter selections (multi-select per dimension)
 const activeFilters = { type: new Set(), state: new Set(), category: new Set() };
-
-// All rows loaded from CSV — kept in memory for client-side filtering
 let allRows = [];
+
+
+/* ── NAV (mobile) ───────────────────────────────────────────── */
+function toggleNav() {
+  const links = document.getElementById('nav-links');
+  if (links) links.classList.toggle('open');
+}
 
 
 /* ── MODAL ──────────────────────────────────────────────────── */
 function openModal() {
-  document.getElementById('modal').classList.add('active');
+  const m = document.getElementById('modal');
+  if (!m) return;
+  m.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 function closeModal() {
-  document.getElementById('modal').classList.remove('active');
+  const m = document.getElementById('modal');
+  if (!m) return;
+  m.classList.remove('active');
   document.body.style.overflow = '';
 }
 
@@ -32,11 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-/* ── FORM VALIDATION ────────────────────────────────────────── */
+/* ── VALIDATION ─────────────────────────────────────────────── */
 function validateName(v)    { return (!v || v.trim().length < 2) ? 'Please enter your name.' : null; }
 function validateCompany(v) { return (!v || v.trim().length < 2) ? 'Please enter your brand or company name.' : null; }
 function validateLinkedIn(v){ if (!v || !v.trim()) return 'Please enter your LinkedIn URL.'; if (!/linkedin\.com\/(in|company)\//i.test(v)) return 'Enter a valid LinkedIn profile URL.'; return null; }
-function validateContact(v) { const d = v.replace(/\D/g,''); if (!d) return 'Please enter your WhatsApp number.'; if (d.length === 12 && d.startsWith('91')) return null; if (d.length === 10) return null; return 'Enter a valid 10-digit number.'; }
+function validateContact(v) { const d = (v || '').replace(/\D/g,''); if (!d) return 'Please enter your WhatsApp number.'; if (d.length === 12 && d.startsWith('91')) return null; if (d.length === 10) return null; return 'Enter a valid 10-digit number.'; }
 
 function showFieldError(input, el, msg) { input.classList.add('has-error'); el.textContent = msg; el.classList.add('show'); }
 function clearFieldError(input, el)    { input.classList.remove('has-error'); el.classList.remove('show'); }
@@ -62,57 +70,124 @@ function saveLocally(data) {
   } catch(e) {}
 }
 
-async function submitLead(data) {
+async function submitLead(payload) {
   const res = await fetch('/api/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: data })
+    body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error(`Submit error ${res.status}`);
   return true;
 }
 
-function showSuccess(formEl) {
+function showSuccess(formEl, msg) {
   formEl.style.display = 'none';
   const div = document.createElement('div');
   div.className = 'success-state';
-  div.innerHTML = `<div class="success-check">✓</div><h4>You're in.</h4><p>The list is now unlocked below.</p>`;
+  div.innerHTML = `<div class="success-check">✓</div><h4>You're in.</h4><p>${msg}</p>`;
   formEl.parentElement.appendChild(div);
 }
 
+function collectAndValidate(formEl, names) {
+  const f = n => formEl.querySelector(`[name="${n}"]`);
+  const er = n => formEl.querySelector(`[data-error="${n}"]`);
+  const validators = { name: validateName, company: validateCompany, linkedin: validateLinkedIn, contact: validateContact };
+  let hasError = false;
+  const values = {};
+  names.forEach(n => {
+    const input = f(n), errEl = er(n);
+    const err = validators[n] ? validators[n](input.value) : null;
+    if (err) { showFieldError(input, errEl, err); hasError = true; }
+    else if (errEl) clearFieldError(input, errEl);
+    values[n] = input.value;
+  });
+  return hasError ? null : values;
+}
+
+function getHp(formEl) {
+  const el = formEl.querySelector('[name="website"]');
+  return el ? el.value : '';
+}
+
+function toPayloadFields(v) {
+  const digits  = v.contact.replace(/\D/g,'');
+  const contact = digits.length === 12 ? digits.slice(2) : digits;
+  return {
+    Name: v.name.trim(),
+    Company: v.company.trim(),
+    LinkedIn: v.linkedin.trim(),
+    Contact: contact,
+    Timestamp: new Date().toISOString()
+  };
+}
+
+/* Network page — unlock form */
 async function handleSubmit(e, formEl) {
   e.preventDefault();
-  const f = name => formEl.querySelector(`[name="${name}"]`);
-  const er = name => formEl.querySelector(`[data-error="${name}"]`);
-  const nameI = f('name'), compI = f('company'), linI = f('linkedin'), conI = f('contact');
-  const nameE = er('name'), compE = er('company'), linE = er('linkedin'), conE = er('contact');
+  const v = collectAndValidate(formEl, ['name', 'company', 'linkedin', 'contact']);
+  if (!v) return;
 
-  const errors = [
-    [nameI, nameE, validateName(nameI.value)],
-    [compI, compE, validateCompany(compI.value)],
-    [linI,  linE,  validateLinkedIn(linI.value)],
-    [conI,  conE,  validateContact(conI.value)],
-  ];
-  let hasError = false;
-  errors.forEach(([inp, el, err]) => {
-    if (err) { showFieldError(inp, el, err); hasError = true; }
-    else clearFieldError(inp, el);
-  });
-  if (hasError) return;
-
-  const digits  = conI.value.replace(/\D/g,'');
-  const contact = digits.length === 12 ? digits.slice(2) : digits;
-  const payload = { Name: nameI.value.trim(), Company: compI.value.trim(), LinkedIn: linI.value.trim(), Contact: contact, Timestamp: new Date().toISOString() };
+  const fields = toPayloadFields(v);
+  const notes = ((formEl.querySelector('[name="notes"]') || {}).value || '').trim();
+  const brief = notes ? { Notes: notes } : undefined;
 
   const btn = formEl.querySelector('.btn-submit');
   btn.disabled = true;
   btn.textContent = 'Unlocking…';
 
-  saveLocally(payload);
+  saveLocally(notes ? { ...fields, Notes: notes } : fields);
   unlockTable();
-  showSuccess(formEl);
+  showSuccess(formEl, 'The list is now unlocked below.');
   setTimeout(closeModal, 2200);
-  submitLead(payload).catch(err => console.warn('[First Batch Club] Backend submission failed. Lead saved locally.', err));
+  submitLead({ fields, brief, hp: getHp(formEl) }).catch(err => console.warn('[First Batch] Backend submission failed. Lead saved locally.', err));
+}
+
+/* Partners page — join form */
+async function handlePartner(e, formEl) {
+  e.preventDefault();
+  const v = collectAndValidate(formEl, ['name', 'company', 'contact']);
+  if (!v) return;
+
+  const fields = toPayloadFields({ ...v, linkedin: '' });
+  delete fields.LinkedIn;
+  const g = n => ((formEl.querySelector(`[name="${n}"]`) || {}).value || '').trim();
+  const brief = {
+    Type: 'Partner application',
+    Makes: g('make'),
+    Certifications: g('certs'),
+    Minimums: g('moq')
+  };
+
+  const btn = formEl.querySelector('.btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  saveLocally({ ...fields, ...brief });
+  showSuccess(formEl, "We'll be in touch on WhatsApp.");
+  submitLead({ fields, brief, hp: getHp(formEl) }).catch(err => console.warn('[First Batch] Backend submission failed. Application saved locally.', err));
+}
+
+/* Start page — intake form */
+async function handleIntake(e, formEl) {
+  e.preventDefault();
+  const v = collectAndValidate(formEl, ['name', 'company', 'linkedin', 'contact']);
+  if (!v) return;
+
+  const fields = toPayloadFields(v);
+  const brief = {
+    Category: (formEl.querySelector('[name="category"]') || {}).value || '',
+    Stage:    (formEl.querySelector('[name="stage"]') || {}).value || '',
+    Stuck:    (formEl.querySelector('[name="stuck"]') || {}).value || ''
+  };
+
+  const btn = formEl.querySelector('.btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  saveLocally({ ...fields, ...brief });
+  unlockTable(); // filling the brief also unlocks the network
+  showSuccess(formEl, "We read every brief. If there's a fit, you'll hear from us on WhatsApp within a couple of days.");
+  submitLead({ fields, brief, hp: getHp(formEl) }).catch(err => console.warn('[First Batch] Backend submission failed. Brief saved locally.', err));
 }
 
 
@@ -271,6 +346,7 @@ function updateStats(rows) {
 /* ── LOAD ───────────────────────────────────────────────────── */
 async function loadCMs() {
   const loading = document.getElementById('table-loading');
+  if (!document.getElementById('cm-table')) return; // not on network page
   try {
     const res = await fetch(SHEETS_CSV_URL);
     if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
@@ -280,7 +356,7 @@ async function loadCMs() {
     renderTable(allRows);
     updateStats(allRows);
   } catch(err) {
-    console.error('[First Batch Club] Failed to load data:', err);
+    console.error('[First Batch] Failed to load data:', err);
     if (loading) loading.textContent = 'Could not load data. Please try refreshing.';
   }
 }
@@ -288,16 +364,16 @@ async function loadCMs() {
 
 /* ── INIT ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  // Live field validation
-  const form = document.getElementById('access-form');
-  if (form) {
+  ['access-form', 'intake-form', 'partner-form'].forEach(id => {
+    const form = document.getElementById(id);
+    if (!form) return;
     form.querySelectorAll('.input-field').forEach(input => {
       input.addEventListener('input', () => {
         const errorEl = form.querySelector(`[data-error="${input.name}"]`);
         if (errorEl) clearFieldError(input, errorEl);
       });
     });
-  }
+  });
 
   loadCMs();
   if (isUnlocked()) unlockTable();

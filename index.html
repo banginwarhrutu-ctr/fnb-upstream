@@ -1,645 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>First Batch Club — f&b contract manufacturers in India</title>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-serif-display@5/index.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/dm-sans@5/index.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:          #F4F0E6;
-      --surface:     #FDFAF3;
-      --border:      #DDD8C8;
-      --ink:         #17140C;
-      --mid:         #4A4535;
-      --muted:       #8C8672;
-      --teal:        #1A7070;
-      --teal-h:      #145858;
-      --teal-light:  #E4F2F2;
-      --red:         #c0392b;
-      --radius:      8px;
-      --serif:       'DM Serif Display', Georgia, serif;
-      --sans:        'DM Sans', -apple-system, Helvetica, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── Nav ── */
-    nav {
-      border-bottom: 1px solid var(--border);
-      padding: 18px 0;
-    }
-    nav .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-brand {
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--ink);
-      text-decoration: none;
-    }
-    .nav-brand span { color: var(--teal); }
-
-    /* ── Hero ── */
-    .hero {
-      padding: 72px 0 48px;
-      text-align: center;
-    }
-    .hero-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--teal);
-      background: var(--teal-light);
-      padding: 4px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-    }
-    .hero h1 {
-      font-family: var(--serif);
-      font-size: clamp(28px, 5vw, 42px);
-      font-weight: 400;
-      letter-spacing: -0.01em;
-      line-height: 1.12;
-      margin-bottom: 16px;
-      color: var(--ink);
-    }
-    .hero h1 em {
-      font-style: italic;
-      color: var(--teal);
-    }
-    .hero p {
-      font-size: 16px;
-      color: var(--mid);
-      max-width: 500px;
-      margin: 0 auto 32px;
-      line-height: 1.7;
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--teal-light);
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 12px 26px;
-      border-radius: var(--radius);
-      border: 1.5px solid var(--teal);
-      cursor: pointer;
-      text-decoration: none;
-      font-family: var(--sans);
-      transition: background 0.15s;
-    }
-    .btn-primary:hover { background: #cde9e9; }
-
-    /* ── Stats ── */
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 48px;
-      padding: 24px 0 52px;
-      border-bottom: 1px solid var(--border);
-    }
-    .stat { text-align: center; }
-    .stat-num {
-      font-family: var(--serif);
-      font-size: 32px;
-      font-weight: 400;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-    }
-    .stat-label {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* ── Intro ── */
-    .intro-section {
-      padding: 0 0 40px;
-      border-bottom: 1px solid var(--border);
-    }
-    .intro-text {
-      font-size: 15px;
-      color: var(--mid);
-      max-width: 620px;
-      margin: 0 auto;
-      text-align: center;
-      line-height: 1.8;
-    }
-    .intro-text a {
-      color: var(--teal);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .intro-text a:hover { text-decoration: underline; }
-
-    /* ── CM Section ── */
-    .cm-section { padding: 52px 0 80px; }
-    .cm-section-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .cm-section-header h2 {
-      font-family: var(--serif);
-      font-size: 24px;
-      font-weight: 400;
-      color: var(--ink);
-    }
-    .cm-count { font-size: 13px; color: var(--muted); }
-
-    /* ── Filters ── */
-    .filters {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .filter-dropdown { position: relative; display: inline-block; }
-    .filter-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 12px;
-      background: var(--surface);
-      color: var(--mid);
-      cursor: pointer;
-      font-family: var(--sans);
-      transition: border-color 0.15s, color 0.15s;
-      user-select: none;
-    }
-    .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
-    .filter-btn.active { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
-    .filter-badge {
-      background: var(--teal);
-      color: var(--teal-light);
-      border-radius: 10px;
-      padding: 1px 6px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-    .filter-panel {
-      display: none;
-      position: absolute;
-      top: calc(100% + 5px);
-      left: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 6px;
-      min-width: 200px;
-      z-index: 20;
-      box-shadow: 0 4px 16px rgba(23,20,12,0.08);
-    }
-    .filter-panel.open { display: block; }
-    .filter-item {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 7px 10px;
-      font-size: 13px;
-      color: var(--mid);
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: var(--sans);
-    }
-    .filter-item:hover { background: #EDE9DC; }
-    .filter-item.selected { color: var(--ink); font-weight: 500; }
-    .filter-checkbox {
-      width: 14px;
-      height: 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 3px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .filter-item.selected .filter-checkbox {
-      background: var(--teal);
-      border-color: var(--teal);
-    }
-    .filter-item.selected .filter-checkbox::after {
-      content: '';
-      width: 7px;
-      height: 4px;
-      border-left: 1.5px solid var(--teal-light);
-      border-bottom: 1.5px solid var(--teal-light);
-      transform: rotate(-45deg) translateY(-1px);
-      display: block;
-    }
-
-    /* ── Table wrap ── */
-    .table-wrap {
-      position: relative;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: var(--surface);
-    }
-    .lock-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(
-        to bottom,
-        rgba(244,240,230,0) 0%,
-        rgba(244,240,230,0.65) 28%,
-        rgba(244,240,230,0.98) 58%,
-        #F4F0E6 100%
-      );
-    }
-    .lock-overlay.hidden { display: none; }
-    .lock-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 32px 36px;
-      text-align: center;
-      max-width: 360px;
-      width: 90%;
-    }
-    .lock-icon { font-size: 26px; margin-bottom: 12px; }
-    .lock-card h3 {
-      font-family: var(--serif);
-      font-size: 22px;
-      font-weight: 400;
-      margin-bottom: 8px;
-    }
-    .lock-card p {
-      font-size: 13.5px;
-      color: var(--mid);
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
-    #cm-table-container { overflow-x: auto; }
-    .table-locked #cm-table-container {
-      filter: blur(5px);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ── Table ── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    thead {
-      background: #EDE9DC;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    th {
-      text-align: left;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-    }
-    td {
-      padding: 13px 14px;
-      border-bottom: 1px solid #EAE6D8;
-      vertical-align: top;
-      color: var(--ink);
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #F0EDE3; }
-
-    .td-name { font-weight: 500; white-space: nowrap; }
-    .td-location { white-space: nowrap; color: var(--muted); font-size: 12.5px; }
-    .td-website a {
-      color: var(--teal);
-      text-decoration: none;
-      font-size: 12.5px;
-    }
-    .td-website a:hover { text-decoration: underline; }
-
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      background: #EAE6D8;
-      color: var(--mid);
-      border-radius: 4px;
-      padding: 2px 7px;
-      margin: 2px 2px 2px 0;
-      white-space: nowrap;
-    }
-    .badge.cert {
-      background: var(--teal-light);
-      color: var(--teal-h);
-    }
-    .badge.type {
-      font-size: 10px;
-      letter-spacing: 0.03em;
-    }
-
-    .table-placeholder {
-      padding: 48px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* ── Modal ── */
-    #modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(23,20,12,0.45);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-    #modal.active { display: flex; }
-
-    .modal-card {
-      background: var(--surface);
-      border-radius: 12px;
-      padding: 36px 36px 32px;
-      width: 100%;
-      max-width: 420px;
-      position: relative;
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: var(--muted);
-      line-height: 1;
-      padding: 4px 8px;
-    }
-    .modal-close:hover { color: var(--ink); }
-
-    .modal-card h3 {
-      font-family: var(--serif);
-      font-size: 24px;
-      font-weight: 400;
-      margin-bottom: 6px;
-    }
-    .modal-sub {
-      font-size: 13.5px;
-      color: var(--mid);
-      margin-bottom: 24px;
-      line-height: 1.5;
-    }
-
-    .form-group { margin-bottom: 16px; }
-    .form-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .input-field {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 11px 13px;
-      font-size: 14px;
-      font-family: var(--sans);
-      color: var(--ink);
-      background: var(--bg);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .input-field:focus { border-color: var(--teal); }
-    .input-field.has-error { border-color: var(--red); }
-    .input-field::placeholder { color: #b5b09e; }
-
-    .field-error {
-      display: none;
-      font-size: 12px;
-      color: var(--red);
-      margin-top: 5px;
-    }
-    .field-error.show { display: block; }
-
-    .btn-submit {
-      width: 100%;
-      background: var(--teal-light);
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 13px;
-      border-radius: 6px;
-      border: 1.5px solid var(--teal);
-      cursor: pointer;
-      margin-top: 4px;
-      font-family: var(--sans);
-      transition: background 0.15s;
-    }
-    .btn-submit:hover:not(:disabled) { background: #cde9e9; }
-    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; }
-
-    .success-state {
-      text-align: center;
-      padding: 24px 0 8px;
-    }
-    .success-check {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 52px;
-      height: 52px;
-      background: var(--teal-light);
-      color: var(--teal);
-      border-radius: 50%;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-    .success-state h4 {
-      font-family: var(--serif);
-      font-size: 22px;
-      font-weight: 400;
-      margin-bottom: 6px;
-    }
-    .success-state p { font-size: 14px; color: var(--mid); }
-
-    /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 0;
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    /* ── Mobile ── */
-    @media (max-width: 600px) {
-      .hero { padding: 48px 0 32px; }
-      .stats { gap: 24px; }
-      .lock-card { padding: 24px 20px; }
-      .modal-card { padding: 28px 20px 24px; }
-      .filters { gap: 6px; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Batch — From formula to first batch</title>
+  <meta name="description" content="We connect early-stage F&B brands in India with the right food technologists, contract manufacturers, ingredient suppliers and labs.">
+  <link rel="canonical" href="https://firstbatch.in/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <nav>
-    <div class="container">
-      <a class="nav-brand" href="/">First <span>Batch</span> Club</a>
-    </div>
-  </nav>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li class="nav-partner"><a href="partners.html">For partners</a></li>
+      <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+    </ul>
+  </div>
+</nav>
 
-  <section class="hero">
-    <div class="container">
-      <div class="hero-tag">A founder's notes, made public</div>
-      <h1>f&amp;b contract manufacturers<br>in India</h1>
-      <p>Hey, this is <a href="https://www.linkedin.com/in/hrutu-banginwar/" target="_blank" rel="noopener" style="color:var(--teal);text-decoration:none;font-weight:500;">Hrutu</a>. The last few months, I have been in the process of launching my f&amp;b brand. Here are my personal notes on CMs across India from expos, referrals and a lot of cold calls. This is not exhaustive, neither is it perfect. But it shouldn't have taken me months to have this stuff so here is my attempt to save your time.</p>
-      <button class="btn-primary" onclick="openModal()">Get Access →</button>
-    </div>
-  </section>
-
-  <section class="cm-section">
-    <div class="container">
-      <div class="cm-section-header">
-        <h2>The database (work in progress)</h2>
-        <span class="cm-count" id="cm-count-label"></span>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters" id="filters-bar">
-        <div class="filter-dropdown" id="dd-type">
-          <div class="filter-btn" id="btn-type" onclick="toggleFilter('type')">
-            Type <span class="fchev">▾</span>
-          </div>
-          <div class="filter-panel" id="panel-type"></div>
-        </div>
-        <div class="filter-dropdown" id="dd-state">
-          <div class="filter-btn" id="btn-state" onclick="toggleFilter('state')">
-            State <span class="fchev">▾</span>
-          </div>
-          <div class="filter-panel" id="panel-state"></div>
-        </div>
-        <div class="filter-dropdown" id="dd-category">
-          <div class="filter-btn" id="btn-category" onclick="toggleFilter('category')">
-            Categories <span class="fchev">▾</span>
-          </div>
-          <div class="filter-panel" id="panel-category"></div>
-        </div>
-      </div>
-
-      <div class="table-wrap table-locked" id="table-wrap">
-        <div class="lock-overlay" id="lock-overlay">
-          <div class="lock-card">
-            <div class="lock-icon">🔒</div>
-            <h3>Unlock the database</h3>
-            <p>Takes 30 seconds. Tell me who you are and it's yours — no spam, no newsletter.</p>
-            <button class="btn-primary" onclick="openModal()">Get Access →</button>
-          </div>
-        </div>
-
-        <div id="cm-table-container">
-          <div class="table-placeholder" id="table-loading">Loading…</div>
-          <table id="cm-table" style="display:none;">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Location</th>
-                <th>Categories</th>
-                <th>Formats</th>
-                <th>Certifications</th>
-                <th>Website</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="cm-tbody"></tbody>
-          </table>
-        </div>
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-kicker">Pre-launch infrastructure for F&amp;B brands in India</div>
+      <h1>From formula to <em>first batch.</em></h1>
+      <p class="hero-sub">We connect early-stage F&amp;B brands in India with the right food technologists, contract manufacturers, ingredient suppliers and labs.</p>
+      <div class="hero-actions">
+        <a href="start.html" class="btn btn-primary">Tell us what you're building</a>
+        <a href="network.html" class="btn btn-ghost">See the network</a>
       </div>
     </div>
-  </section>
-
-  <!-- Modal -->
-  <div id="modal">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeModal()">×</button>
-      <h3>Get access</h3>
-      <p class="modal-sub">Free. Just so I know who's looking — I may reach out to connect.</p>
-
-      <form id="access-form" onsubmit="handleSubmit(event, this)">
-        <div class="form-group">
-          <label class="form-label" for="name">Your name</label>
-          <input class="input-field" type="text" id="name" name="name" placeholder="Asha Kumar" autocomplete="name" />
-          <div class="field-error" data-error="name"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="company">Brand / company</label>
-          <input class="input-field" type="text" id="company" name="company" placeholder="e.g. Nutri Bites" autocomplete="organization" />
-          <div class="field-error" data-error="company"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="linkedin">LinkedIn URL</label>
-          <input class="input-field" type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/yourprofile" autocomplete="url" />
-          <div class="field-error" data-error="linkedin"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="contact">WhatsApp / phone</label>
-          <input class="input-field" type="tel" id="contact" name="contact" placeholder="10-digit number" autocomplete="tel" />
-          <div class="field-error" data-error="contact"></div>
-        </div>
-        <button type="submit" class="btn-submit">Unlock the list →</button>
-      </form>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 420 360" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <g stroke="#9C3A11" stroke-width="2" stroke-linecap="round">
+          <path d="M60 210 V120"/>
+          <path d="M60 132 C52 128 48 118 48 108 C56 112 60 120 60 132"/>
+          <path d="M60 132 C68 128 72 118 72 108 C64 112 60 120 60 132"/>
+          <path d="M60 152 C52 148 48 138 48 128 C56 132 60 140 60 152"/>
+          <path d="M60 152 C68 148 72 138 72 128 C64 132 60 140 60 152"/>
+          <path d="M60 172 C52 168 48 158 48 148 C56 152 60 160 60 172"/>
+          <path d="M60 172 C68 168 72 158 72 148 C64 152 60 160 60 172"/>
+          <path d="M368 220 V140"/>
+          <path d="M368 152 C360 148 356 138 356 128 C364 132 368 140 368 152"/>
+          <path d="M368 152 C376 148 380 138 380 128 C372 132 368 140 368 152"/>
+          <path d="M368 172 C360 168 356 158 356 148 C364 152 368 160 368 172"/>
+          <path d="M368 172 C376 168 380 158 380 148 C372 152 368 160 368 172"/>
+          <path d="M368 192 C360 188 356 178 356 168 C364 172 368 180 368 192"/>
+          <path d="M368 192 C376 188 380 178 380 168 C372 172 368 180 368 192"/>
+        </g>
+        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
+          <rect x="96" y="150" width="76" height="118" rx="14" fill="#FFFFFF"/>
+          <rect x="102" y="136" width="64" height="16" rx="6" fill="#FBE3D6"/>
+          <path d="M110 196 h48" stroke="#9C3A11"/>
+          <path d="M110 210 h48" stroke="#9C3A11"/>
+          <rect x="112" y="226" width="44" height="26" rx="5" fill="#FBE3D6" stroke-width="2"/>
+        </g>
+        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
+          <path d="M192 118 h72 l8 20 v112 a14 14 0 0 1 -14 14 h-60 a14 14 0 0 1 -14 -14 V138 z" fill="#FFFFFF"/>
+          <path d="M192 118 l8 20 h64" stroke-width="2"/>
+          <path d="M200 138 v-14 a8 8 0 0 1 8 -8 h40 a8 8 0 0 1 8 8 v14"/>
+          <circle cx="228" cy="196" r="22" stroke="#9C3A11"/>
+          <path d="M220 196 l6 6 l12 -12" stroke="#9C3A11"/>
+          <path d="M204 238 h48" stroke-width="2"/>
+          <path d="M204 250 h32" stroke-width="2"/>
+        </g>
+        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
+          <path d="M296 176 h72 l-8 88 a10 10 0 0 1 -10 8 h-36 a10 10 0 0 1 -10 -8 z" fill="#FFFFFF"/>
+          <ellipse cx="332" cy="176" rx="36" ry="8" fill="#FBE3D6"/>
+          <path d="M318 148 c0 -8 8 -8 8 -16" stroke="#9C3A11" stroke-width="2" stroke-linecap="round"/>
+          <path d="M336 152 c0 -8 8 -8 8 -16" stroke="#9C3A11" stroke-width="2" stroke-linecap="round"/>
+          <path d="M304 220 h56" stroke-width="2"/>
+        </g>
+        <g stroke="#111111" stroke-width="2.5" stroke-linecap="round">
+          <path d="M40 288 H380"/>
+          <circle cx="76" cy="304" r="7"/>
+          <circle cx="152" cy="304" r="7"/>
+          <circle cx="228" cy="304" r="7"/>
+          <circle cx="304" cy="304" r="7"/>
+          <circle cx="360" cy="304" r="7"/>
+        </g>
+        <g>
+          <rect x="252" y="86" width="112" height="30" rx="15" fill="#111111"/>
+          <text x="308" y="106" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="14" font-weight="700" fill="#FFFFFF">BATCH 001</text>
+        </g>
+      </svg>
     </div>
   </div>
+</header>
 
-  <footer>
-    <p>First Batch Club · built for food founders · work in progress</p>
-  </footer>
 
-  <script src="app.js"></script>
+<!-- FOUR PILLARS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-kicker">The upstream, covered</div>
+    <h2>Everything between your idea and your first production run.</h2>
+    <div class="pillar-flow">
+      <div class="pillar pillar--butter">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 6 h10 M21 6 v10 L11 36 a5 5 0 0 0 4.5 7 h17 a5 5 0 0 0 4.5 -7 L27 16 V6"/>
+            <path d="M15 30 h18" stroke="#9C3A11"/>
+            <circle cx="21" cy="36" r="1.6" fill="#9C3A11" stroke="none"/>
+            <circle cx="27" cy="33" r="1.4" fill="#9C3A11" stroke="none"/>
+          </svg>
+        </div>
+        <div class="pillar-step">01 / R&amp;D</div>
+        <h3>Formulation</h3>
+        <p>Food technologists and NPD consultants who work in your category.</p>
+        <span class="pillar-arrow">→</span>
+      </div>
+      <div class="pillar pillar--peach">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M24 44 V12"/>
+            <path d="M24 16 C19 14 16 9 16 4 C21 6 24 10 24 16" stroke="#9C3A11"/>
+            <path d="M24 16 C29 14 32 9 32 4 C27 6 24 10 24 16" stroke="#9C3A11"/>
+            <path d="M24 26 C19 24 16 19 16 14 C21 16 24 20 24 26"/>
+            <path d="M24 26 C29 24 32 19 32 14 C27 16 24 20 24 26"/>
+            <path d="M24 36 C19 34 16 29 16 24 C21 26 24 30 24 36"/>
+            <path d="M24 36 C29 34 32 29 32 24 C27 26 24 30 24 36"/>
+          </svg>
+        </div>
+        <div class="pillar-step">02 / Sourcing</div>
+        <h3>Ingredients</h3>
+        <p>Mapped supplier landscape.</p>
+        <span class="pillar-arrow">→</span>
+      </div>
+      <div class="pillar pillar--mint">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 42 V20 l12 8 v-8 l12 8 v-8 l12 8 v14 z"/>
+            <rect x="10" y="8" width="6" height="12"/>
+            <path d="M13 6 c0 -2 2 -2 2 -4" stroke="#9C3A11"/>
+            <path d="M14 34 h4 M22 34 h4 M30 34 h4" stroke="#9C3A11"/>
+          </svg>
+        </div>
+        <div class="pillar-step">03 / Manufacturing</div>
+        <h3>Contract manufacturing</h3>
+        <p>Vetted CMs across categories. We know who will actually work with first-time brands.</p>
+        <span class="pillar-arrow">→</span>
+      </div>
+      <div class="pillar pillar--lilac">
+        <div class="pillar-icon">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="10" y="8" width="28" height="34" rx="4"/>
+            <path d="M18 8 v-3 h12 v3"/>
+            <path d="M17 22 l4 4 l9 -9" stroke="#9C3A11"/>
+            <path d="M17 32 h14"/>
+          </svg>
+        </div>
+        <div class="pillar-step">04 / Testing</div>
+        <h3>Testing &amp; compliance</h3>
+        <p>NABL labs, shelf-life, FSSAI.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-cream">
+  <div class="wrap">
+    <div class="section-kicker">How it works</div>
+    <div class="steps" style="margin-top: 24px;">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Tell us what you're building</h3>
+        <p>Fill out a short brief: product category, where you are in development, what you're stuck on.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>We map the path</h3>
+        <p>Based on your product and stage, we tell you exactly what you need and in what order and we make the right introductions.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>You get to first batch</h3>
+        <p>We stay involved through the process. If something doesn't fit, we find the next option.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="wrap">
+    <h2>Building something?</h2>
+    <p>Tell us your category, your stage and where you're stuck.</p>
+    <a href="start.html" class="btn btn-primary">Tell us what you're building</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <ul class="footer-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="partners.html">For partners</a></li>
+    </ul>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in · Upstream, sorted.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Partners — First Batch</title>
+  <meta name="description" content="Manufacturers, ingredient suppliers, food technologists, labs: we bring you brands who are actually ready.">
+  <link rel="canonical" href="https://firstbatch.in/partners">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li class="nav-partner"><a href="partners.html" class="active">For partners</a></li>
+      <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero page-hero">
+  <div class="wrap">
+    <div class="hero-kicker">For manufacturers, suppliers, technologists &amp; labs</div>
+    <h1>We bring you brands who are actually ready.</h1>
+  </div>
+</header>
+
+
+<section class="section">
+  <div class="wrap">
+    <div class="proof-grid">
+      <div class="proof-card pillar--butter">
+        <span class="proof-tag">Pre-qualified</span>
+        <h3>No tyre-kickers</h3>
+        <p>Every brand we introduce has filled a brief, taken a call with us and knows their category, format and rough volumes.</p>
+      </div>
+      <div class="proof-card pillar--mint">
+        <span class="proof-tag">Right fit</span>
+        <h3>Matched to your line</h3>
+        <p>We only send briefs that match your equipment, categories and minimums.</p>
+      </div>
+      <div class="proof-card pillar--peach">
+        <span class="proof-tag">Relationships</span>
+        <h3>Brands that convert</h3>
+        <p>First-time brands become repeat customers. We stay involved through the first batch, which means fewer misunderstandings and smoother runs for you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-cream" id="join">
+  <div class="wrap">
+    <div class="section-kicker">Join the network</div>
+    <h2>Tell us what you make.</h2>
+    <div class="form-card">
+      <form id="partner-form" onsubmit="handlePartner(event, this)" novalidate>
+        <div class="field">
+          <label for="pf-name">Your name</label>
+          <input class="input-field" id="pf-name" name="name" type="text" placeholder="Full name">
+          <div class="field-error" data-error="name"></div>
+        </div>
+        <div class="field">
+          <label for="pf-company">Company</label>
+          <input class="input-field" id="pf-company" name="company" type="text" placeholder="Company name">
+          <div class="field-error" data-error="company"></div>
+        </div>
+        <div class="field">
+          <label for="pf-contact">WhatsApp number</label>
+          <input class="input-field" id="pf-contact" name="contact" type="tel" placeholder="10-digit number">
+          <div class="field-error" data-error="contact"></div>
+        </div>
+        <div class="field">
+          <label for="pf-make">What do you make or offer?</label>
+          <input class="input-field" id="pf-make" name="make" type="text" placeholder="e.g. extruded snacks CM, flavour house, NABL lab">
+        </div>
+        <div class="field">
+          <label for="pf-certs">Certifications</label>
+          <input class="input-field" id="pf-certs" name="certs" type="text" placeholder="e.g. FSSAI, ISO 22000, HACCP">
+        </div>
+        <div class="field">
+          <label for="pf-moq">Minimums</label>
+          <input class="input-field" id="pf-moq" name="moq" type="text" placeholder="Smallest run you'll take on">
+        </div>
+      <div class="hp-wrap" aria-hidden="true"><label for="pf-website">Website</label><input id="pf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+        <button type="submit" class="btn btn-primary btn-submit">Apply to join</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <ul class="footer-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="partners.html">For partners</a></li>
+    </ul>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in · Upstream, sorted.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,69 +1,145 @@
 /* ============================================================
-   F&B UPSTREAM — /api/submit
-   Serverless proxy: saves lead to Airtable + sends email via Resend.
-   All secrets live in Vercel env vars — never in client JS.
+   FIRST BATCH — /api/submit (v3)
+   Validates, rate-limits, filters spam, then writes to Airtable
+   and emails H via Resend.
 
-   Env vars required (set in Vercel dashboard → Settings → Environment Variables):
-     AIRTABLE_TOKEN      — Airtable Personal Access Token
-     AIRTABLE_BASE_ID    — e.g. appXXXXXXXXXXXXXX
-     AIRTABLE_TABLE_ID   — e.g. tblXXXXXXXXXXXXXX
-     RESEND_API_KEY      — from resend.com (free tier works)
-     NOTIFY_EMAIL        — your email address to receive lead notifications
+   Payload: { fields, brief?, hp? }
+   - fields: Name, Company, LinkedIn?, Contact, Timestamp
+   - brief:  founder brief (Category/Stage/Stuck), unlock notes
+             (Notes), or partner application (Type/Makes/
+             Certifications/Minimums)
+   - hp:     honeypot — non-empty means bot; accept + discard
+
+   Routing:
+   - brief.Type === 'Partner application' → Partner Applications table
+   - everything else → Founder Leads table (+ Source column)
+
+   Env vars (Vercel → Settings → Environment Variables):
+     AIRTABLE_TOKEN
+     AIRTABLE_BASE_ID            appm5hPqDHPQcXrhX (F&B Upstream)
+     AIRTABLE_TABLE_ID           Founder Leads table id
+     AIRTABLE_PARTNER_TABLE_ID   Partner Applications table id
+                                 (defaults to tblP6YIG6sWFEDKQF)
+     RESEND_API_KEY
+     NOTIFY_EMAIL
    ============================================================ */
+
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 5;
+const hits = new Map(); // per-instance; resets on cold start — good enough
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const arr = (hits.get(ip) || []).filter(t => now - t < WINDOW_MS);
+  arr.push(now);
+  hits.set(ip, arr);
+  if (hits.size > 5000) hits.clear();
+  return arr.length > MAX_PER_WINDOW;
+}
+
+function validate(fields) {
+  const errors = [];
+  const name = (fields.Name || '').trim();
+  const company = (fields.Company || '').trim();
+  const contact = (fields.Contact || '').replace(/\D/g, '');
+  if (name.length < 2 || name.length > 120) errors.push('Name');
+  if (company.length < 2 || company.length > 200) errors.push('Company');
+  if (contact.length !== 10) errors.push('Contact');
+  if (fields.LinkedIn && !/linkedin\.com\/(in|company)\//i.test(fields.LinkedIn)) errors.push('LinkedIn');
+  return errors;
+}
+
+const clip = (v, n = 2000) => typeof v === 'string' ? v.slice(0, n).trim() : '';
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { fields } = req.body || {};
-  if (!fields) {
-    return res.status(400).json({ error: 'Missing fields' });
-  }
+  const { fields, brief, hp } = req.body || {};
+  if (!fields) return res.status(400).json({ error: 'Missing fields' });
+
+  // Honeypot: pretend success, store nothing
+  if (hp) return res.status(200).json({ ok: true });
+
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  if (rateLimited(ip)) return res.status(429).json({ error: 'Too many requests' });
+
+  const errors = validate(fields);
+  if (errors.length) return res.status(400).json({ error: `Invalid: ${errors.join(', ')}` });
 
   const {
     AIRTABLE_TOKEN,
     AIRTABLE_BASE_ID,
     AIRTABLE_TABLE_ID,
+    AIRTABLE_PARTNER_TABLE_ID,
     RESEND_API_KEY,
     NOTIFY_EMAIL
   } = process.env;
 
   if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID || !AIRTABLE_TABLE_ID) {
-    console.error('[F&B Upstream] Missing Airtable env vars');
+    console.error('[First Batch] Missing Airtable env vars');
     return res.status(500).json({ error: 'Server misconfiguration' });
   }
 
-  // ── 1. Save to Airtable ──────────────────────────────────
-  const airtableEndpoint = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`;
+  // ── Build the Airtable record ─────────────────────────────
+  const isPartner = brief && brief.Type === 'Partner application';
+  const base = {
+    Name: clip(fields.Name, 120),
+    Company: clip(fields.Company, 200),
+    Contact: (fields.Contact || '').replace(/\D/g, ''),
+    Timestamp: clip(fields.Timestamp, 40) || new Date().toISOString()
+  };
 
-  const airtableRes = await fetch(airtableEndpoint, {
+  let tableId, record;
+  if (isPartner) {
+    tableId = AIRTABLE_PARTNER_TABLE_ID || 'tblP6YIG6sWFEDKQF';
+    record = {
+      ...base,
+      Makes: clip(brief.Makes, 300),
+      Certifications: clip(brief.Certifications, 300),
+      Minimums: clip(brief.Minimums, 300)
+    };
+  } else {
+    tableId = AIRTABLE_TABLE_ID;
+    const isBrief = brief && (brief.Category || brief.Stage || brief.Stuck);
+    record = {
+      ...base,
+      LinkedIn: clip(fields.LinkedIn, 300),
+      Source: isBrief ? 'Founder brief' : 'Network unlock'
+    };
+    if (brief) {
+      if (brief.Category) record.Category = clip(brief.Category, 300);
+      if (brief.Stage) record.Stage = clip(brief.Stage, 100);
+      if (brief.Stuck) record.Stuck = clip(brief.Stuck);
+      if (brief.Notes) record.Notes = clip(brief.Notes);
+    }
+  }
+
+  // ── 1. Save to Airtable ───────────────────────────────────
+  const airtableRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${tableId}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ fields })
+    body: JSON.stringify({ fields: record, typecast: true })
   });
 
   if (!airtableRes.ok) {
     const err = await airtableRes.text();
-    console.error('[F&B Upstream] Airtable error:', airtableRes.status, err);
+    console.error('[First Batch] Airtable error:', airtableRes.status, err);
     // Don't fail the whole request — still try to send email
   }
 
-  // ── 2. Send email notification via Resend ────────────────
+  // ── 2. Email notification via Resend ──────────────────────
   if (RESEND_API_KEY && NOTIFY_EMAIL) {
     try {
-      const emailBody = `
-New lead on F&B Upstream:
-
-Name:     ${fields.Name || '—'}
-Company:  ${fields.Company || '—'}
-LinkedIn: ${fields.LinkedIn || '—'}
-Contact:  ${fields.Contact || '—'}
-Time:     ${fields.Timestamp || new Date().toISOString()}
-      `.trim();
+      const label = isPartner ? 'PARTNER APPLICATION' : (record.Source === 'Founder brief' ? 'FOUNDER BRIEF' : 'network unlock');
+      const details = Object.entries(record)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
 
       await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -74,13 +150,12 @@ Time:     ${fields.Timestamp || new Date().toISOString()}
         body: JSON.stringify({
           from: 'onboarding@resend.dev',
           to: NOTIFY_EMAIL,
-          subject: `New F&B Upstream lead — ${fields.Name || 'Unknown'} @ ${fields.Company || '?'}`,
-          text: emailBody
+          subject: `${isPartner ? '🏭 Partner' : record.Source === 'Founder brief' ? '🔥 Brief' : 'New lead'} — ${record.Name} @ ${record.Company}`,
+          text: `New ${label} on First Batch:\n\n${details}`
         })
       });
     } catch (emailErr) {
-      // Email failure is non-fatal — lead is already in Airtable
-      console.warn('[F&B Upstream] Resend email failed:', emailErr);
+      console.warn('[First Batch] Resend email failed:', emailErr);
     }
   }
 

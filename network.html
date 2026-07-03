@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Network — First Batch</title>
+  <meta name="description" content="A curated CM database — mapped by category, format, certification and location. Built by hand, not scraped.">
+  <link rel="canonical" href="https://firstbatch.in/network">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="network.html" class="active">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li class="nav-partner"><a href="partners.html">For partners</a></li>
+      <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero page-hero">
+  <div class="wrap">
+    <div class="hero-kicker">The network</div>
+    <h1>We've done the sourcing so you don't have to.</h1>
+    <p class="hero-sub">A curated CM database — mapped by category, format, certification and location. Built by hand, not scraped.</p>
+    <div class="stats-band" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="stat"><div class="stat-num" id="stat-cms">—</div><div class="stat-label">Vetted manufacturers</div></div>
+      <div class="stat"><div class="stat-num" id="stat-states">—</div><div class="stat-label">States covered</div></div>
+      <div class="stat"><div class="stat-num" id="stat-cats">—</div><div class="stat-label">Product categories</div></div>
+    </div>
+    <div class="meta-chips">
+      <span class="meta-chip">Categories run</span>
+      <span class="meta-chip">Pack formats</span>
+      <span class="meta-chip">Certifications</span>
+      <span class="meta-chip">Special equipment</span>
+      <span class="meta-chip">Location</span>
+    </div>
+  </div>
+</header>
+
+
+<section class="section">
+  <div class="wrap">
+    <div class="db-toolbar">
+      <div class="filters">
+        <div class="filter-dropdown">
+          <button class="filter-btn" id="btn-type" onclick="toggleFilter('type')">Type <span class="fchev">▾</span></button>
+          <div class="filter-panel" id="panel-type"></div>
+        </div>
+        <div class="filter-dropdown">
+          <button class="filter-btn" id="btn-state" onclick="toggleFilter('state')">State <span class="fchev">▾</span></button>
+          <div class="filter-panel" id="panel-state"></div>
+        </div>
+        <div class="filter-dropdown">
+          <button class="filter-btn" id="btn-category" onclick="toggleFilter('category')">Categories <span class="fchev">▾</span></button>
+          <div class="filter-panel" id="panel-category"></div>
+        </div>
+      </div>
+      <span class="count-label" id="cm-count-label">Loading…</span>
+    </div>
+
+    <div class="table-wrap table-locked" id="table-wrap">
+      <div id="table-loading">Loading the network…</div>
+      <table id="cm-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Name</th><th>Type</th><th>Location</th><th>Categories</th>
+            <th>Formats</th><th>Certifications</th><th>Website</th><th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="cm-tbody"></tbody>
+      </table>
+
+      <div class="lock-overlay" id="lock-overlay">
+        <button class="btn btn-primary" onclick="openModal()">Unlock the network</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCESS MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    <h4>Unlock the network</h4>
+    <form id="access-form" onsubmit="handleSubmit(event, this)" novalidate>
+      <div class="field">
+        <label for="af-name">Your name</label>
+        <input class="input-field" id="af-name" name="name" type="text" placeholder="Full name">
+        <div class="field-error" data-error="name"></div>
+      </div>
+      <div class="field">
+        <label for="af-company">Brand / company</label>
+        <input class="input-field" id="af-company" name="company" type="text" placeholder="Or 'exploring' — that's fine too">
+        <div class="field-error" data-error="company"></div>
+      </div>
+      <div class="field">
+        <label for="af-linkedin">LinkedIn</label>
+        <input class="input-field" id="af-linkedin" name="linkedin" type="url" placeholder="linkedin.com/in/you">
+        <div class="field-error" data-error="linkedin"></div>
+      </div>
+      <div class="field">
+        <label for="af-contact">WhatsApp number</label>
+        <input class="input-field" id="af-contact" name="contact" type="tel" placeholder="10-digit number">
+        <div class="field-error" data-error="contact"></div>
+      </div>
+      <div class="field">
+        <label for="af-notes">Anything else you'd like to share with us?</label>
+        <textarea id="af-notes" name="notes" rows="3" placeholder="The more you share, the better we can help."></textarea>
+      </div>
+      <div class="hp-wrap" aria-hidden="true"><label for="af-website">Website</label><input id="af-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <button type="submit" class="btn btn-primary btn-submit">Unlock</button>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <a href="index.html" class="logo">First Batch</a>
+    <ul class="footer-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="partners.html">For partners</a></li>
+    </ul>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in · Upstream, sorted.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
