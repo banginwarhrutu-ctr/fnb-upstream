@@ -94,12 +94,21 @@ module.exports = async function handler(req, res) {
   let tableId, record;
   if (isPartner) {
     tableId = AIRTABLE_PARTNER_TABLE_ID || 'tblP6YIG6sWFEDKQF';
-    record = {
-      ...base,
-      Makes: clip(brief.Makes, 300),
-      Certifications: clip(brief.Certifications, 300),
-      Minimums: clip(brief.Minimums, 300)
-    };
+    record = { ...base };
+    // Only set columns that have a value, so records stay clean per type.
+    const setIf = (col, val, n = 300) => { const c = clip(val, n); if (c) record[col] = c; };
+    setIf('Type', brief.PartnerType, 60);          // Contract manufacturer / Food technologist / R&D / etc.
+    // Only write Email if it looks valid — a malformed value could reject the record.
+    if (brief.Email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(brief.Email.trim())) setIf('Email', brief.Email, 200);
+    setIf('Categories', brief.Categories);
+    setIf('Makes', brief.Makes);
+    setIf('Certifications', brief.Certifications);
+    setIf('Minimums', brief.Minimums);
+    setIf('Specialties', brief.Specialties);
+    setIf('Experience', brief.Experience, 100);
+    setIf('Engagement', brief.Engagement, 100);
+    setIf('Stages', brief.Stages);
+    setIf('Portfolio', brief.Portfolio, 500);
   } else {
     tableId = AIRTABLE_TABLE_ID;
     const isBrief = brief && (brief.Category || brief.Stage || brief.Stuck);
@@ -149,7 +158,8 @@ module.exports = async function handler(req, res) {
   // ── 2. Email notification via Resend ──────────────────────
   if (RESEND_API_KEY && NOTIFY_EMAIL) {
     try {
-      const label = isPartner ? 'PARTNER APPLICATION' : (record.Source === 'Founder brief' ? 'FOUNDER BRIEF' : 'network unlock');
+      const partnerLabel = record.Type ? `PARTNER APPLICATION (${record.Type})` : 'PARTNER APPLICATION';
+      const label = isPartner ? partnerLabel : (record.Source === 'Founder brief' ? 'FOUNDER BRIEF' : 'network unlock');
       const details = Object.entries(record)
         .filter(([, v]) => v)
         .map(([k, v]) => `${k}: ${v}`)
@@ -164,7 +174,7 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           from: 'onboarding@resend.dev',
           to: NOTIFY_EMAIL,
-          subject: `${isPartner ? '🏭 Partner' : record.Source === 'Founder brief' ? '🔥 Brief' : 'New lead'} — ${record.Name} @ ${record.Company}`,
+          subject: `${isPartner ? `🏭 Partner${record.Type ? ' · ' + record.Type : ''}` : record.Source === 'Founder brief' ? '🔥 Brief' : 'New lead'} — ${record.Name} @ ${record.Company}`,
           text: `New ${label} on First Batch:\n\n${details}\n\n──────────\nAirtable: ${airtableStatus}\nTable: ${tableId}`
         })
       });

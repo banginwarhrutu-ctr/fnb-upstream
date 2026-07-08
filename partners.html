@@ -59,17 +59,30 @@
 <section class="section section-cream" id="join">
   <div class="wrap">
     <div class="section-kicker">Join the network</div>
-    <h2>Tell us what you make.</h2>
+    <h2>Tell us what you do.</h2>
+    <p class="section-lead">Contract manufacturers, ingredient suppliers, food technologists, R&amp;D and NPD consultants, and testing labs. Pick what you are and we'll ask the right questions.</p>
     <div class="form-card">
       <form id="partner-form" onsubmit="handlePartner(event, this)" novalidate>
+        <div class="field">
+          <label for="pf-type">What kind of partner are you?</label>
+          <select id="pf-type" name="type" onchange="updatePartnerForm()">
+            <option value="">Select one</option>
+            <option>Contract manufacturer</option>
+            <option>Ingredient supplier</option>
+            <option>Food technologist / R&amp;D</option>
+            <option>Testing lab</option>
+            <option>Other</option>
+          </select>
+          <div class="field-error" data-error="type"></div>
+        </div>
         <div class="field">
           <label for="pf-name">Your name</label>
           <input class="input-field" id="pf-name" name="name" type="text" placeholder="Full name">
           <div class="field-error" data-error="name"></div>
         </div>
         <div class="field">
-          <label for="pf-company">Company</label>
-          <input class="input-field" id="pf-company" name="company" type="text" placeholder="Company name">
+          <label for="pf-company">Company (or 'independent')</label>
+          <input class="input-field" id="pf-company" name="company" type="text" placeholder="Company name, or 'independent'">
           <div class="field-error" data-error="company"></div>
         </div>
         <div class="field">
@@ -78,18 +91,51 @@
           <div class="field-error" data-error="contact"></div>
         </div>
         <div class="field">
-          <label for="pf-make">What do you make or offer?</label>
+          <label for="pf-email">Email (optional)</label>
+          <input class="input-field" id="pf-email" name="email" type="email" placeholder="you@company.com">
+        </div>
+        <div class="field" data-show="cm supplier tech lab other">
+          <label for="pf-cats">Categories you work in</label>
+          <input class="input-field" id="pf-cats" name="categories" type="text" placeholder="e.g. beverages, snacks, bakery">
+        </div>
+
+        <!-- Manufacturer / supplier / lab / other -->
+        <div class="field" data-show="cm supplier lab other">
+          <label for="pf-make">What do you make?</label>
           <input class="input-field" id="pf-make" name="make" type="text" placeholder="e.g. extruded snacks CM, flavour house, NABL lab">
         </div>
-        <div class="field">
+        <div class="field" data-show="cm supplier lab">
           <label for="pf-certs">Certifications</label>
-          <input class="input-field" id="pf-certs" name="certs" type="text" placeholder="e.g. FSSAI, ISO 22000, HACCP">
+          <input class="input-field" id="pf-certs" name="certs" type="text" placeholder="e.g. FSSAI, ISO 22000, HACCP, NABL">
         </div>
-        <div class="field">
+        <div class="field" data-show="cm">
           <label for="pf-moq">Minimums</label>
           <input class="input-field" id="pf-moq" name="moq" type="text" placeholder="Smallest run you'll take on">
         </div>
-      <div class="hp-wrap" aria-hidden="true"><label for="pf-website">Website</label><input id="pf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+
+        <!-- Food technologist / R&D -->
+        <div class="field" data-show="tech">
+          <label for="pf-spec">Your specialties</label>
+          <input class="input-field" id="pf-spec" name="specialties" type="text" placeholder="e.g. functional beverages, fermentation, shelf-life">
+        </div>
+        <div class="field" data-show="tech">
+          <label for="pf-exp">Years of experience</label>
+          <input class="input-field" id="pf-exp" name="experience" type="text" placeholder="e.g. 8 years">
+        </div>
+        <div class="field" data-show="tech">
+          <label for="pf-eng">Freelance, firm or in-house?</label>
+          <input class="input-field" id="pf-eng" name="engagement" type="text" placeholder="e.g. freelance consultant">
+        </div>
+        <div class="field" data-show="tech">
+          <label for="pf-stages">Stages you take on</label>
+          <input class="input-field" id="pf-stages" name="stages" type="text" placeholder="e.g. formulation, reformulation, scale-up, costing">
+        </div>
+        <div class="field" data-show="tech">
+          <label for="pf-portfolio">Portfolio or best project</label>
+          <input class="input-field" id="pf-portfolio" name="portfolio" type="text" placeholder="Link, or one line on your best work">
+        </div>
+
+        <div class="hp-wrap" aria-hidden="true"><label for="pf-website">Website</label><input id="pf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
         <button type="submit" class="btn btn-primary btn-submit">Apply to join</button>
       </form>
     </div>

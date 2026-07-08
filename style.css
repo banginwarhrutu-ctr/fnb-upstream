@@ -149,7 +149,10 @@ input, select, textarea { font-family: inherit; }
   color: var(--accent); margin-bottom: 16px;
 }
 .section h2 { max-width: 720px; margin-bottom: 18px; }
-.section-lead { font-size: 1.12rem; color: var(--muted); max-width: 620px; }
+.section-lead { font-size: 1.12rem; color: var(--muted); max-width: 620px; margin-bottom: 28px; }
+.pillar-note { margin-top: 32px; font-size: 1rem; color: var(--muted); }
+.pillar-note a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.pillar-note a:hover { text-decoration: underline; }
 
 /* ── PILLAR FLOW (homepage) ────────────────────────────────── */
 .pillar-flow {

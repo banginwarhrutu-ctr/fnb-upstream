@@ -148,14 +148,31 @@ async function handlePartner(e, formEl) {
   const v = collectAndValidate(formEl, ['name', 'company', 'contact']);
   if (!v) return;
 
+  // Partner type is required so we route + label the lead correctly.
+  const typeEl = formEl.querySelector('[name="type"]');
+  const typeErr = formEl.querySelector('[data-error="type"]');
+  if (typeEl && !typeEl.value) {
+    if (typeErr) showFieldError(typeEl, typeErr, 'Please pick what kind of partner you are');
+    return;
+  }
+  if (typeEl && typeErr) clearFieldError(typeEl, typeErr);
+
   const fields = toPayloadFields({ ...v, linkedin: '' });
   delete fields.LinkedIn;
   const g = n => ((formEl.querySelector(`[name="${n}"]`) || {}).value || '').trim();
   const brief = {
-    Type: 'Partner application',
+    Type: 'Partner application',   // routing signal for /api/submit
+    PartnerType: g('type'),        // the actual partner subtype
+    Email: g('email'),
+    Categories: g('categories'),
     Makes: g('make'),
     Certifications: g('certs'),
-    Minimums: g('moq')
+    Minimums: g('moq'),
+    Specialties: g('specialties'),
+    Experience: g('experience'),
+    Engagement: g('engagement'),
+    Stages: g('stages'),
+    Portfolio: g('portfolio')
   };
 
   const btn = formEl.querySelector('.btn-submit');
@@ -165,6 +182,48 @@ async function handlePartner(e, formEl) {
   saveLocally({ ...fields, ...brief });
   showSuccess(formEl, "We'll be in touch on WhatsApp.");
   submitLead({ fields, brief, hp: getHp(formEl) }).catch(err => console.warn('[First Batch] Backend submission failed. Application saved locally.', err));
+}
+
+/* Partners page — show the right fields for the selected partner type */
+const PARTNER_TYPE_KEY = {
+  'Contract manufacturer': 'cm',
+  'Ingredient supplier': 'supplier',
+  'Food technologist / R&D': 'tech',
+  'Testing lab': 'lab',
+  'Other': 'other'
+};
+const PARTNER_MAKE_LABEL = {
+  cm: 'What do you make?',
+  supplier: 'What do you supply?',
+  lab: 'What tests do you offer?',
+  other: 'What do you offer?'
+};
+function updatePartnerForm() {
+  const form = document.getElementById('partner-form');
+  if (!form) return;
+  const sel = form.querySelector('[name="type"]');
+  const key = PARTNER_TYPE_KEY[sel ? sel.value : ''] || '';
+  form.querySelectorAll('[data-show]').forEach(el => {
+    const types = el.getAttribute('data-show').split(/\s+/);
+    el.style.display = (key && types.indexOf(key) !== -1) ? '' : 'none';
+  });
+  const makeLabel = form.querySelector('label[for="pf-make"]');
+  if (makeLabel && PARTNER_MAKE_LABEL[key]) makeLabel.textContent = PARTNER_MAKE_LABEL[key];
+}
+function initPartnerForm() {
+  const form = document.getElementById('partner-form');
+  if (!form) return;
+  const sel = form.querySelector('[name="type"]');
+  const role = (new URLSearchParams(location.search).get('role') || '').toLowerCase();
+  const ROLE_MAP = {
+    technologist: 'Food technologist / R&D', tech: 'Food technologist / R&D',
+    rnd: 'Food technologist / R&D', 'r&d': 'Food technologist / R&D', npd: 'Food technologist / R&D',
+    manufacturer: 'Contract manufacturer', cm: 'Contract manufacturer',
+    supplier: 'Ingredient supplier', ingredient: 'Ingredient supplier',
+    lab: 'Testing lab', testing: 'Testing lab'
+  };
+  if (role && ROLE_MAP[role] && sel) sel.value = ROLE_MAP[role];
+  updatePartnerForm();
 }
 
 /* Start page — intake form */
@@ -375,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  initPartnerForm();
   loadCMs();
   if (isUnlocked()) unlockTable();
 });
