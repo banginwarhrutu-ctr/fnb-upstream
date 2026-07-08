@@ -117,19 +117,33 @@ module.exports = async function handler(req, res) {
   }
 
   // ── 1. Save to Airtable ───────────────────────────────────
-  const airtableRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${tableId}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ fields: record, typecast: true })
-  });
+  // encodeURIComponent so a table NAME with spaces (e.g. "Founder Leads")
+  // works as well as a table id. Un-encoded spaces produce a broken URL
+  // that Airtable rejects — a common cause of silent write failures.
+  const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableId)}`;
+  let airtableStatus = 'unknown';
+  try {
+    const airtableRes = await fetch(airtableUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fields: record, typecast: true })
+    });
 
-  if (!airtableRes.ok) {
-    const err = await airtableRes.text();
-    console.error('[First Batch] Airtable error:', airtableRes.status, err);
-    // Don't fail the whole request — still try to send email
+    if (airtableRes.ok) {
+      airtableStatus = 'saved ✓';
+    } else {
+      const err = await airtableRes.text();
+      airtableStatus = `FAILED ${airtableRes.status} — ${err.slice(0, 400)}`;
+      console.error('[First Batch] Airtable error:', airtableRes.status, err);
+      // Don't fail the whole request — still send the email (which now
+      // reports the failure reason so nothing is lost or hidden).
+    }
+  } catch (airtableErr) {
+    airtableStatus = `FAILED (network) — ${airtableErr.message}`;
+    console.error('[First Batch] Airtable fetch threw:', airtableErr);
   }
 
   // ── 2. Email notification via Resend ──────────────────────
@@ -151,7 +165,7 @@ module.exports = async function handler(req, res) {
           from: 'onboarding@resend.dev',
           to: NOTIFY_EMAIL,
           subject: `${isPartner ? '🏭 Partner' : record.Source === 'Founder brief' ? '🔥 Brief' : 'New lead'} — ${record.Name} @ ${record.Company}`,
-          text: `New ${label} on First Batch:\n\n${details}`
+          text: `New ${label} on First Batch:\n\n${details}\n\n──────────\nAirtable: ${airtableStatus}\nTable: ${tableId}`
         })
       });
     } catch (emailErr) {
@@ -159,5 +173,5 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  return res.status(200).json({ ok: true });
+  return res.status(200).json({ ok: true, airtable: airtableStatus });
 };
