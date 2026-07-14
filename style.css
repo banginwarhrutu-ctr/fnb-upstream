@@ -1,26 +1,26 @@
 /* ============================================================
-   FIRST BATCH — style.css
+   FIRST BATCH CO — style.css
    Type + hierarchy borrowed from grabbly.in (Inter, 800 heads,
    black on white/cream, pill buttons). Logo: Anonymous Pro.
-   Accent: muted terracotta — warm, food, not neon.
+   Theme: "Fresh Kitchen" — sage, cream, charcoal, clay accent.
    ============================================================ */
 
 :root {
-  --black:       #111111;
-  --text:        #1C1C1C;
-  --muted:       #6B6B6B;
-  --border:      #EBEBEB;
+  --black:       #22271F;
+  --text:        #262B21;
+  --muted:       #6E7566;
+  --border:      #E1E4D8;
   --white:       #FFFFFF;
-  --cream:       #FAF6F0;   /* neutral for small UI bits (badges, row hover) */
-  --coral:       #F8D3C0;   /* hero + section wash */
-  --accent:      #9C3A11;   /* deep rust */
-  --accent-soft: #FBE3D6;   /* light coral tint */
-  --green:       #3D6B4F;   /* cert badge green */
-  --yellow:      #FFDE45;   /* grabbly yellow — hero + highlights */
-  --butter:      #FFF3C4;   /* pillar tints */
-  --peach:       #FFE1D1;
-  --mint:        #DFF0E2;
-  --lilac:       #E8E3F5;
+  --cream:       #F5F3EA;   /* neutral for small UI bits (badges, row hover) */
+  --coral:       #DCE8DA;   /* hero + section wash (sage) */
+  --accent:      #3F6B4E;   /* sage green */
+  --accent-soft: #E4EEE1;   /* light sage tint */
+  --clay:        #9A5236;   /* cert badges, warm contrast to sage */
+  --yellow:      #E3A93B;   /* turmeric — sparing highlight use */
+  --butter:      #F1E7C9;   /* pillar tints */
+  --peach:       #F3DAC9;
+  --mint:        #DCEBDB;
+  --lilac:       #DCE6E8;
   --radius-card: 20px;
   --radius-btn:  50px;
   --shadow:       0 2px 20px rgba(0,0,0,0.08);
@@ -230,7 +230,7 @@ input, select, textarea { font-family: inherit; }
 
 .callout {
   margin-top: 48px; padding: 32px 36px; border-radius: var(--radius-card);
-  background: var(--accent-soft); border: 1px solid #F0C4AC;
+  background: var(--accent-soft); border: 1px solid #C9DDC6;
   font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em;
   color: var(--black); max-width: 760px;
 }
@@ -315,7 +315,7 @@ tbody tr:hover { background: var(--cream); }
   border-radius: var(--radius-btn); padding: 2px 9px; margin: 2px 3px 2px 0; white-space: nowrap;
 }
 .badge.type { background: var(--accent-soft); border-color: transparent; color: var(--accent); font-weight: 600; }
-.badge.cert { background: #EAF2EC; border-color: #D3E3D7; color: var(--green); }
+.badge.cert { background: #F4E9E1; border-color: #E3CFC2; color: var(--clay); }
 
 #table-loading { padding: 60px; text-align: center; color: var(--muted); }
 
@@ -323,7 +323,7 @@ tbody tr:hover { background: var(--cream); }
   position: absolute; inset: 0; z-index: 10;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 18px; text-align: center; padding: 32px;
-  background: linear-gradient(180deg, rgba(250,246,240,0.3), rgba(250,246,240,0.94) 70%);
+  background: linear-gradient(180deg, rgba(245,243,234,0.3), rgba(245,243,234,0.94) 70%);
 }
 .lock-overlay.hidden { display: none; }
 .lock-overlay h3 { font-size: 1.5rem; font-weight: 800; }
@@ -370,7 +370,7 @@ tbody tr:hover { background: var(--cream); }
 
 .success-state { text-align: center; padding: 24px 0; }
 .success-check {
-  width: 56px; height: 56px; border-radius: 50%; background: var(--green);
+  width: 56px; height: 56px; border-radius: 50%; background: var(--accent);
   color: var(--white); font-size: 26px; display: flex; align-items: center;
   justify-content: center; margin: 0 auto 18px;
 }

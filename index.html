@@ -15,7 +15,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a href="index.html" class="logo">First Batch</a>
+    <a href="index.html" class="logo">First Batch Co</a>
     <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
     <ul class="nav-links" id="nav-links">
       <li><a href="network.html">The network</a></li>
@@ -40,56 +40,62 @@
     </div>
     <div class="hero-art" aria-hidden="true">
       <svg viewBox="0 0 420 360" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <g stroke="#9C3A11" stroke-width="2" stroke-linecap="round">
-          <path d="M60 210 V120"/>
-          <path d="M60 132 C52 128 48 118 48 108 C56 112 60 120 60 132"/>
-          <path d="M60 132 C68 128 72 118 72 108 C64 112 60 120 60 132"/>
-          <path d="M60 152 C52 148 48 138 48 128 C56 132 60 140 60 152"/>
-          <path d="M60 152 C68 148 72 138 72 128 C64 132 60 140 60 152"/>
-          <path d="M60 172 C52 168 48 158 48 148 C56 152 60 160 60 172"/>
-          <path d="M60 172 C68 168 72 158 72 148 C64 152 60 160 60 172"/>
-          <path d="M368 220 V140"/>
-          <path d="M368 152 C360 148 356 138 356 128 C364 132 368 140 368 152"/>
-          <path d="M368 152 C376 148 380 138 380 128 C372 132 368 140 368 152"/>
-          <path d="M368 172 C360 168 356 158 356 148 C364 152 368 160 368 172"/>
-          <path d="M368 172 C376 168 380 158 380 148 C372 152 368 160 368 172"/>
-          <path d="M368 192 C360 188 356 178 356 168 C364 172 368 180 368 192"/>
-          <path d="M368 192 C376 188 380 178 380 168 C372 172 368 180 368 192"/>
+        <!-- countertop -->
+        <path d="M30 290 H390" stroke="#22271F" stroke-width="2" stroke-linecap="round"/>
+        <path d="M30 295 H390" stroke="#22271F" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+        <circle cx="188" cy="298" r="2" fill="#3F6B4E" opacity="0.5"/>
+        <circle cx="202" cy="301" r="1.5" fill="#3F6B4E" opacity="0.4"/>
+
+        <!-- crate of produce -->
+        <g stroke-linejoin="round">
+          <path d="M56 212 L168 212 L160 290 L64 290 Z" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
+          <rect x="48" y="196" width="128" height="16" rx="4" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
+          <path d="M112 212 L108 290" stroke="#22271F" stroke-width="1.5"/>
+          <path d="M62 239 L163 239" stroke="#22271F" stroke-width="1.5"/>
+          <path d="M63 265 L161 265" stroke="#22271F" stroke-width="1.5"/>
         </g>
-        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
-          <rect x="96" y="150" width="76" height="118" rx="14" fill="#FFFFFF"/>
-          <rect x="102" y="136" width="64" height="16" rx="6" fill="#FBE3D6"/>
-          <path d="M110 196 h48" stroke="#9C3A11"/>
-          <path d="M110 210 h48" stroke="#9C3A11"/>
-          <rect x="112" y="226" width="44" height="26" rx="5" fill="#FBE3D6" stroke-width="2"/>
+        <g stroke="#22271F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M96 192 C100 176 112 168 108 150 C118 164 116 180 104 194 C101 196 97 195 96 192 Z" fill="#9A5236"/>
+          <path d="M107 151 C105 147 108 143 112 142" stroke="#3F6B4E" fill="none"/>
+          <circle cx="138" cy="182" r="15" fill="#C1543A"/>
+          <path d="M138 167 L132 158 M138 167 L138 154 M138 167 L144 158" stroke="#3F6B4E" fill="none"/>
+          <path d="M68 196 C64 184 58 178 52 168" stroke="#3F6B4E" fill="none"/>
+          <path d="M71 196 C69 182 67 174 65 162" stroke="#3F6B4E" fill="none"/>
+          <path d="M75 196 C77 184 81 176 83 166" stroke="#3F6B4E" fill="none"/>
         </g>
-        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
-          <path d="M192 118 h72 l8 20 v112 a14 14 0 0 1 -14 14 h-60 a14 14 0 0 1 -14 -14 V138 z" fill="#FFFFFF"/>
-          <path d="M192 118 l8 20 h64" stroke-width="2"/>
-          <path d="M200 138 v-14 a8 8 0 0 1 8 -8 h40 a8 8 0 0 1 8 8 v14"/>
-          <circle cx="228" cy="196" r="22" stroke="#9C3A11"/>
-          <path d="M220 196 l6 6 l12 -12" stroke="#9C3A11"/>
-          <path d="M204 238 h48" stroke-width="2"/>
-          <path d="M204 250 h32" stroke-width="2"/>
+
+        <!-- jar with tied lid + swing tag -->
+        <g stroke="#22271F" stroke-width="2.5" stroke-linejoin="round">
+          <rect x="206" y="192" width="72" height="98" rx="14" fill="#FFFFFF"/>
+          <rect x="224" y="170" width="36" height="24" rx="6" fill="#FFFFFF"/>
+          <ellipse cx="242" cy="168" rx="21" ry="8" fill="#F1E7C9"/>
+          <path d="M230 162 C232 150 252 150 254 162" fill="none"/>
         </g>
-        <g stroke="#111111" stroke-width="2.5" stroke-linejoin="round">
-          <path d="M296 176 h72 l-8 88 a10 10 0 0 1 -10 8 h-36 a10 10 0 0 1 -10 -8 z" fill="#FFFFFF"/>
-          <ellipse cx="332" cy="176" rx="36" ry="8" fill="#FBE3D6"/>
-          <path d="M318 148 c0 -8 8 -8 8 -16" stroke="#9C3A11" stroke-width="2" stroke-linecap="round"/>
-          <path d="M336 152 c0 -8 8 -8 8 -16" stroke="#9C3A11" stroke-width="2" stroke-linecap="round"/>
-          <path d="M304 220 h56" stroke-width="2"/>
+        <g stroke="#3F6B4E" stroke-width="2" fill="none">
+          <path d="M212 233 C220 230 232 236 242 233 C252 230 264 236 272 233"/>
+          <path d="M212 255 C220 252 232 258 242 255 C252 252 264 258 272 255"/>
         </g>
-        <g stroke="#111111" stroke-width="2.5" stroke-linecap="round">
-          <path d="M40 288 H380"/>
-          <circle cx="76" cy="304" r="7"/>
-          <circle cx="152" cy="304" r="7"/>
-          <circle cx="228" cy="304" r="7"/>
-          <circle cx="304" cy="304" r="7"/>
-          <circle cx="360" cy="304" r="7"/>
+        <circle cx="224" cy="272" r="2.5" fill="#DCEBDB"/>
+        <circle cx="246" cy="277" r="2" fill="#DCEBDB"/>
+        <circle cx="262" cy="269" r="2.5" fill="#DCEBDB"/>
+        <path d="M245 159 C266 146 282 133 291 121" stroke="#22271F" stroke-width="1.5" fill="none"/>
+        <g stroke="#22271F" stroke-width="2.5" stroke-linejoin="round">
+          <path d="M280 108 L310 108 L318 126 L310 158 L278 158 L270 126 Z" fill="#F1E7C9"/>
         </g>
-        <g>
-          <rect x="252" y="86" width="112" height="30" rx="15" fill="#111111"/>
-          <text x="308" y="106" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="14" font-weight="700" fill="#FFFFFF">BATCH 001</text>
+        <circle cx="294" cy="119" r="2.5" fill="none" stroke="#22271F" stroke-width="1.5"/>
+        <text x="294" y="137" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">BATCH</text>
+        <text x="294" y="150" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">001</text>
+
+        <!-- mixing bowl + whisk -->
+        <path d="M293 204 C293 204 297 254 305 268 C311 280 322 286 335 286 C348 286 359 280 365 268 C373 254 377 204 377 204" fill="#FFFFFF" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
+        <ellipse cx="335" cy="204" rx="42" ry="9" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
+        <path d="M318 196 L346 148" stroke="#22271F" stroke-width="3" stroke-linecap="round"/>
+        <path d="M340 150 C336 138 350 132 352 144" stroke="#22271F" stroke-width="1.8" fill="none"/>
+        <path d="M344 148 C342 136 356 132 356 144" stroke="#22271F" stroke-width="1.8" fill="none"/>
+        <g stroke="#3F6B4E" stroke-width="2" stroke-linecap="round" opacity="0.7" fill="none">
+          <path d="M322 196 C320 188 326 184 324 176"/>
+          <path d="M335 194 C333 186 339 182 337 174"/>
+          <path d="M348 196 C346 188 352 184 350 176"/>
         </g>
       </svg>
     </div>
@@ -107,9 +113,9 @@
         <div class="pillar-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 6 h10 M21 6 v10 L11 36 a5 5 0 0 0 4.5 7 h17 a5 5 0 0 0 4.5 -7 L27 16 V6"/>
-            <path d="M15 30 h18" stroke="#9C3A11"/>
-            <circle cx="21" cy="36" r="1.6" fill="#9C3A11" stroke="none"/>
-            <circle cx="27" cy="33" r="1.4" fill="#9C3A11" stroke="none"/>
+            <path d="M15 30 h18" stroke="#3F6B4E"/>
+            <circle cx="21" cy="36" r="1.6" fill="#3F6B4E" stroke="none"/>
+            <circle cx="27" cy="33" r="1.4" fill="#3F6B4E" stroke="none"/>
           </svg>
         </div>
         <div class="pillar-step">01 / R&amp;D</div>
@@ -121,8 +127,8 @@
         <div class="pillar-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M24 44 V12"/>
-            <path d="M24 16 C19 14 16 9 16 4 C21 6 24 10 24 16" stroke="#9C3A11"/>
-            <path d="M24 16 C29 14 32 9 32 4 C27 6 24 10 24 16" stroke="#9C3A11"/>
+            <path d="M24 16 C19 14 16 9 16 4 C21 6 24 10 24 16" stroke="#3F6B4E"/>
+            <path d="M24 16 C29 14 32 9 32 4 C27 6 24 10 24 16" stroke="#3F6B4E"/>
             <path d="M24 26 C19 24 16 19 16 14 C21 16 24 20 24 26"/>
             <path d="M24 26 C29 24 32 19 32 14 C27 16 24 20 24 26"/>
             <path d="M24 36 C19 34 16 29 16 24 C21 26 24 30 24 36"/>
@@ -139,8 +145,8 @@
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 42 V20 l12 8 v-8 l12 8 v-8 l12 8 v14 z"/>
             <rect x="10" y="8" width="6" height="12"/>
-            <path d="M13 6 c0 -2 2 -2 2 -4" stroke="#9C3A11"/>
-            <path d="M14 34 h4 M22 34 h4 M30 34 h4" stroke="#9C3A11"/>
+            <path d="M13 6 c0 -2 2 -2 2 -4" stroke="#3F6B4E"/>
+            <path d="M14 34 h4 M22 34 h4 M30 34 h4" stroke="#3F6B4E"/>
           </svg>
         </div>
         <div class="pillar-step">03 / Manufacturing</div>
@@ -153,7 +159,7 @@
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="10" y="8" width="28" height="34" rx="4"/>
             <path d="M18 8 v-3 h12 v3"/>
-            <path d="M17 22 l4 4 l9 -9" stroke="#9C3A11"/>
+            <path d="M17 22 l4 4 l9 -9" stroke="#3F6B4E"/>
             <path d="M17 32 h14"/>
           </svg>
         </div>
