@@ -20,8 +20,8 @@
     <ul class="nav-links" id="nav-links">
       <li><a href="network.html">The network</a></li>
       <li><a href="about.html">About</a></li>
-      <li class="nav-partner"><a href="partners.html">For partners</a></li>
       <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+      <li class="nav-partner"><a href="partners.html">For partners</a></li>
     </ul>
   </div>
 </nav>
@@ -30,6 +30,7 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
+      <div class="mix-dots"><span></span><span></span><span></span><span></span></div>
       <div class="hero-kicker">Pre-launch infrastructure for F&amp;B brands in India</div>
       <h1>From formula to <em>first batch.</em></h1>
       <p class="hero-sub">We connect early-stage F&amp;B brands in India with the right food technologists, contract manufacturers, ingredient suppliers and labs.</p>
@@ -40,63 +41,67 @@
     </div>
     <div class="hero-art" aria-hidden="true">
       <svg viewBox="0 0 420 360" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- four-color panel behind the shelf -->
+        <defs><clipPath id="hero-panel"><rect x="20" y="44" width="380" height="266" rx="26"/></clipPath></defs>
+        <g clip-path="url(#hero-panel)" opacity="0.6">
+          <rect x="20" y="44" width="190" height="133" fill="#FFF3C4"/>
+          <rect x="210" y="44" width="190" height="133" fill="#FFE1D1"/>
+          <rect x="20" y="177" width="190" height="133" fill="#E8E3F5"/>
+          <rect x="210" y="177" width="190" height="133" fill="#DFF0E2"/>
+        </g>
+        <rect x="20" y="44" width="380" height="266" rx="26" stroke="#22271F" stroke-width="1" stroke-opacity="0.1"/>
         <!-- countertop -->
         <path d="M30 290 H390" stroke="#22271F" stroke-width="2" stroke-linecap="round"/>
         <path d="M30 295 H390" stroke="#22271F" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
-        <circle cx="188" cy="298" r="2" fill="#3F6B4E" opacity="0.5"/>
-        <circle cx="202" cy="301" r="1.5" fill="#3F6B4E" opacity="0.4"/>
+        <circle cx="168" cy="298" r="2" fill="#C9971A" opacity="0.6"/>
+        <circle cx="252" cy="300" r="1.8" fill="#E0603A" opacity="0.5"/>
 
-        <!-- crate of produce -->
-        <g stroke-linejoin="round">
-          <path d="M56 212 L168 212 L160 290 L64 290 Z" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
-          <rect x="48" y="196" width="128" height="16" rx="4" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
-          <path d="M112 212 L108 290" stroke="#22271F" stroke-width="1.5"/>
-          <path d="M62 239 L163 239" stroke="#22271F" stroke-width="1.5"/>
-          <path d="M63 265 L161 265" stroke="#22271F" stroke-width="1.5"/>
-        </g>
-        <g stroke="#22271F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M96 192 C100 176 112 168 108 150 C118 164 116 180 104 194 C101 196 97 195 96 192 Z" fill="#9A5236"/>
-          <path d="M107 151 C105 147 108 143 112 142" stroke="#3F6B4E" fill="none"/>
-          <circle cx="138" cy="182" r="15" fill="#C1543A"/>
-          <path d="M138 167 L132 158 M138 167 L138 154 M138 167 L144 158" stroke="#3F6B4E" fill="none"/>
-          <path d="M68 196 C64 184 58 178 52 168" stroke="#3F6B4E" fill="none"/>
-          <path d="M71 196 C69 182 67 174 65 162" stroke="#3F6B4E" fill="none"/>
-          <path d="M75 196 C77 184 81 176 83 166" stroke="#3F6B4E" fill="none"/>
-        </g>
+        <!-- chip bag (butter) — zigzag seal top AND bottom, label + triangle logo -->
+        <path d="M46 150 L52 142 L58 150 L64 142 L70 150 L76 142 L82 150 L88 142 L96 150" stroke="#22271F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M48 150 L94 150 L90 282 L52 282 Z" fill="#FFF3C4" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M48 282 L54 290 L60 282 L66 290 L72 282 L78 290 L84 282 L90 282" stroke="#22271F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="57" y="160" width="30" height="19" rx="3" fill="#FFFFFF" stroke="#22271F" stroke-width="1.5"/>
+        <path d="M60 166 H84 M60 171 H84 M60 176 H78" stroke="#22271F" stroke-width="1" opacity="0.6"/>
+        <path d="M61 205 L81 205 L71 223 Z" fill="#FFFFFF" stroke="#22271F" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="71" cy="212" r="1.4" fill="#22271F" opacity="0.35"/>
 
-        <!-- jar with tied lid + swing tag -->
-        <g stroke="#22271F" stroke-width="2.5" stroke-linejoin="round">
-          <rect x="206" y="192" width="72" height="98" rx="14" fill="#FFFFFF"/>
-          <rect x="224" y="170" width="36" height="24" rx="6" fill="#FFFFFF"/>
-          <ellipse cx="242" cy="168" rx="21" ry="8" fill="#F1E7C9"/>
-          <path d="M230 162 C232 150 252 150 254 162" fill="none"/>
-        </g>
-        <g stroke="#3F6B4E" stroke-width="2" fill="none">
-          <path d="M212 233 C220 230 232 236 242 233 C252 230 264 236 272 233"/>
-          <path d="M212 255 C220 252 232 258 242 255 C252 252 264 258 272 255"/>
-        </g>
-        <circle cx="224" cy="272" r="2.5" fill="#DCEBDB"/>
-        <circle cx="246" cy="277" r="2" fill="#DCEBDB"/>
-        <circle cx="262" cy="269" r="2.5" fill="#DCEBDB"/>
-        <path d="M245 159 C266 146 282 133 291 121" stroke="#22271F" stroke-width="1.5" fill="none"/>
-        <g stroke="#22271F" stroke-width="2.5" stroke-linejoin="round">
-          <path d="M280 108 L310 108 L318 126 L310 158 L278 158 L270 126 Z" fill="#F1E7C9"/>
-        </g>
-        <circle cx="294" cy="119" r="2.5" fill="none" stroke="#22271F" stroke-width="1.5"/>
-        <text x="294" y="137" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">BATCH</text>
-        <text x="294" y="150" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">001</text>
+        <!-- takeaway coffee cup (lilac sleeve) with steam -->
+        <path d="M126 156 c0 -6 6 -6 6 -12" stroke="#22271F" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M142 158 c0 -6 6 -6 6 -12" stroke="#22271F" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="124" y="164" width="26" height="9" rx="3" fill="#FFFFFF" stroke="#22271F" stroke-width="2"/>
+        <rect x="110" y="172" width="54" height="12" rx="3" fill="#E8E3F5" stroke="#22271F" stroke-width="2.5"/>
+        <path d="M114 184 L160 184 L153 286 L121 286 Z" fill="#FFFFFF" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M117 212 L157 212 L154 248 L120 248 Z" fill="#E8E3F5" stroke="#22271F" stroke-width="2"/>
+        <circle cx="137" cy="230" r="6.5" fill="none" stroke="#7C6BC4" stroke-width="2"/>
+        <path d="M137 224 c-2.5 4 -2.5 8 0 12" stroke="#7C6BC4" stroke-width="1.6" fill="none"/>
 
-        <!-- mixing bowl + whisk -->
-        <path d="M293 204 C293 204 297 254 305 268 C311 280 322 286 335 286 C348 286 359 280 365 268 C373 254 377 204 377 204" fill="#FFFFFF" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
-        <ellipse cx="335" cy="204" rx="42" ry="9" fill="#F1E7C9" stroke="#22271F" stroke-width="2.5"/>
-        <path d="M318 196 L346 148" stroke="#22271F" stroke-width="3" stroke-linecap="round"/>
-        <path d="M340 150 C336 138 350 132 352 144" stroke="#22271F" stroke-width="1.8" fill="none"/>
-        <path d="M344 148 C342 136 356 132 356 144" stroke="#22271F" stroke-width="1.8" fill="none"/>
-        <g stroke="#3F6B4E" stroke-width="2" stroke-linecap="round" opacity="0.7" fill="none">
-          <path d="M322 196 C320 188 326 184 324 176"/>
-          <path d="M335 194 C333 186 339 182 337 174"/>
-          <path d="M348 196 C346 188 352 184 350 176"/>
-        </g>
+        <!-- beverage can (mint) with pull-tab + BATCH 001 swing tag -->
+        <ellipse cx="218" cy="280" rx="28" ry="6" fill="#B9CDBF" stroke="#22271F" stroke-width="2.5"/>
+        <rect x="190" y="176" width="56" height="104" fill="#2F8F5B" stroke="#22271F" stroke-width="2.5"/>
+        <path d="M201 182 V274" stroke="#FFFFFF" stroke-width="3" opacity="0.2" stroke-linecap="round"/>
+        <ellipse cx="218" cy="176" rx="28" ry="6" fill="#B9CDBF" stroke="#22271F" stroke-width="2.5"/>
+        <ellipse cx="212" cy="174" rx="5" ry="2.4" fill="none" stroke="#22271F" stroke-width="1.5"/>
+        <circle cx="223" cy="174" r="1.5" fill="#22271F"/>
+        <path d="M214 172 C232 158 248 144 258 132" stroke="#22271F" stroke-width="1.5" fill="none"/>
+        <path d="M248 118 L278 118 L286 136 L278 168 L246 168 L238 136 Z" fill="#FFF3C4" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="262" cy="128" r="2.5" fill="none" stroke="#22271F" stroke-width="1.5"/>
+        <text x="262" y="147" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">BATCH</text>
+        <text x="262" y="160" text-anchor="middle" font-family="'Anonymous Pro', monospace" font-size="11" font-weight="700" fill="#22271F">001</text>
+
+        <!-- flow-wrapped protein bar (peach) — flat body, serrated crimp ends, label band -->
+        <path d="M304 248 H366 L376 252 L370 257 L376 263 L370 268 L376 274 L366 284 H304 L294 280 L300 274 L294 268 L300 263 L294 257 Z" fill="#FFE1D1" stroke="#22271F" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M300 253 V279 M370 253 V279" stroke="#22271F" stroke-width="1" opacity="0.4"/>
+        <rect x="317" y="256" width="38" height="20" rx="3" fill="#FFFFFF" stroke="#22271F" stroke-width="1.5"/>
+        <path d="M322 263 H350 M322 269 H344" stroke="#22271F" stroke-width="1.2" opacity="0.6"/>
+        <path d="M309 253 L306 279 M363 253 L360 279" stroke="#E0603A" stroke-width="1.3" opacity="0.6"/>
+
+        <!-- muffin (bakery), tucked between the can and the bar -->
+        <path d="M246 260 C246 248 288 248 288 260 Z" fill="#FFF3C4" stroke="#22271F" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M248 260 L284 260 L278 288 L254 288 Z" fill="#FFE1D1" stroke="#22271F" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M254 264 L256 284 M262 262 L263 286 M270 262 L271 286 M278 264 L276 284" stroke="#22271F" stroke-width="1" opacity="0.4"/>
+        <circle cx="258" cy="252" r="1.5" fill="#C9971A"/>
+        <circle cx="270" cy="250" r="1.3" fill="#C9971A"/>
+        <circle cx="278" cy="254" r="1.5" fill="#C9971A"/>
       </svg>
     </div>
   </div>
@@ -113,9 +118,9 @@
         <div class="pillar-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 6 h10 M21 6 v10 L11 36 a5 5 0 0 0 4.5 7 h17 a5 5 0 0 0 4.5 -7 L27 16 V6"/>
-            <path d="M15 30 h18" stroke="#3F6B4E"/>
-            <circle cx="21" cy="36" r="1.6" fill="#3F6B4E" stroke="none"/>
-            <circle cx="27" cy="33" r="1.4" fill="#3F6B4E" stroke="none"/>
+            <path d="M15 30 h18" stroke="#C9971A"/>
+            <circle cx="21" cy="36" r="1.6" fill="#C9971A" stroke="none"/>
+            <circle cx="27" cy="33" r="1.4" fill="#C9971A" stroke="none"/>
           </svg>
         </div>
         <div class="pillar-step">01 / R&amp;D</div>
@@ -127,8 +132,8 @@
         <div class="pillar-icon">
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M24 44 V12"/>
-            <path d="M24 16 C19 14 16 9 16 4 C21 6 24 10 24 16" stroke="#3F6B4E"/>
-            <path d="M24 16 C29 14 32 9 32 4 C27 6 24 10 24 16" stroke="#3F6B4E"/>
+            <path d="M24 16 C19 14 16 9 16 4 C21 6 24 10 24 16" stroke="#E0603A"/>
+            <path d="M24 16 C29 14 32 9 32 4 C27 6 24 10 24 16" stroke="#E0603A"/>
             <path d="M24 26 C19 24 16 19 16 14 C21 16 24 20 24 26"/>
             <path d="M24 26 C29 24 32 19 32 14 C27 16 24 20 24 26"/>
             <path d="M24 36 C19 34 16 29 16 24 C21 26 24 30 24 36"/>
@@ -145,8 +150,8 @@
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 42 V20 l12 8 v-8 l12 8 v-8 l12 8 v14 z"/>
             <rect x="10" y="8" width="6" height="12"/>
-            <path d="M13 6 c0 -2 2 -2 2 -4" stroke="#3F6B4E"/>
-            <path d="M14 34 h4 M22 34 h4 M30 34 h4" stroke="#3F6B4E"/>
+            <path d="M13 6 c0 -2 2 -2 2 -4" stroke="#2F8F5B"/>
+            <path d="M14 34 h4 M22 34 h4 M30 34 h4" stroke="#2F8F5B"/>
           </svg>
         </div>
         <div class="pillar-step">03 / Manufacturing</div>
@@ -159,7 +164,7 @@
           <svg viewBox="0 0 48 48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="10" y="8" width="28" height="34" rx="4"/>
             <path d="M18 8 v-3 h12 v3"/>
-            <path d="M17 22 l4 4 l9 -9" stroke="#3F6B4E"/>
+            <path d="M17 22 l4 4 l9 -9" stroke="#7C6BC4"/>
             <path d="M17 32 h14"/>
           </svg>
         </div>
@@ -206,14 +211,33 @@
 </section>
 
 <footer class="footer">
-  <div class="wrap footer-inner">
-    <a href="index.html" class="logo">First Batch</a>
-    <ul class="footer-links">
-      <li><a href="network.html">The network</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="partners.html">For partners</a></li>
-    </ul>
-    <p class="footer-note">© 2026 First Batch · firstbatch.in · Upstream, sorted.</p>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">First Batch Co</a>
+        <p class="footer-tag">Upstream, sorted.</p>
+        <div class="footer-social">
+          <a href="https://www.linkedin.com/in/hrutu-banginwar/" target="_blank" rel="noopener" class="social-chip chip-linkedin" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="7.5" y1="9.5" x2="7.5" y2="16.5"/><circle cx="7.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/><path d="M11 16.5v-4.2a2.3 2.3 0 0 1 4.6 0v4.2"/><line x1="11" y1="9.5" x2="11" y2="16.5"/></svg>
+          </a>
+          <a href="https://www.instagram.com/hrutu.firstbatch/" target="_blank" rel="noopener" class="social-chip chip-instagram" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="0.8" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://wa.me/918010231914" target="_blank" rel="noopener" class="social-chip chip-whatsapp" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.2-3.6A8 8 0 1 1 8.6 19.8L4 20Z"/><path d="M9.2 9.6c0 3.4 2.7 6.1 6 6.1c.4 0 .7-.2.8-.6l.3-1c.1-.4-.1-.7-.4-.9l-1-.6c-.3-.2-.7-.1-.9.1l-.3.4c-.9-.5-1.6-1.2-2.1-2.1l.4-.3c.2-.2.3-.6.1-.9l-.6-1c-.2-.3-.5-.5-.9-.4l-1 .3c-.4.1-.6.4-.6.8Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-nav-title">Site</div>
+        <ul class="footer-links">
+          <li><a href="network.html">The network</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="partners.html">For partners</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in</p>
   </div>
 </footer>
 
