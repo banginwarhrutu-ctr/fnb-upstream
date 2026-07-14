@@ -39,10 +39,9 @@
     </div>
     <div class="meta-chips">
       <span class="meta-chip">Categories run</span>
-      <span class="meta-chip">Pack formats</span>
       <span class="meta-chip">Certifications</span>
-      <span class="meta-chip">Special equipment</span>
       <span class="meta-chip">Location</span>
+      <span class="meta-chip">Contact info</span>
     </div>
   </div>
 </header>
@@ -51,6 +50,10 @@
 <section class="section">
   <div class="wrap">
     <div class="db-toolbar">
+      <div class="db-search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="9" r="6.5"/><line x1="18" y1="18" x2="13.8" y2="13.8"/></svg>
+        <input type="text" id="cm-search" placeholder="Search by name, category, location…" oninput="handleSearch(this.value)">
+      </div>
       <div class="filters">
         <div class="filter-dropdown">
           <button class="filter-btn" id="btn-type" onclick="toggleFilter('type')">Type <span class="fchev">▾</span></button>
@@ -59,10 +62,6 @@
         <div class="filter-dropdown">
           <button class="filter-btn" id="btn-state" onclick="toggleFilter('state')">State <span class="fchev">▾</span></button>
           <div class="filter-panel" id="panel-state"></div>
-        </div>
-        <div class="filter-dropdown">
-          <button class="filter-btn" id="btn-category" onclick="toggleFilter('category')">Categories <span class="fchev">▾</span></button>
-          <div class="filter-panel" id="panel-category"></div>
         </div>
       </div>
       <span class="count-label" id="cm-count-label">Loading…</span>
@@ -74,7 +73,7 @@
         <thead>
           <tr>
             <th>Name</th><th>Type</th><th>Location</th><th>Categories</th>
-            <th>Formats</th><th>Certifications</th><th>Website</th><th>Notes</th>
+            <th>Certifications</th><th>Email</th><th>Phone</th><th>Website</th><th>Notes</th>
           </tr>
         </thead>
         <tbody id="cm-tbody"></tbody>
@@ -84,6 +83,8 @@
         <button class="btn btn-primary" onclick="openModal()">Unlock the network</button>
       </div>
     </div>
+
+    <div class="pagination" id="cm-pagination"></div>
   </div>
 </section>
 

@@ -352,6 +352,15 @@ input, select, textarea { font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; flex-wrap: wrap; margin: 40px 0 18px;
 }
+.db-search {
+  flex-basis: 100%; display: flex; align-items: center; gap: 10px;
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-btn);
+  padding: 12px 18px; margin-bottom: 4px;
+}
+.db-search svg { width: 17px; height: 17px; color: var(--muted); flex-shrink: 0; }
+.db-search input {
+  border: none; outline: none; font-size: 15px; width: 100%; background: none; color: var(--text);
+}
 .filters { display: flex; gap: 10px; flex-wrap: wrap; }
 .filter-dropdown { position: relative; }
 .filter-btn {
@@ -425,6 +434,21 @@ tbody tr:hover { background: var(--cream); }
 .lock-overlay.hidden { display: none; }
 .lock-overlay h3 { font-size: 1.5rem; font-weight: 800; }
 .lock-overlay p { color: var(--muted); max-width: 400px; font-size: 15px; }
+
+.pagination {
+  display: flex; align-items: center; justify-content: center;
+  gap: 18px; margin-top: 24px;
+}
+.pagination:empty { display: none; }
+.table-locked ~ .pagination { display: none; }
+.page-btn {
+  font-size: 14px; font-weight: 600;
+  background: var(--white); border: 1.5px solid var(--black); border-radius: var(--radius-btn);
+  padding: 9px 20px; transition: background .15s, color .15s;
+}
+.page-btn:hover:not(:disabled) { background: var(--black); color: var(--white); }
+.page-btn:disabled { opacity: 0.35; cursor: default; }
+.page-info { font-size: 14px; color: var(--muted); }
 
 /* ── MODAL ─────────────────────────────────────────────────── */
 .modal-overlay {

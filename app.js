@@ -5,11 +5,64 @@
    ============================================================ */
 
 /* ── CONFIG ─────────────────────────────────────────────────── */
-const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQjWC69O9Cdw3P5aFKhPaYgn0ln07MwChClXEha4ny_FbwX1iCpT4RE_GY6rAEWfaBAsijDdeh_ePlU/pub?gid=686969694&single=true&output=csv';
+const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/1VGj4tOvJQqqMLbx6GNNrAr4mB4jzSwlYAaAL7vrsIXo/export?format=csv';
 const UNLOCK_KEY = 'fnb_upstream_unlocked'; // kept from v1 so existing unlocks carry over
 
-const activeFilters = { type: new Set(), state: new Set(), category: new Set() };
+// Sheet header names vary in case (NAME, Name, etc.) — map them case-insensitively
+// onto the field names the rest of this file expects.
+const HEADER_MAP = {
+  name: 'Name', type: 'Type', location: 'Location', state: 'State',
+  categories: 'Categories', certifications: 'Certifications',
+  email: 'Email', phone: 'Phone', website: 'Website', notes: 'Notes'
+};
+// Sheets use these as literal placeholder text for "no data" — treat as blank.
+function isBlankValue(v) {
+  const t = (v || '').trim();
+  return t === '' || t === '-' || /^n\/?a$/i.test(t);
+}
+function splitMulti(text) {
+  return (text || '').split(/[,;]/).map(s => s.trim()).filter(Boolean);
+}
+
+// Location is freeform ("City, State", "State-110033", a bare locality, a
+// foreign address, etc). Rather than trust whatever's in the last comma
+// segment, match against the real list of Indian states/UTs so the State
+// filter only ever shows ~36 clean options instead of hundreds of variants.
+const INDIA_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana',
+  'Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur',
+  'Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
+  'Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+  'Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi',
+  'Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'
+];
+const STATE_ALIASES = {
+  'jammu & kashmir': 'Jammu and Kashmir', 'j&k': 'Jammu and Kashmir',
+  'new delhi': 'Delhi', 'nct of delhi': 'Delhi', 'ncr': 'Delhi',
+  'pondicherry': 'Puducherry',
+  'dadra & nagar haveli': 'Dadra and Nagar Haveli and Daman and Diu',
+  'dadra and nagar haveli': 'Dadra and Nagar Haveli and Daman and Diu',
+  'daman and diu': 'Dadra and Nagar Haveli and Daman and Diu',
+  'orissa': 'Odisha', 'uttaranchal': 'Uttarakhand'
+};
+const STATE_LOOKUP = {};
+INDIA_STATES.forEach(s => { STATE_LOOKUP[s.toLowerCase()] = s; });
+Object.entries(STATE_ALIASES).forEach(([k, v]) => { STATE_LOOKUP[k] = v; });
+
+function deriveState(location) {
+  if (!location) return '';
+  const parts = location.split(',').map(s => s.trim()).filter(Boolean);
+  const candidate = parts.length ? parts[parts.length - 1] : location.trim();
+  const cleaned = candidate.replace(/[-\s]*\d{5,6}\s*$/, '').trim(); // drop trailing pincode
+  return STATE_LOOKUP[cleaned.toLowerCase()] || '';
+}
+
+const activeFilters = { type: new Set(), state: new Set() };
 let allRows = [];
+let filteredRows = [];
+let searchQuery = '';
+let currentPage = 1;
+const PAGE_SIZE = 50;
 
 
 /* ── NAV (mobile) ───────────────────────────────────────────── */
@@ -251,36 +304,61 @@ async function handleIntake(e, formEl) {
 
 
 /* ── CSV PARSE ──────────────────────────────────────────────── */
+// Character-level parser (not line-split) so quoted commas, escaped ""
+// quotes, and notes containing literal line breaks all survive intact.
 function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-  return lines.slice(1).map(line => {
-    const values = [];
-    let inQuote = false, current = '';
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') { inQuote = !inQuote; continue; }
-      if (ch === ',' && !inQuote) { values.push(current.trim()); current = ''; continue; }
-      current += ch;
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        field += ch;
+      }
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      row.push(field); field = '';
+    } else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      row.push(field); field = '';
+      rows.push(row); row = [];
+    } else {
+      field += ch;
     }
-    values.push(current.trim());
-    const row = {};
-    headers.forEach((h, i) => { row[h] = values[i] !== undefined ? values[i] : ''; });
-    return row;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map(h => {
+    const key = h.trim().toLowerCase();
+    return HEADER_MAP[key] || h.trim();
   });
+  return rows.slice(1)
+    .filter(cells => cells.some(v => v.trim() !== ''))
+    .map(cells => {
+      const obj = {};
+      headers.forEach((h, i) => {
+        const raw = (cells[i] !== undefined ? cells[i] : '').trim();
+        obj[h] = isBlankValue(raw) ? '' : raw;
+      });
+      obj.State = deriveState(obj.Location);
+      return obj;
+    });
 }
 
 
 /* ── FILTERS ────────────────────────────────────────────────── */
 function buildFilterPanels(rows) {
-  const types      = [...new Set(rows.map(r => r['Type']).filter(Boolean))].sort();
-  const states     = [...new Set(rows.map(r => r['State']).filter(Boolean))].sort();
-  const categories = [...new Set(rows.flatMap(r => (r['Categories'] || '').split(';').map(s => s.trim()).filter(Boolean)))].sort();
+  const types  = [...new Set(rows.flatMap(r => splitMulti(r['Type'])))].sort();
+  const states = [...new Set(rows.map(r => r['State']).filter(Boolean))].sort();
 
-  buildPanel('type',     types,      'panel-type');
-  buildPanel('state',    states,     'panel-state');
-  buildPanel('category', categories, 'panel-category');
+  buildPanel('type',  types,  'panel-type');
+  buildPanel('state', states, 'panel-state');
 }
 
 function buildPanel(dimension, values, panelId) {
@@ -301,8 +379,8 @@ function toggleFilterItem(el, dimension, value) {
 }
 
 function updateFilterButton(dimension) {
-  const panelMap = { type: 'btn-type', state: 'btn-state', category: 'btn-category' };
-  const labelMap = { type: 'Type', state: 'State', category: 'Categories' };
+  const panelMap = { type: 'btn-type', state: 'btn-state' };
+  const labelMap = { type: 'Type', state: 'State' };
   const btn = document.getElementById(panelMap[dimension]);
   if (!btn) return;
   const count = activeFilters[dimension].size;
@@ -311,23 +389,64 @@ function updateFilterButton(dimension) {
   if (count > 0) btn.classList.add('active'); else btn.classList.remove('active');
 }
 
+function matchesSearch(row, q) {
+  if (!q) return true;
+  const haystack = [row['Name'], row['Type'], row['Location'], row['Categories'], row['Certifications']]
+    .join(' ').toLowerCase();
+  return haystack.includes(q);
+}
+
 function applyFilters() {
-  const { type, state, category } = activeFilters;
+  const { type, state } = activeFilters;
   let rows = allRows;
-  if (type.size)     rows = rows.filter(r => type.has(r['Type']));
-  if (state.size)    rows = rows.filter(r => state.has(r['State']));
-  if (category.size) rows = rows.filter(r => {
-    const cats = (r['Categories'] || '').split(';').map(s => s.trim());
-    return cats.some(c => category.has(c));
-  });
-  renderTable(rows);
+  if (type.size)  rows = rows.filter(r => splitMulti(r['Type']).some(t => type.has(t)));
+  if (state.size) rows = rows.filter(r => state.has(r['State']));
+  if (searchQuery) rows = rows.filter(r => matchesSearch(r, searchQuery));
+  filteredRows = rows;
+  currentPage = 1;
+  renderPage();
+}
+
+let searchDebounce;
+function handleSearch(value) {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => {
+    searchQuery = value.trim().toLowerCase();
+    applyFilters();
+  }, 150);
+}
+
+function renderPage() {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  renderTable(filteredRows.slice(start, start + PAGE_SIZE));
+  renderPagination();
   const cntEl = document.getElementById('cm-count-label');
-  if (cntEl) cntEl.textContent = `${rows.length} of ${allRows.length}`;
+  if (cntEl) cntEl.textContent = `${filteredRows.length} of ${allRows.length}`;
+}
+
+function renderPagination() {
+  const el = document.getElementById('cm-pagination');
+  if (!el) return;
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})">← Prev</button>
+    <span class="page-info">Page ${currentPage} of ${totalPages}</span>
+    <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})">Next →</button>
+  `;
+}
+
+function goToPage(p) {
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / PAGE_SIZE));
+  currentPage = Math.min(Math.max(1, p), totalPages);
+  renderPage();
+  const wrap = document.getElementById('table-wrap');
+  if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function toggleFilter(dimension) {
-  const panelMap = { type: 'panel-type', state: 'panel-state', category: 'panel-category' };
-  const all = ['panel-type', 'panel-state', 'panel-category'];
+  const panelMap = { type: 'panel-type', state: 'panel-state' };
+  const all = ['panel-type', 'panel-state'];
   const target = panelMap[dimension];
   const panel = document.getElementById(target);
   const isOpen = panel && panel.classList.contains('open');
@@ -337,7 +456,7 @@ function toggleFilter(dimension) {
 
 document.addEventListener('click', e => {
   if (!e.target.closest('.filter-dropdown')) {
-    ['panel-type','panel-state','panel-category'].forEach(id => {
+    ['panel-type','panel-state'].forEach(id => {
       const p = document.getElementById(id);
       if (p) p.classList.remove('open');
     });
@@ -347,15 +466,27 @@ document.addEventListener('click', e => {
 
 /* ── TABLE RENDER ───────────────────────────────────────────── */
 function renderBadges(text, isCert) {
-  if (!text || text === '—') return '—';
-  return text.split(';').map(s => s.trim()).filter(Boolean)
-    .map(s => `<span class="badge${isCert ? ' cert' : ''}">${s}</span>`).join('');
+  if (!text) return '—';
+  const values = splitMulti(text);
+  if (!values.length) return '—';
+  return values.map(s => `<span class="badge${isCert ? ' cert' : ''}">${s}</span>`).join('');
 }
 
 function renderWebsite(url) {
   if (!url || url === '—') return '—';
   const href = url.startsWith('http') ? url : `https://${url}`;
   return `<a href="${href}" target="_blank" rel="noopener">${url.replace(/^https?:\/\//,'')}</a>`;
+}
+
+function renderEmail(email) {
+  if (!email) return '—';
+  return `<a href="mailto:${email}">${email}</a>`;
+}
+
+function renderPhone(phone) {
+  if (!phone) return '—';
+  const digits = phone.replace(/[^\d+]/g, '');
+  return `<a href="tel:${digits}">${phone}</a>`;
 }
 
 function renderTable(rows) {
@@ -365,22 +496,25 @@ function renderTable(rows) {
   if (!tbody || !table) return;
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No matches — try adjusting your filters.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted)">No matches — try adjusting your filters or search.</td></tr>`;
     if (loading) loading.style.display = 'none';
     table.style.display = '';
     return;
   }
 
   tbody.innerHTML = rows.map(row => {
-    const location = [row['City'], row['State']].filter(Boolean).join(', ') || '—';
-    const typeText = row['Type'] || '—';
+    const types = splitMulti(row['Type']);
+    const typeHtml = types.length
+      ? types.map(t => `<span class="badge type">${t}</span>`).join('')
+      : '—';
     return `<tr>
       <td class="td-name">${row['Name'] || '—'}</td>
-      <td><span class="badge type">${typeText}</span></td>
-      <td class="td-location">${location}</td>
+      <td>${typeHtml}</td>
+      <td class="td-location">${row['Location'] || '—'}</td>
       <td>${renderBadges(row['Categories'], false)}</td>
-      <td>${renderBadges(row['Formats'], false)}</td>
       <td>${renderBadges(row['Certifications'], true)}</td>
+      <td>${renderEmail(row['Email'])}</td>
+      <td>${renderPhone(row['Phone'])}</td>
       <td class="td-website">${renderWebsite(row['Website'])}</td>
       <td style="font-size:12px;color:var(--muted)">${row['Notes'] || '—'}</td>
     </tr>`;
@@ -393,12 +527,11 @@ function renderTable(rows) {
 function updateStats(rows) {
   const states = new Set(rows.map(r => r['State']).filter(Boolean));
   const categories = new Set();
-  rows.forEach(r => (r['Categories'] || '').split(';').map(s => s.trim()).filter(Boolean).forEach(c => categories.add(c)));
+  rows.forEach(r => splitMulti(r['Categories']).forEach(c => categories.add(c)));
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set('stat-cms',    rows.length);
   set('stat-states', states.size);
   set('stat-cats',   categories.size);
-  set('cm-count-label', `${rows.length} entries`);
 }
 
 
@@ -411,8 +544,9 @@ async function loadCMs() {
     if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
     const text = await res.text();
     allRows = parseCSV(text);
+    filteredRows = allRows;
     buildFilterPanels(allRows);
-    renderTable(allRows);
+    renderPage();
     updateStats(allRows);
   } catch(err) {
     console.error('[First Batch] Failed to load data:', err);
