@@ -33,9 +33,9 @@
     <h1>We've done the sourcing so you don't have to.</h1>
     <p class="hero-sub">A curated CM database — mapped by category, format, certification and location. Built by hand, not scraped.</p>
     <div class="stats-band" style="grid-template-columns: repeat(3, 1fr);">
-      <div class="stat"><div class="stat-num" id="stat-cms">—</div><div class="stat-label">Vetted manufacturers</div></div>
-      <div class="stat"><div class="stat-num" id="stat-states">—</div><div class="stat-label">States covered</div></div>
-      <div class="stat"><div class="stat-num" id="stat-cats">—</div><div class="stat-label">Product categories</div></div>
+      <div class="stat"><div class="stat-num" id="stat-cms">2040</div><div class="stat-label">Vetted manufacturers</div></div>
+      <div class="stat"><div class="stat-num" id="stat-states">32</div><div class="stat-label">States covered</div></div>
+      <div class="stat"><div class="stat-num" id="stat-cats">2800+</div><div class="stat-label">Product categories</div></div>
     </div>
     <div class="meta-chips">
       <span class="meta-chip">Categories run</span>
@@ -63,6 +63,7 @@
           <button class="filter-btn" id="btn-state" onclick="toggleFilter('state')">State <span class="fchev">▾</span></button>
           <div class="filter-panel" id="panel-state"></div>
         </div>
+        <button class="clear-filters-btn hidden" id="clear-filters-btn" onclick="clearFilters()">Clear filters ×</button>
       </div>
       <span class="count-label" id="cm-count-label">Loading…</span>
     </div>
@@ -95,22 +96,22 @@
     <h4>Unlock the network</h4>
     <form id="access-form" onsubmit="handleSubmit(event, this)" novalidate>
       <div class="field">
-        <label for="af-name">Your name</label>
+        <label for="af-name">Your name <span class="req-mark">*</span></label>
         <input class="input-field" id="af-name" name="name" type="text" placeholder="Full name">
         <div class="field-error" data-error="name"></div>
       </div>
       <div class="field">
-        <label for="af-company">Brand / company</label>
+        <label for="af-company">Brand / company <span class="req-mark">*</span></label>
         <input class="input-field" id="af-company" name="company" type="text" placeholder="Or 'exploring' — that's fine too">
         <div class="field-error" data-error="company"></div>
       </div>
       <div class="field">
-        <label for="af-linkedin">LinkedIn</label>
+        <label for="af-linkedin">LinkedIn <span class="req-mark">*</span></label>
         <input class="input-field" id="af-linkedin" name="linkedin" type="url" placeholder="linkedin.com/in/you">
         <div class="field-error" data-error="linkedin"></div>
       </div>
       <div class="field">
-        <label for="af-contact">WhatsApp number</label>
+        <label for="af-contact">WhatsApp number <span class="req-mark">*</span></label>
         <input class="input-field" id="af-contact" name="contact" type="tel" placeholder="10-digit number">
         <div class="field-error" data-error="contact"></div>
       </div>

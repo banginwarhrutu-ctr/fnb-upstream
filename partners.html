@@ -65,7 +65,7 @@
     <div class="form-card">
       <form id="partner-form" onsubmit="handlePartner(event, this)" novalidate>
         <div class="field">
-          <label for="pf-type">What kind of partner are you?</label>
+          <label for="pf-type">What kind of partner are you? <span class="req-mark">*</span></label>
           <select id="pf-type" name="type" onchange="updatePartnerForm()">
             <option value="">Select one</option>
             <option>Contract manufacturer</option>
@@ -77,17 +77,17 @@
           <div class="field-error" data-error="type"></div>
         </div>
         <div class="field">
-          <label for="pf-name">Your name</label>
+          <label for="pf-name">Your name <span class="req-mark">*</span></label>
           <input class="input-field" id="pf-name" name="name" type="text" placeholder="Full name">
           <div class="field-error" data-error="name"></div>
         </div>
         <div class="field">
-          <label for="pf-company">Company (or 'independent')</label>
+          <label for="pf-company">Company (or 'independent') <span class="req-mark">*</span></label>
           <input class="input-field" id="pf-company" name="company" type="text" placeholder="Company name, or 'independent'">
           <div class="field-error" data-error="company"></div>
         </div>
         <div class="field">
-          <label for="pf-contact">WhatsApp number</label>
+          <label for="pf-contact">WhatsApp number <span class="req-mark">*</span></label>
           <input class="input-field" id="pf-contact" name="contact" type="tel" placeholder="10-digit number">
           <div class="field-error" data-error="contact"></div>
         </div>

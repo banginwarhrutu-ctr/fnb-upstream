@@ -98,6 +98,7 @@ function validateName(v)    { return (!v || v.trim().length < 2) ? 'Please enter
 function validateCompany(v) { return (!v || v.trim().length < 2) ? 'Please enter your brand or company name.' : null; }
 function validateLinkedIn(v){ if (!v || !v.trim()) return 'Please enter your LinkedIn URL.'; if (!/linkedin\.com\/(in|company)\//i.test(v)) return 'Enter a valid LinkedIn profile URL.'; return null; }
 function validateContact(v) { const d = (v || '').replace(/\D/g,''); if (!d) return 'Please enter your WhatsApp number.'; if (d.length === 12 && d.startsWith('91')) return null; if (d.length === 10) return null; return 'Enter a valid 10-digit number.'; }
+function validateEmail(v)   { if (!v || !v.trim()) return null; return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? null : 'Enter a valid email address.'; }
 
 function showFieldError(input, el, msg) { input.classList.add('has-error'); el.textContent = msg; el.classList.add('show'); }
 function clearFieldError(input, el)    { input.classList.remove('has-error'); el.classList.remove('show'); }
@@ -144,7 +145,7 @@ function showSuccess(formEl, msg) {
 function collectAndValidate(formEl, names) {
   const f = n => formEl.querySelector(`[name="${n}"]`);
   const er = n => formEl.querySelector(`[data-error="${n}"]`);
-  const validators = { name: validateName, company: validateCompany, linkedin: validateLinkedIn, contact: validateContact };
+  const validators = { name: validateName, company: validateCompany, linkedin: validateLinkedIn, contact: validateContact, email: validateEmail };
   let hasError = false;
   const values = {};
   names.forEach(n => {
@@ -165,13 +166,15 @@ function getHp(formEl) {
 function toPayloadFields(v) {
   const digits  = v.contact.replace(/\D/g,'');
   const contact = digits.length === 12 ? digits.slice(2) : digits;
-  return {
+  const fields = {
     Name: v.name.trim(),
     Company: v.company.trim(),
     LinkedIn: v.linkedin.trim(),
     Contact: contact,
     Timestamp: new Date().toISOString()
   };
+  if (v.email && v.email.trim()) fields.Email = v.email.trim();
+  return fields;
 }
 
 /* Network page — unlock form */
@@ -282,7 +285,7 @@ function initPartnerForm() {
 /* Start page — intake form */
 async function handleIntake(e, formEl) {
   e.preventDefault();
-  const v = collectAndValidate(formEl, ['name', 'company', 'linkedin', 'contact']);
+  const v = collectAndValidate(formEl, ['name', 'company', 'linkedin', 'contact', 'email']);
   if (!v) return;
 
   const fields = toPayloadFields(v);
@@ -405,6 +408,24 @@ function applyFilters() {
   filteredRows = rows;
   currentPage = 1;
   renderPage();
+
+  const clearBtn = document.getElementById('clear-filters-btn');
+  if (clearBtn) {
+    const hasActive = type.size || state.size || searchQuery;
+    clearBtn.classList.toggle('hidden', !hasActive);
+  }
+}
+
+function clearFilters() {
+  activeFilters.type.clear();
+  activeFilters.state.clear();
+  searchQuery = '';
+  const searchInput = document.getElementById('cm-search');
+  if (searchInput) searchInput.value = '';
+  document.querySelectorAll('.filter-item.selected').forEach(el => el.classList.remove('selected'));
+  updateFilterButton('type');
+  updateFilterButton('state');
+  applyFilters();
 }
 
 let searchDebounce;

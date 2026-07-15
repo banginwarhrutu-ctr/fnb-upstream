@@ -370,6 +370,11 @@ input, select, textarea { font-family: inherit; }
   transition: border-color .15s;
 }
 .filter-btn:hover, .filter-btn.active { border-color: var(--black); }
+.clear-filters-btn {
+  font-size: 14px; font-weight: 600; color: var(--accent);
+  padding: 9px 4px; text-decoration: underline; text-underline-offset: 2px;
+}
+.clear-filters-btn.hidden { display: none; }
 .filter-badge {
   background: var(--accent); color: var(--white); font-size: 11px; font-weight: 700;
   border-radius: var(--radius-btn); padding: 1px 7px;
@@ -471,6 +476,7 @@ tbody tr:hover { background: var(--cream); }
 /* ── FORMS ─────────────────────────────────────────────────── */
 .field { margin-bottom: 18px; }
 .field label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 7px; }
+.req-mark { color: #C0392B; }
 .input-field, .field textarea, .field select {
   width: 100%; font-size: 15px;
   padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px;

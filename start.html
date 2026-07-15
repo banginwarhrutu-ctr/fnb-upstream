@@ -39,22 +39,27 @@
     <div class="form-card">
       <form id="intake-form" onsubmit="handleIntake(event, this)" novalidate>
         <div class="field">
-          <label for="if-name">Your name</label>
+          <label for="if-name">Your name <span class="req-mark">*</span></label>
           <input class="input-field" id="if-name" name="name" type="text" placeholder="Full name">
           <div class="field-error" data-error="name"></div>
         </div>
         <div class="field">
-          <label for="if-company">Brand / company</label>
+          <label for="if-company">Brand / company <span class="req-mark">*</span></label>
           <input class="input-field" id="if-company" name="company" type="text" placeholder="Or working title — 'exploring' is fine">
           <div class="field-error" data-error="company"></div>
         </div>
         <div class="field">
-          <label for="if-linkedin">LinkedIn</label>
+          <label for="if-linkedin">LinkedIn <span class="req-mark">*</span></label>
           <input class="input-field" id="if-linkedin" name="linkedin" type="url" placeholder="linkedin.com/in/you">
           <div class="field-error" data-error="linkedin"></div>
         </div>
         <div class="field">
-          <label for="if-contact">WhatsApp number</label>
+          <label for="if-email">Email</label>
+          <input class="input-field" id="if-email" name="email" type="email" placeholder="you@company.com">
+          <div class="field-error" data-error="email"></div>
+        </div>
+        <div class="field">
+          <label for="if-contact">WhatsApp number <span class="req-mark">*</span></label>
           <input class="input-field" id="if-contact" name="contact" type="tel" placeholder="10-digit number">
           <div class="field-error" data-error="contact"></div>
         </div>
