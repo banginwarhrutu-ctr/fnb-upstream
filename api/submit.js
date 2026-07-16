@@ -117,15 +117,10 @@ module.exports = async function handler(req, res) {
       LinkedIn: clip(fields.LinkedIn, 300),
       Source: isBrief ? 'Founder brief' : 'Network unlock'
     };
-    // NOTE: Founder Leads table doesn't have an Email column yet. Airtable
-    // rejects the *entire* record if it contains an unrecognized field name,
-    // so until that column is added, do NOT send Email here — it would
-    // silently fail to save the whole lead, not just the email part.
-    // Once the column exists, uncomment this (Email still reaches you via
-    // the Resend notification below regardless):
-    // if (fields.Email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.Email.trim())) {
-    //   record.Email = clip(fields.Email, 200);
-    // }
+    // Only write Email if it looks valid — a malformed value could reject the record.
+    if (fields.Email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fields.Email.trim())) {
+      record.Email = clip(fields.Email, 200);
+    }
     if (brief) {
       if (brief.Category) record.Category = clip(brief.Category, 300);
       if (brief.Stage) record.Stage = clip(brief.Stage, 100);
