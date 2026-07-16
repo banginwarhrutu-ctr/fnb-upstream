@@ -23,6 +23,15 @@ function isBlankValue(v) {
 function splitMulti(text) {
   return (text || '').split(/[,;]/).map(s => s.trim()).filter(Boolean);
 }
+// Categories is inconsistent across rows: some use "|" as the real separator
+// (in which case commas are just punctuation inside a single category, e.g.
+// "Fruit, Seeds, Nuts & Peanuts"), others only ever used commas. Prefer "|"
+// when present so those phrases don't get shredded.
+function splitCategories(text) {
+  if (!text) return [];
+  if (text.includes('|')) return text.split('|').map(s => s.trim()).filter(Boolean);
+  return splitMulti(text);
+}
 
 // Location is freeform ("City, State", "State-110033", a bare locality, a
 // foreign address, etc). Rather than trust whatever's in the last comma
@@ -486,12 +495,31 @@ document.addEventListener('click', e => {
 
 
 /* ── TABLE RENDER ───────────────────────────────────────────── */
-function renderBadges(text, isCert) {
-  if (!text) return '—';
-  const values = splitMulti(text);
-  if (!values.length) return '—';
-  return values.map(s => `<span class="badge${isCert ? ' cert' : ''}">${s}</span>`).join('');
+function escapeAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+function renderBadges(text, isCert, maxVisible, splitter = splitMulti) {
+  if (!text) return '—';
+  const values = splitter(text);
+  if (!values.length) return '—';
+  const shown = maxVisible ? values.slice(0, maxVisible) : values;
+  const rest = maxVisible ? values.slice(maxVisible) : [];
+  let html = shown.map(s => `<span class="badge${isCert ? ' cert' : ''}">${s}</span>`).join('');
+  if (rest.length) {
+    html += `<span class="badge more" role="button" tabindex="0">+${rest.length} more</span>`;
+  }
+  return html;
+}
+
+// Click "+N more" to swap the truncated cell for the full category list.
+document.addEventListener('click', e => {
+  const moreBtn = e.target.closest('.badge.more');
+  if (!moreBtn) return;
+  const td = moreBtn.closest('.td-categories');
+  if (!td) return;
+  td.innerHTML = renderBadges(td.dataset.cats, false, null, splitCategories);
+});
 
 function renderWebsite(url) {
   if (!url || url === '—') return '—';
@@ -532,7 +560,7 @@ function renderTable(rows) {
       <td class="td-name">${row['Name'] || '—'}</td>
       <td>${typeHtml}</td>
       <td class="td-location">${row['Location'] || '—'}</td>
-      <td>${renderBadges(row['Categories'], false)}</td>
+      <td class="td-categories" data-cats="${escapeAttr(row['Categories'] || '')}">${renderBadges(row['Categories'], false, 3, splitCategories)}</td>
       <td>${renderBadges(row['Certifications'], true)}</td>
       <td>${renderEmail(row['Email'])}</td>
       <td>${renderPhone(row['Phone'])}</td>
@@ -545,25 +573,78 @@ function renderTable(rows) {
   table.style.display = '';
 }
 
+// Counts an element's number up from whatever it currently shows to `target`,
+// preserving any non-numeric suffix (e.g. "2600+" counts up, keeping the "+").
+function animateStatNum(el, target, duration = 1200) {
+  if (!el) return;
+  const targetMatch = String(target).match(/^(\d+)(\D*)$/);
+  const endNum = targetMatch ? parseInt(targetMatch[1], 10) : (parseInt(target, 10) || 0);
+  const suffix = targetMatch ? targetMatch[2] : '';
+  const startNum = parseInt((el.textContent || '').match(/^(\d+)/)?.[1] || '0', 10);
+  // rAF never fires on a hidden/background tab — jump straight to the final
+  // value so a backgrounded tab can't get stuck showing 0.
+  if (startNum === endNum || document.hidden) { el.textContent = endNum + suffix; return; }
+
+  const startTime = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(startNum + (endNum - startNum) * eased) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = endNum + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+// Counts every stat up from 0 the moment the hero renders, using whatever
+// static number is already baked into the HTML as the target.
+function animateStatsOnLoad() {
+  document.querySelectorAll('.stats-band .stat-num').forEach(el => {
+    const target = el.textContent.trim();
+    el.textContent = '0';
+    animateStatNum(el, target, 1400);
+  });
+}
+
 function updateStats(rows) {
   const states = new Set(rows.map(r => r['State']).filter(Boolean));
   const categories = new Set();
-  rows.forEach(r => splitMulti(r['Categories']).forEach(c => categories.add(c)));
-  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  rows.forEach(r => splitCategories(r['Categories']).forEach(c => categories.add(c)));
+  const labs = rows.filter(r => splitMulti(r['Type']).some(t => /lab/i.test(t))).length;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) animateStatNum(el, val, 700); };
   set('stat-cms',    rows.length);
   set('stat-states', states.size);
   set('stat-cats',   categories.size);
+  set('stat-labs',   labs);
 }
 
 
 /* ── LOAD ───────────────────────────────────────────────────── */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Transient network errors (dropped QUIC connections, brief DNS hiccups,
+// etc.) are common when fetching an external host on every page load — a
+// single failed attempt shouldn't surface as "the site is broken."
+async function fetchCSVWithRetry(url, attempts = 3) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) await sleep(600 * (i + 1)); // back off: 600ms, 1200ms
+    }
+  }
+  throw lastErr;
+}
+
 async function loadCMs() {
   const loading = document.getElementById('table-loading');
   if (!document.getElementById('cm-table')) return; // not on network page
   try {
-    const res = await fetch(SHEETS_CSV_URL);
-    if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-    const text = await res.text();
+    const text = await fetchCSVWithRetry(SHEETS_CSV_URL);
     allRows = parseCSV(text);
     filteredRows = allRows;
     buildFilterPanels(allRows);
@@ -571,7 +652,9 @@ async function loadCMs() {
     updateStats(allRows);
   } catch(err) {
     console.error('[First Batch] Failed to load data:', err);
-    if (loading) loading.textContent = 'Could not load data. Please try refreshing.';
+    if (loading) {
+      loading.innerHTML = 'Could not load data. <button class="link-btn" onclick="loadCMs()">Try again</button>';
+    }
   }
 }
 
@@ -590,6 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   initPartnerForm();
+  animateStatsOnLoad();
   loadCMs();
   if (isUnlocked()) unlockTable();
 });

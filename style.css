@@ -417,6 +417,7 @@ tbody td { padding: 14px 16px; border-top: 1px solid var(--border); vertical-ali
 tbody tr:hover { background: var(--cream); }
 .td-name { font-weight: 600; min-width: 180px; }
 .td-location { white-space: nowrap; }
+.td-categories { max-width: 280px; }
 .td-website a { color: var(--accent); text-decoration: none; }
 .td-website a:hover { text-decoration: underline; }
 
@@ -427,8 +428,14 @@ tbody tr:hover { background: var(--cream); }
 }
 .badge.type { background: var(--accent-soft); border-color: transparent; color: var(--accent); font-weight: 600; }
 .badge.cert { background: #F4E9E1; border-color: #E3CFC2; color: var(--clay); }
+.badge.more { background: none; border-style: dashed; color: var(--accent); cursor: pointer; font-weight: 600; }
+.badge.more:hover { background: var(--accent-soft); }
 
 #table-loading { padding: 60px; text-align: center; color: var(--muted); }
+.link-btn {
+  color: var(--accent); font-weight: 600; text-decoration: underline;
+  text-underline-offset: 2px; cursor: pointer; font-size: inherit;
+}
 
 .lock-overlay {
   position: absolute; inset: 0; z-index: 10;
