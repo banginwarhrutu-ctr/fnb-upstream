@@ -210,7 +210,7 @@ async function handleSubmit(e, formEl) {
 /* Partners page — join form */
 async function handlePartner(e, formEl) {
   e.preventDefault();
-  const v = collectAndValidate(formEl, ['name', 'company', 'contact']);
+  const v = collectAndValidate(formEl, ['name', 'company', 'linkedin', 'contact']);
   if (!v) return;
 
   // Partner type is required so we route + label the lead correctly.
@@ -222,8 +222,7 @@ async function handlePartner(e, formEl) {
   }
   if (typeEl && typeErr) clearFieldError(typeEl, typeErr);
 
-  const fields = toPayloadFields({ ...v, linkedin: '' });
-  delete fields.LinkedIn;
+  const fields = toPayloadFields(v);
   const g = n => ((formEl.querySelector(`[name="${n}"]`) || {}).value || '').trim();
   const brief = {
     Type: 'Partner application',   // routing signal for /api/submit

@@ -97,6 +97,7 @@ module.exports = async function handler(req, res) {
     record = { ...base };
     // Only set columns that have a value, so records stay clean per type.
     const setIf = (col, val, n = 300) => { const c = clip(val, n); if (c) record[col] = c; };
+    setIf('LinkedIn', fields.LinkedIn, 300);
     setIf('Type', brief.PartnerType, 60);          // Contract manufacturer / Food technologist / R&D / etc.
     // Only write Email if it looks valid — a malformed value could reject the record.
     if (brief.Email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(brief.Email.trim())) setIf('Email', brief.Email, 200);

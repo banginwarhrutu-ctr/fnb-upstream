@@ -432,6 +432,11 @@ tbody tr:hover { background: var(--cream); }
 .badge.more { background: none; border-style: dashed; color: var(--accent); cursor: pointer; font-weight: 600; }
 .badge.more:hover { background: var(--accent-soft); }
 
+/* A single category entry is sometimes one long unbroken phrase rather
+   than several short tags — without this, that one badge's nowrap text
+   spills straight past the column into whatever sits next to it. */
+.td-categories .badge { white-space: normal; word-break: break-word; max-width: 100%; }
+
 #table-loading { padding: 60px; text-align: center; color: var(--muted); }
 .link-btn {
   color: var(--accent); font-weight: 600; text-decoration: underline;
@@ -582,9 +587,10 @@ tbody tr:hover { background: var(--cream); }
   .nav-partner { border-left: none; padding-left: 0; margin-left: 0; }
   .pillar-flow, .steps, .proof-grid { grid-template-columns: 1fr; }
   .lane { grid-template-columns: 1fr; gap: 12px; padding: 36px 0; }
-  .hero { padding: 120px 0 64px; }
-  .page-hero { padding: 110px 0 48px; }
-  .section { padding: 64px 0; }
+  .hero { padding: 120px 0 40px; }
+  .page-hero { padding: 110px 0 32px; }
+  .section { padding: 40px 0; }
+  .pillar-flow, .proof-grid, .steps { margin-top: 28px; }
   .form-card { padding: 28px 22px; }
   .modal { padding: 30px 22px; }
   /* iOS Safari renders position:sticky inside a border-radius + overflow:auto
