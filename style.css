@@ -597,6 +597,7 @@ tbody tr:hover { background: var(--cream); }
     padding: 0; border-radius: 0;
   }
   .nav-cta:hover { background: none; transform: none; color: var(--black) !important; }
+  .prose .sig { font-size: 0.72rem; letter-spacing: -0.01em; }
   .pillar-flow, .steps, .proof-grid { grid-template-columns: 1fr; }
   .lane { grid-template-columns: 1fr; gap: 12px; padding: 36px 0; }
   .hero { padding: 120px 0 40px; }
