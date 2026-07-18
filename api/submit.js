@@ -110,6 +110,7 @@ module.exports = async function handler(req, res) {
     setIf('Engagement', brief.Engagement, 100);
     setIf('Stages', brief.Stages);
     setIf('Portfolio', brief.Portfolio, 500);
+    setIf('WhatsApp Opt-in', brief.WhatsAppOptIn, 10);
   } else {
     tableId = AIRTABLE_TABLE_ID;
     const isBrief = brief && (brief.Category || brief.Stage || brief.Stuck);

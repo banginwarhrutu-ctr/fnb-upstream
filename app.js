@@ -236,7 +236,8 @@ async function handlePartner(e, formEl) {
     Experience: g('experience'),
     Engagement: g('engagement'),
     Stages: g('stages'),
-    Portfolio: g('portfolio')
+    Portfolio: g('portfolio'),
+    WhatsAppOptIn: (formEl.querySelector('[name="whatsappOptIn"]') || {}).checked ? 'Yes' : 'No'
   };
 
   const btn = formEl.querySelector('.btn-submit');
@@ -244,7 +245,10 @@ async function handlePartner(e, formEl) {
   btn.textContent = 'Sending…';
 
   saveLocally({ ...fields, ...brief });
-  showSuccess(formEl, "We'll be in touch on WhatsApp.");
+  const whatsappNote = brief.WhatsAppOptIn === 'Yes'
+    ? ` <a href="https://chat.whatsapp.com/D8aKoArz25zAp6oFtp7hBP" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Join the WhatsApp channel now →</a>`
+    : '';
+  showSuccess(formEl, `We'll be in touch on WhatsApp.${whatsappNote}`);
   submitLead({ fields, brief, hp: getHp(formEl) }).catch(err => console.warn('[First Batch] Backend submission failed. Application saved locally.', err));
 }
 
