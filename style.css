@@ -401,7 +401,8 @@ input, select, textarea { font-family: inherit; }
 
 .table-wrap {
   position: relative; background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--radius-card); overflow: auto; max-height: 640px;
+  border-radius: var(--radius-card); overflow-x: auto; overflow-y: auto;
+  -webkit-overflow-scrolling: touch; max-height: 640px;
 }
 .table-locked { max-height: 460px; overflow: hidden; }
 .table-locked table { filter: blur(5px); pointer-events: none; user-select: none; }
@@ -565,8 +566,7 @@ tbody tr:hover { background: var(--cream); }
   .pillar-flow, .steps, .proof-grid { grid-template-columns: 1fr 1fr; }
   .pillar-arrow { display: none; }
   .stats-band { grid-template-columns: 1fr 1fr; gap: 32px 20px; }
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-art { order: -1; }
+  .hero-grid { grid-template-columns: 1fr; gap: 24px; }
   .hero-art svg { max-width: 300px; }
 }
 
@@ -575,6 +575,7 @@ tbody tr:hover { background: var(--cream); }
     display: none; position: absolute; top: 68px; left: 0; right: 0;
     background: var(--white); flex-direction: column; align-items: flex-start;
     padding: 20px 24px 28px; gap: 18px; border-bottom: 1px solid var(--border);
+    margin-left: 0; width: 100%;
   }
   .nav-links.open { display: flex; }
   .nav-toggle { display: block; }
@@ -586,4 +587,8 @@ tbody tr:hover { background: var(--cream); }
   .section { padding: 64px 0; }
   .form-card { padding: 28px 22px; }
   .modal { padding: 30px 22px; }
+  /* iOS Safari renders position:sticky inside a border-radius + overflow:auto
+     ancestor incorrectly (rows visually overlapping) — fall back to a
+     non-sticky header on small screens where this combination triggers it. */
+  thead th { position: static; }
 }
