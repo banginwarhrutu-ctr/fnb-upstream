@@ -26,26 +26,6 @@ const JN_CERTIFICATIONS = [
   'USFDA', 'APEDA', 'NABL', 'AGMARK', 'Organic (India Organic / USDA NOP)'
 ];
 
-// FSSAI's 16 primary food product categories.
-const JN_FSSAI_CATEGORIES = [
-  'Dairy products and analogues',
-  'Fats, oils and fat emulsions',
-  'Edible ices, including sherbet and sorbet',
-  'Fruits and vegetables',
-  'Confectionery',
-  'Cereals and cereal products',
-  'Bakery wares',
-  'Meat and meat products',
-  'Fish and fish products',
-  'Eggs and egg products',
-  'Sweeteners, including honey',
-  'Salts, spices, soups, sauces, salads, protein products',
-  'Foodstuffs for particular nutritional uses',
-  'Beverages, excluding dairy products',
-  'Ready-to-eat savouries',
-  'Prepared foods'
-];
-
 function jnRenderChipGroup(containerId, name, values) {
   const el = document.getElementById(containerId);
   if (!el) return;
@@ -155,7 +135,7 @@ async function handleJoinNetwork(e, formEl) {
     servicesOther: formEl.querySelector('[name="servicesOther"]').value.trim(),
     certifications: jnGetChecked(formEl, 'certifications').join(', '),
     certificationsOther: formEl.querySelector('[name="certificationsOther"]').value.trim(),
-    categories: jnGetChecked(formEl, 'categories').join(', '),
+    categories: formEl.querySelector('[name="categories"]').value.trim(),
     moq: formEl.querySelector('[name="moq"]').value,
     pilotRun: formEl.querySelector('[name="pilotRun"]').checked ? 'Yes' : 'No',
     rndFeasibility: formEl.querySelector('[name="rndFeasibility"]').checked ? 'Yes' : 'No',
@@ -196,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('join-network-form')) return;
   jnRenderChipGroup('jn-services-grid', 'services', JN_SERVICES);
   jnRenderChipGroup('jn-certs-grid', 'certifications', JN_CERTIFICATIONS);
-  jnRenderChipGroup('jn-categories-grid', 'categories', JN_FSSAI_CATEGORIES);
   jnRenderStateOptions();
 
   const form = document.getElementById('join-network-form');
