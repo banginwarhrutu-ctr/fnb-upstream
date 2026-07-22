@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Founder Intake — First Batch Co</title>
+  <meta name="description" content="A few questions so we can scope your project.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">First Batch Co</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+      <li class="nav-partner"><a href="partners.html">For partners</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero page-hero wash-mint">
+  <div class="wrap">
+    <div class="mix-dots"><span></span><span></span><span></span><span></span></div>
+    <div class="hero-kicker">Founder intake</div>
+    <h1>Let's build your first batch.</h1>
+    <p class="hero-sub">A few questions so we can scope your project properly. Answer what you can — the more detail, the faster we can help.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="wrap wrap-narrow">
+
+    <div class="form-card form-card-wide">
+      <form id="founder-intake-form" onsubmit="handleFounderIntake(event, this)" novalidate>
+
+        <!-- CONTACT -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <span class="form-step">01</span>
+            <h2>Contact details</h2>
+          </div>
+          <div class="field">
+            <label for="fi-name">Your name <span class="req-mark">*</span></label>
+            <input class="input-field" id="fi-name" name="name" type="text" placeholder="Full name" required>
+            <div class="field-error" data-error="name"></div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fi-company">Company / venture name</label>
+              <input class="input-field" id="fi-company" name="company" type="text" placeholder="Or working title">
+            </div>
+            <div class="field">
+              <label for="fi-phone">Phone / WhatsApp <span class="req-mark">*</span></label>
+              <input class="input-field" id="fi-phone" name="phone" type="tel" placeholder="10-digit mobile number" required>
+              <div class="field-error" data-error="phone"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="fi-email">Email <span class="req-mark">*</span></label>
+            <input class="input-field" id="fi-email" name="email" type="email" placeholder="you@company.com" required>
+            <div class="field-error" data-error="email"></div>
+          </div>
+        </div>
+
+        <!-- STAGE -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <span class="form-step">02</span>
+            <h2>What stage are you at? <span class="req-mark">*</span></h2>
+          </div>
+          <div class="chip-grid" id="fi-stage-grid"></div>
+          <div class="field-error" data-error="stage"></div>
+        </div>
+
+        <!-- PRODUCT -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <span class="form-step">03</span>
+            <h2>Your product</h2>
+          </div>
+          <div class="field">
+            <label for="fi-idea">Product idea: explain it in 3 to 5 lines <span class="req-mark">*</span></label>
+            <textarea class="input-field" id="fi-idea" name="productIdea" rows="4" required></textarea>
+            <div class="field-error" data-error="productIdea"></div>
+          </div>
+
+          <div class="field">
+            <label>Product format <span class="req-mark">*</span></label>
+            <div class="chip-grid" id="fi-format-grid"></div>
+            <div class="field-error" data-error="format"></div>
+          </div>
+          <div class="field field-inline">
+            <label for="fi-format-other">If "Other," specify</label>
+            <input class="input-field" id="fi-format-other" name="formatOther" type="text" placeholder="Please specify">
+          </div>
+
+          <div class="field">
+            <label for="fi-skus">How many products and variants/SKUs?</label>
+            <input class="input-field" id="fi-skus" name="productsSkus" type="text" placeholder="e.g. 1 product, 3 flavors">
+          </div>
+          <div class="field">
+            <label for="fi-benchmarks">Benchmark products — similar products you want to emulate, or ones you want something changed about</label>
+            <textarea class="input-field" id="fi-benchmarks" name="benchmarks" rows="2"></textarea>
+          </div>
+          <div class="field">
+            <label for="fi-positioning">Positioning and claims</label>
+            <textarea class="input-field" id="fi-positioning" name="positioningClaims" rows="2" placeholder="e.g. vegan, no added sugar, kids-safe, PCOS-friendly"></textarea>
+          </div>
+          <div class="field">
+            <label for="fi-ingredients">Key ingredients to explore, and to avoid</label>
+            <textarea class="input-field" id="fi-ingredients" name="ingredients" rows="2" placeholder="e.g. explore millets; avoid palm oil, maida"></textarea>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="fi-cost">Target cost per unit</label>
+              <input class="input-field" id="fi-cost" name="targetCost" type="text" placeholder="e.g. ₹40 per unit">
+            </div>
+            <div class="field">
+              <label for="fi-distribution">Distribution channel</label>
+              <input class="input-field" id="fi-distribution" name="distribution" type="text" placeholder="e.g. quick commerce, retail, D2C">
+            </div>
+          </div>
+          <div class="field">
+            <label for="fi-shelf">Shelf life and storage conditions</label>
+            <textarea class="input-field" id="fi-shelf" name="shelfLife" rows="2"></textarea>
+          </div>
+        </div>
+
+        <!-- SCOPE -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <span class="form-step">04</span>
+            <h2>What do you need from us? <span class="req-mark">*</span></h2>
+            <p class="form-section-sub">Select all that apply.</p>
+          </div>
+          <div class="chip-grid" id="fi-scope-grid"></div>
+          <div class="field-error" data-error="scope"></div>
+        </div>
+
+        <!-- BUDGET -->
+        <div class="form-section">
+          <div class="form-section-head">
+            <span class="form-step">05</span>
+            <h2>Budget</h2>
+          </div>
+          <div class="field">
+            <label for="fi-budget">Rough budget for pre-launch development (optional)</label>
+            <input class="input-field" id="fi-budget" name="budget" type="text" placeholder="e.g. ₹1,50,000">
+          </div>
+        </div>
+
+        <div class="hp-wrap" aria-hidden="true"><label for="fi-website">Website</label><input id="fi-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+
+        <div class="field-error submit-error" id="fi-submit-error"></div>
+        <button type="submit" class="btn btn-primary btn-submit" id="fi-submit-btn">Send</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">First Batch Co</a>
+        <div class="footer-social">
+          <a href="https://www.linkedin.com/in/hrutu-banginwar/" target="_blank" rel="noopener" class="social-chip chip-linkedin" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="7.5" y1="9.5" x2="7.5" y2="16.5"/><circle cx="7.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/><path d="M11 16.5v-4.2a2.3 2.3 0 0 1 4.6 0v4.2"/><line x1="11" y1="9.5" x2="11" y2="16.5"/></svg>
+          </a>
+          <a href="https://www.instagram.com/hrutu.firstbatch/" target="_blank" rel="noopener" class="social-chip chip-instagram" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="0.8" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://wa.me/918010231914" target="_blank" rel="noopener" class="social-chip chip-whatsapp" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.2-3.6A8 8 0 1 1 8.6 19.8L4 20Z"/><path d="M9.2 9.6c0 3.4 2.7 6.1 6 6.1c.4 0 .7-.2.8-.6l.3-1c.1-.4-.1-.7-.4-.9l-1-.6c-.3-.2-.7-.1-.9.1l-.3.4c-.9-.5-1.6-1.2-2.1-2.1l.4-.3c.2-.2.3-.6.1-.9l-.6-1c-.2-.3-.5-.5-.9-.4l-1 .3c-.4.1-.6.4-.6.8Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-nav-title">Site</div>
+        <ul class="footer-links">
+          <li><a href="network.html">The network</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="partners.html">For partners</a></li>
+          <li><a href="join-network.html">Join the Network</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script src="founder-intake.js"></script>
+</body>
+</html>
