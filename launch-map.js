@@ -1304,7 +1304,7 @@ function generateReportPdf(kb, tierResult, answers) {
       !t.appliesTo || t.appliesTo.some(frag => selectedIds.some(id => id.includes(frag)))
     );
     sectionTitle('Mandatory lab tests', LM_PDF_BRAND.mint);
-    bodyText('Filtered to the ingredients you actually selected in the wizard.', { size: 8.5, color: LM_PDF_BRAND.muted, gap: 10 });
+    bodyText('Filtered to the ingredients you selected in the wizard.', { size: 8.5, color: LM_PDF_BRAND.muted, gap: 10 });
     doc.autoTable({
       startY: y,
       margin: { left: margin, right: margin },
