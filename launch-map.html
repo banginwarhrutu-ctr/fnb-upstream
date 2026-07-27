@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Launch Map (prototype), First Batch Co</title>
+  <meta name="description" content="Tell us what you're making. Get your FSSAI license tier, mandatory tests and label rules.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">First Batch Co</a>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="network.html">The network</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="start.html" class="nav-cta">Tell us what you're building</a></li>
+      <li class="nav-partner"><a href="partners.html">For partners</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero page-hero wash-lilac">
+  <div class="wrap">
+    <div class="mix-dots"><span></span><span></span><span></span><span></span></div>
+    <div class="hero-kicker">Launch Map, prototype, 1 category live</div>
+    <h1>What do you need before your first batch?</h1>
+    <p class="hero-sub">Pick what you need, answer the rest, and get your FSSAI license tier, mandatory tests and label rules matched to exactly what you asked for. Deterministic, not AI-generated: every answer maps back to an actual regulation.</p>
+  </div>
+</header>
+
+<section class="section lm-page-bg">
+  <div class="wrap wrap-narrow">
+
+    <div class="form-card form-card-wide lm-wizard-card">
+
+      <div class="lm-progress" id="lm-progress">
+        <div class="lm-progress-track"><div class="lm-progress-fill" id="lm-progress-fill"></div></div>
+        <div class="lm-progress-meta">
+          <span id="lm-progress-label">Step 1 of 6</span>
+          <div class="lm-progress-dots" id="lm-progress-dots"></div>
+        </div>
+      </div>
+
+      <form id="lm-wizard-form" novalidate>
+
+        <div class="lm-step-viewport" id="lm-step-viewport">
+
+          <div class="lm-step active" data-step="0">
+            <div class="form-section-head">
+              <span class="form-step">01</span>
+              <h2>What do you need?</h2>
+              <p class="form-section-sub">Pick one or more. We'll only put together what you actually choose.</p>
+            </div>
+            <div class="lm-report-choice-grid" id="lm-report-choice-grid"></div>
+            <div class="field-error" id="lm-report-choice-error"></div>
+          </div>
+
+          <div class="lm-step" data-step="1">
+            <div class="form-section-head">
+              <span class="form-step">02</span>
+              <h2>What are you making?</h2>
+              <p class="form-section-sub">Pick a category. The rest of the wizard adapts to it.</p>
+            </div>
+            <div class="lm-category-grid" id="lm-category-grid"></div>
+          </div>
+
+          <div class="lm-step" data-step="waitlist" id="lm-waitlist-section">
+            <div class="lm-waitlist-box">
+              <h3>We haven't built this category yet</h3>
+              <p>This prototype only has full data for <strong>Bakery goods / products</strong>. The other 14 categories are scoped (see <code>LAUNCH-MAP-SPEC.md</code>) but not yet sourced. Leave your email and we'll notify you when your category is live.</p>
+              <div class="field"><input class="input-field" type="email" placeholder="you@company.com"></div>
+              <button type="button" class="btn btn-primary" onclick="alert('Prototype only. Waitlist capture isn\'t wired to Airtable yet.')">Notify me</button>
+            </div>
+          </div>
+
+          <div class="lm-step" data-step="2">
+            <div class="form-section-head">
+              <span class="form-step">03</span>
+              <h2>Key ingredients</h2>
+              <p class="form-section-sub">Check everything that applies. ⚠ = commonly needs an allergen declaration.</p>
+            </div>
+            <div id="lm-ingredients-wrap"></div>
+          </div>
+
+          <div class="lm-step" data-step="3">
+            <div class="form-section-head">
+              <span class="form-step">04</span>
+              <h2>Process</h2>
+            </div>
+            <div class="field">
+              <label for="lm-process">How is it made / stored?</label>
+              <select class="input-field" id="lm-process">
+                <option value="ambient">Ambient / ready-to-eat</option>
+                <option value="refrigerated">Refrigerated</option>
+                <option value="frozen">Frozen</option>
+                <option value="retort">Retort / thermally processed</option>
+                <option value="fermented">Fermented</option>
+                <option value="dried">Dried</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="lm-step" data-step="activity">
+            <div class="form-section-head">
+              <span class="form-step">05</span>
+              <h2>Who makes it?</h2>
+              <p class="form-section-sub">This decides your Kind of Business on FoSCoS, which changes the licence you need.</p>
+            </div>
+            <div class="lm-report-choice-grid" id="lm-activity-grid"></div>
+            <div class="field-error" id="lm-activity-error"></div>
+          </div>
+
+          <div class="lm-step" data-step="4">
+            <div class="form-section-head">
+              <span class="form-step">06</span>
+              <h2>Expected turnover</h2>
+            </div>
+            <div class="field">
+              <label for="lm-turnover">Annual turnover, realistically over the next year</label>
+              <select class="input-field" id="lm-turnover">
+                <option value="under-1.5cr">Under ₹1.5 crore</option>
+                <option value="1.5cr-10cr">₹1.5 crore – ₹10 crore</option>
+                <option value="10cr-50cr">₹10 crore – ₹50 crore</option>
+                <option value="above-50cr">Above ₹50 crore</option>
+              </select>
+              <p class="lm-note">Thresholds per the FSS (Licensing and Registration of Food Businesses) Amendment Regulations, 2026, in force since 1 April 2026: Registration up to ₹1.5cr, State ₹1.5cr–₹50cr, Central above ₹50cr.</p>
+            </div>
+          </div>
+
+          <div class="lm-step" data-step="5">
+            <div class="form-section-head">
+              <span class="form-step">07</span>
+              <h2>Sales channels</h2>
+              <p class="form-section-sub">Select all that apply.</p>
+            </div>
+            <div class="chip-grid">
+              <label class="chip-check"><input type="checkbox" name="channels" value="d2c-online"><span>D2C / own website or app</span></label>
+              <label class="chip-check"><input type="checkbox" name="channels" value="marketplaces"><span>Marketplaces (Amazon, Blinkit, etc.)</span></label>
+              <label class="chip-check"><input type="checkbox" name="channels" value="general-trade"><span>General trade / retail</span></label>
+              <label class="chip-check"><input type="checkbox" name="channels" value="modern-trade"><span>Modern trade</span></label>
+              <label class="chip-check"><input type="checkbox" name="channels" value="export"><span>Export</span></label>
+            </div>
+            <div class="field-error" id="lm-channels-error"></div>
+          </div>
+
+          <div class="lm-step" data-step="6">
+            <div class="form-section-head">
+              <span class="form-step">08</span>
+              <h2>State</h2>
+            </div>
+            <div class="field">
+              <label for="lm-state">Where are you registering the business?</label>
+              <select class="input-field" id="lm-state"></select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="lm-step-nav">
+          <button type="button" class="btn btn-ghost" id="lm-back-btn">Back</button>
+          <button type="button" class="btn btn-primary" id="lm-next-btn">Next</button>
+          <button type="submit" class="btn btn-primary" id="lm-submit-btn" style="display:none;">See my launch map</button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="form-card form-card-wide" id="lm-email-gate" style="display:none;">
+      <div class="lm-tier-badge lm-badge-good">Report generated</div>
+      <p class="modal-sub" id="lm-gate-summary"></p>
+      <form id="lm-email-gate-form" novalidate>
+        <div class="field">
+          <label for="lm-email">Enter your email to access the report <span class="req-mark">*</span></label>
+          <input class="input-field" id="lm-email" type="email" placeholder="you@company.com" required>
+          <div class="field-error" id="lm-email-error"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-submit">Open my launch map</button>
+        <p class="lm-disclaimer" id="lm-gate-disclaimer"></p>
+        <p class="lm-note">Prototype, this doesn't send anywhere yet. Real build POSTs to <code>/api/launch-map-report</code> (Airtable + Resend + PDF), per the spec.</p>
+      </form>
+    </div>
+
+    <div class="form-card form-card-wide" id="lm-report" style="display:none;"></div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">First Batch Co</a>
+      </div>
+      <div>
+        <div class="footer-nav-title">Site</div>
+        <ul class="footer-links">
+          <li><a href="network.html">The network</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="partners.html">For partners</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="footer-note">© 2026 First Batch · firstbatch.in · Launch Map is a prototype, not yet linked from the main site nav.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="launch-map-data.js"></script>
+<script src="launch-map.js"></script>
+</body>
+</html>
