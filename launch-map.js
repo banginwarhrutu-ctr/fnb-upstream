@@ -623,11 +623,17 @@ function renderFullReport(kb, tierResult, answers) {
   );
   const skippedTests = kb.mandatoryTests.filter(t => !relevantTests.includes(t));
 
+  // Test names carry the actual regulatory detail in a trailing "(...)",
+  // e.g. "Gluten content (atta ≥6.0%, maida ≥7.5%, ...)". Wrapped smaller/
+  // muted/italic so the test name itself reads first and the parenthetical
+  // doesn't visually compete with it.
+  const formatTestName = name => name.replace(/\([^()]*\)/g, m => `<span class="lm-test-note">${m}</span>`);
+
   const testsContent = `
     <div class="lm-table-wrap"><table class="lm-table">
       <thead><tr><th>Test</th><th>Lab</th><th>Frequency</th></tr></thead>
       <tbody>
-        ${relevantTests.map(t => `<tr><td>${t.name}</td><td>${t.lab}</td><td>${t.frequency}</td></tr>`).join('')}
+        ${relevantTests.map(t => `<tr><td>${formatTestName(t.name)}</td><td>${t.lab}</td><td>${t.frequency}</td></tr>`).join('')}
       </tbody>
     </table></div>
     <p class="lm-note">Filtered to the ingredients you actually selected. ${skippedTests.length ? `${skippedTests.length} more test${skippedTests.length > 1 ? 's' : ''} would apply if you'd picked different ingredients (e.g. honey-specific adulteration tests, if you'd chosen honey instead of monk fruit).` : ''}</p>
