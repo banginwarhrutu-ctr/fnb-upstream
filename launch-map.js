@@ -132,7 +132,7 @@ const BUSINESS_ACTIVITY_OPTIONS = [
   { id: 'own-facility', label: 'My own facility', desc: 'You run the place where it gets made.', icon: 'tests', hue: 'lm-cat-mint' },
   { id: 'contract-manufacturer', label: 'Contract manufacturer', desc: 'Someone else makes it, you own the brand.', icon: 'license', hue: 'lm-cat-peach' },
   { id: 'repacking', label: 'Repacking bulk goods', desc: 'You buy in bulk and repack, same recipe.', icon: 'labels', hue: 'lm-cat-lilac' },
-  { id: 'importing', label: 'Importing from abroad', desc: 'Made elsewhere, you sell it here.', icon: 'cleanlabel', hue: 'lm-cat-butter' }
+  { id: 'importing', label: 'Importing', desc: 'Made elsewhere, you sell it here.', icon: 'cleanlabel', hue: 'lm-cat-butter' }
 ];
 let selectedBusinessActivity = null;
 
@@ -490,7 +490,7 @@ function determineLicenseTier(kb, answers) {
   }
   if (answers.businessActivity === 'contract-manufacturer') {
     caveats.push('Using a contract manufacturer makes you a Relabeller on FoSCoS, "a food business operator who gets his product manufactured or packed from a third party manufacturer or processor". You still need your own license, and separately your CM\'s license has to already cover this product category, since their Kind of Business is what authorises the actual making.');
-    caveatsShort.push("You're a Relabeller — still need your own license; your CM's license must cover this category.");
+    caveatsShort.push("Relabeller — You need your own license. Your manufacturer's license must also cover this product category.");
   }
   if (answers.businessActivity === 'repacking') {
     caveats.push('Repacking bulk into retail packs is its own Kind of Business (Repacker) and is applied for under the Manufacturer group on FoSCoS, not as a trader.');
@@ -817,11 +817,6 @@ function renderFullReport(kb, tierResult, answers) {
 
     ${sectionsHtml}
 
-    <div class="lm-section">
-      <h3>Step-by-step sequence</h3>
-      <ol class="lm-steps-list">${kb.stepSequence.map(s => `<li>${s}</li>`).join('')}</ol>
-    </div>
-
     <div class="lm-section lm-footer-cta">
       <h3>Where First Batch can help</h3>
       <p>${kb.fbcFooter.ctaCopy}</p>
@@ -971,6 +966,14 @@ function generateReportPdf(kb, tierResult, answers) {
   // result from before this step existed).
   const wanted = (answers.reportSections && answers.reportSections.length) ? answers.reportSections : ['license', 'tests', 'labels-clean'];
 
+  // Cover subtitle names only the sections actually chosen, instead of a
+  // fixed "compliance report" label that doesn't reflect what's inside.
+  const naturalJoin = arr => arr.length <= 1 ? (arr[0] || '')
+    : arr.length === 2 ? arr.join(' and ')
+    : arr.slice(0, -1).join(', ') + ', and ' + arr[arr.length - 1];
+  const SECTION_PHRASES = { license: 'FSSAI license', tests: 'lab tests', 'labels-clean': 'label rules' };
+  const coverSubtitle = 'Your exact ' + naturalJoin(wanted.map(w => SECTION_PHRASES[w]).filter(Boolean));
+
   const setColor = (fn, rgb) => doc[fn](rgb[0], rgb[1], rgb[2]);
 
   function drawContinuationHeader() {
@@ -1001,7 +1004,7 @@ function generateReportPdf(kb, tierResult, answers) {
     }
   }
 
-  function drawCoverHeader() {
+  function drawCoverHeader(subtitle) {
     setColor('setFillColor', LM_PDF_BRAND.black);
     doc.rect(0, 0, pageW, 70, 'F');
     setColor('setFillColor', LM_PDF_BRAND.peach);
@@ -1013,13 +1016,27 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     setColor('setTextColor', LM_PDF_BRAND.mutedOnDark);
-    doc.text('Launch Map, FSSAI compliance report', margin, 55);
+    doc.text(subtitle, margin, 55);
     const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     doc.text(dateStr, pageW - margin, 40, { align: 'right' });
     y = 70 + 38;
   }
 
-  function drawFooter(pageNum, pageCount) {
+  function drawFooter(pageNum, pageCount, footnotes) {
+    // footnotes (if given) print just above the running footer line, one
+    // per line, so a marker in the body (e.g. the license summary, or
+    // the Clean Label heading) has somewhere to actually point to on
+    // that page, rather than a full disclaimer paragraph sitting in the
+    // middle of the report body. Each string already carries its own
+    // marker prefix (* / **) from the caller, so more than one footnote
+    // can share a page's footer and still be told apart.
+    if (footnotes && footnotes.length) {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(7.5);
+      setColor('setTextColor', LM_PDF_BRAND.muted);
+      const footLines = footnotes.flatMap(f => doc.splitTextToSize(f, contentW));
+      doc.text(footLines, margin, pageH - 42 - footLines.length * 10 - 4);
+    }
     setColor('setDrawColor', LM_PDF_BRAND.muted);
     doc.setLineWidth(0.5);
     doc.line(margin, pageH - 42, pageW - margin, pageH - 42);
@@ -1036,7 +1053,11 @@ function generateReportPdf(kb, tierResult, answers) {
     // so heading + content get reserved as one unit and a page break
     // (if needed) happens before the heading - never orphaning it alone
     // above a big empty gap with its content pushed to the next page.
-    ensureSpace(34 + (reserveAfter || 0));
+    // +8pt safety margin: the reserve is an estimate (line-wrap math,
+    // not the exact glyph metrics used at draw time), so pad it slightly
+    // rather than flapping right at the boundary between "fits" and
+    // "doesn't" on some categories but not others.
+    ensureSpace(34 + (reserveAfter || 0) + 8);
     setColor('setFillColor', accent);
     doc.rect(margin, y, 26, 4, 'F');
     y += 20;
@@ -1118,29 +1139,6 @@ function generateReportPdf(kb, tierResult, answers) {
     y += (opts.gap != null ? opts.gap : 6);
   }
 
-  // Numbered circle list rotating the four brand accents, mirroring
-  // .lm-steps-list on the site.
-  function numberedList(items, opts) {
-    const colors = [LM_PDF_BRAND.butter, LM_PDF_BRAND.peach, LM_PDF_BRAND.mint, LM_PDF_BRAND.lilac];
-    items.forEach((item, idx) => {
-      const lines = doc.splitTextToSize(pdfSafe(item), contentW - 36);
-      ensureSpace(Math.max(lines.length * 14, 22) + 7);
-      const cy = y - 7;
-      setColor('setFillColor', colors[idx % colors.length]);
-      doc.circle(margin + 10, cy, 9.5, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      setColor('setTextColor', LM_PDF_BRAND.white);
-      doc.text(String(idx + 1), margin + 10, cy + 3, { align: 'center' });
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      setColor('setTextColor', LM_PDF_BRAND.black);
-      doc.text(lines, margin + 28, y);
-      y += lines.length * 14 + 8;
-    });
-    y += (opts && opts.gap != null ? opts.gap : 8);
-  }
-
   // Tinted rounded card, mirroring .lm-personalized / .lm-headline-steps.
   function tintedBox(text, bg, opts) {
     opts = opts || {};
@@ -1162,9 +1160,12 @@ function generateReportPdf(kb, tierResult, answers) {
   function measureCalloutBox(title, items) {
     const pad = 16;
     const innerW = contentW - pad * 2 - 26;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
-    const titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
-    const titleH = titleLines.length * 13 + 10;
+    let titleH = 0;
+    if (title) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+      const titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
+      titleH = titleLines.length * 13 + 10;
+    }
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
     const itemsH = items.reduce((sum, item) => {
       const lines = doc.splitTextToSize(pdfSafe(item), innerW);
@@ -1187,9 +1188,13 @@ function generateReportPdf(kb, tierResult, answers) {
     const pad = 16;
     const innerW = contentW - pad * 2 - 26;
 
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
-    const titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
-    const titleH = titleLines.length * 13 + 10;
+    let titleLines = [];
+    let titleH = 0;
+    if (title) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+      titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
+      titleH = titleLines.length * 13 + 10;
+    }
 
     doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
     const itemData = items.map(item => {
@@ -1204,10 +1209,12 @@ function generateReportPdf(kb, tierResult, answers) {
     setColor('setFillColor', bg);
     doc.roundedRect(margin, boxY, contentW, totalH, 10, 10, 'F');
 
-    let cy = boxY + pad + titleLines.length * 9;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
-    setColor('setTextColor', LM_PDF_BRAND.black);
-    doc.text(titleLines, margin + pad, cy);
+    if (title) {
+      const cy0 = boxY + pad + titleLines.length * 9;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+      setColor('setTextColor', LM_PDF_BRAND.black);
+      doc.text(titleLines, margin + pad, cy0);
+    }
     cy = boxY + pad + titleH;
 
     itemData.forEach(({ lines, h }) => {
@@ -1234,7 +1241,7 @@ function generateReportPdf(kb, tierResult, answers) {
   }
 
   // ── Page 1: cover ────────────────────────────────────────
-  drawCoverHeader();
+  drawCoverHeader(coverSubtitle);
   doc.setFont('courier', 'bold');
   doc.setFontSize(20);
   setColor('setTextColor', LM_PDF_BRAND.black);
@@ -1245,7 +1252,21 @@ function generateReportPdf(kb, tierResult, answers) {
   const selectedIds = answers.ingredients || [];
   const selectedTags = kb.ingredientTags.filter(t => selectedIds.includes(t.id));
 
+  // Collected while building the License section, then handed to
+  // drawFooter() in the footer loop below - see the asterisk marks left
+  // in the body. Keyed by page number (not always page 1 - claims/clean
+  // label can land on a later page depending on how much precedes them),
+  // and joined per-page so more than one footnote can share a footer.
+  const pageFootnotes = {};
+  function addFootnote(text) {
+    if (!text) return;
+    const p = doc.internal.getNumberOfPages();
+    (pageFootnotes[p] = pageFootnotes[p] || []).push(text);
+  }
+
   if (wanted.includes('license')) {
+    sectionTitle('License tier', LM_PDF_BRAND.peach);
+
     const tierLabel = pdfSafe(tierResult.tier).toUpperCase();
     setColor('setFillColor', LM_PDF_BRAND.peach);
     doc.roundedRect(margin, y, doc.getTextWidth(tierLabel) + 30, 24, 3, 3, 'F');
@@ -1255,10 +1276,17 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.text(tierLabel, margin + 15, y + 16);
     y += 42;
 
-    // Cheat-sheet: one line for tier/fee/trigger, then one "[!]" line
+    // Cheat-sheet: one line for fee/sales-channel, then one "[!]" line
     // per warning. Full reasons/caveats (with citations) stay the source
     // of truth; this is a compressed summary of them, not a replacement.
-    bodyText(`Tier: ${tierResult.tier}  |  Fee: ${tierResult.fee}  |  Trigger: ${tierResult.reasonsShort.join(', ')}`, { bold: true, size: 11, gap: 8 });
+    // Tier isn't repeated here since the badge above already states it.
+    // Two different footnotes can land on this line - the annual-fee
+    // note (marked "*", next to "/year") and the sourcing disclaimer
+    // (marked "**", next to Sales Channel) - so each gets its own marker
+    // rather than one asterisk covering two unrelated footnotes.
+    const licenseDisclaimer = (kb.sectionDisclaimers || {}).license || null;
+    const annualFeeNote = kb.licenseLogic.annualFeeNote || null;
+    bodyText(`Fee: ${tierResult.fee}${annualFeeNote ? ' *' : ''}  |  Sales Channel: ${tierResult.reasonsShort.join(', ')}${licenseDisclaimer ? ' **' : ''}`, { bold: true, size: 11, gap: 8 });
     const allCaveatsShortPdf = [
       ...(tierResult.caveatsShort || []),
       ...(tierResult.noteShort ? [tierResult.noteShort] : [])
@@ -1266,8 +1294,8 @@ function generateReportPdf(kb, tierResult, answers) {
     if (allCaveatsShortPdf.length) {
       glyphList(allCaveatsShortPdf, { bg: LM_PDF_BRAND.butter, kind: 'flag' });
     }
-    disclaimerText((kb.sectionDisclaimers || {}).license);
-    if (kb.licenseLogic.annualFeeNote) bodyText(kb.licenseLogic.annualFeeNote, { size: 8, color: LM_PDF_BRAND.muted, gap: 14 });
+    addFootnote(annualFeeNote ? `* ${annualFeeNote}` : null);
+    addFootnote(licenseDisclaimer ? `** ${licenseDisclaimer}` : null);
   }
 
   // ── Lab tests ────────────────────────────────────────────
@@ -1331,8 +1359,8 @@ function generateReportPdf(kb, tierResult, answers) {
 
   if (wanted.includes('labels-clean')) {
     // ── Label must-haves + conditional declarations ─────────
-    sectionTitle('Label must-haves', LM_PDF_BRAND.lilac, measureCalloutBox('DO THIS', kb.labelRequirements.mustHave));
-    calloutBox('DO THIS', kb.labelRequirements.mustHave, { bg: LM_PDF_BRAND.mintTint, glyphBg: LM_PDF_BRAND.mint, kind: 'check' });
+    sectionTitle('Label must-haves', LM_PDF_BRAND.lilac, measureCalloutBox('', kb.labelRequirements.mustHave));
+    calloutBox('', kb.labelRequirements.mustHave, { bg: LM_PDF_BRAND.mintTint, glyphBg: LM_PDF_BRAND.mint, kind: 'check' });
     if (kb.labelRequirements.conditionalDeclarations && kb.labelRequirements.conditionalDeclarations.length) {
       calloutBox('ACTION NEEDED — only if you use these ingredients or additives', kb.labelRequirements.conditionalDeclarations, { bg: LM_PDF_BRAND.butterTint, glyphBg: LM_PDF_BRAND.butter, kind: 'flag' });
     }
@@ -1343,8 +1371,6 @@ function generateReportPdf(kb, tierResult, answers) {
     } else if (selectedTags.length) {
       tintedBox('No major allergens flagged from your selected ingredients. Still confirm cross-contamination risk if your facility also runs allergen-containing lines.', LM_PDF_BRAND.mintTint);
     }
-    disclaimerText((kb.sectionDisclaimers || {}).labelRequirements);
-
     // ── Claims, one line per claim, grouped BANNED / CONDITIONAL /
     // PERMITTED - same split and wording as the on-screen boxes. Reserve
     // for whichever bucket draws first (they're each independently
@@ -1366,7 +1392,13 @@ function generateReportPdf(kb, tierResult, answers) {
     }
 
     // ── Clean label check ────────────────────────────────────
-    sectionTitle('Clean label check', LM_PDF_BRAND.butter);
+    // Both the label/claims sourcing note and the clean-label-isn't-
+    // legally-defined note are combined into one footer footnote here,
+    // at the end of this section, instead of two separate grey
+    // paragraphs breaking up the report body.
+    const labelReqDisclaimer = (kb.sectionDisclaimers || {}).labelRequirements || null;
+    const cleanLabelDisclaimer = '"Clean label" has no single legal definition under Indian food law; this is not an FSSAI certification.';
+    sectionTitle(`Clean label check${(labelReqDisclaimer || cleanLabelDisclaimer) ? ' *' : ''}`, LM_PDF_BRAND.butter);
     const flagged = [];
     const verify = [];
     selectedTags.forEach(tag => {
@@ -1385,16 +1417,9 @@ function generateReportPdf(kb, tierResult, answers) {
     } else {
       tintedBox('[CLEAR] Clean label looks achievable. Nothing in your selections falls into the commonly flagged categories.', LM_PDF_BRAND.mintTint, { bold: true, textColor: LM_PDF_BRAND.mint });
     }
-    disclaimerText('"Clean label" has no single legal definition under Indian food law; this is not an FSSAI certification.');
+    addFootnote(labelReqDisclaimer ? `* ${labelReqDisclaimer}` : null);
+    addFootnote(`* ${cleanLabelDisclaimer}`);
   }
-
-  // ── Step sequence ────────────────────────────────────────
-  // numberedList checks space per item (fine to split the list itself
-  // across pages), so the heading only needs the FIRST item reserved
-  // alongside it to avoid landing alone with nothing following.
-  const firstStepLines = doc.splitTextToSize(pdfSafe(kb.stepSequence[0]), contentW - 36);
-  sectionTitle('Step-by-step sequence', LM_PDF_BRAND.peach, Math.max(firstStepLines.length * 14, 22) + 7);
-  numberedList(kb.stepSequence);
 
   // ── Closing promo page ───────────────────────────────────
   doc.addPage();
@@ -1465,7 +1490,7 @@ function generateReportPdf(kb, tierResult, answers) {
     if (p === promoPageNum) continue;
     displayIndex++;
     doc.setPage(p);
-    drawFooter(displayIndex, pageCount - 1);
+    drawFooter(displayIndex, pageCount - 1, pageFootnotes[p]);
   }
 
   const fileSlug = (kb.displayName || 'launch-map').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');

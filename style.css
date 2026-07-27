@@ -921,21 +921,6 @@ tbody tr:hover { background: var(--cream); }
   content: ''; position: absolute; left: 2px; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-lilac);
 }
 
-/* Step-by-step sequence: numbered circles, rotating through the four brand hues */
-.lm-steps-list { list-style: none; padding: 0; margin: 14px 0; counter-reset: lmstep; }
-.lm-steps-list li {
-  position: relative; padding-left: 46px; margin-bottom: 16px; font-size: 15px; line-height: 1.5; min-height: 30px; display: flex; align-items: center;
-  counter-increment: lmstep;
-}
-.lm-steps-list li::before {
-  content: counter(lmstep); position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%;
-  color: var(--white); font-family: var(--font-logo); font-weight: 700; font-size: 14px; line-height: 32px; text-align: center;
-}
-.lm-steps-list li:nth-child(4n+1)::before { background: var(--accent-butter); }
-.lm-steps-list li:nth-child(4n+2)::before { background: var(--accent-peach); }
-.lm-steps-list li:nth-child(4n+3)::before { background: var(--accent-mint); }
-.lm-steps-list li:nth-child(4n)::before   { background: var(--accent-lilac); }
-
 .lm-personalized { font-size: 14px; background: var(--lilac); border-radius: 10px; padding: 12px 16px; margin: 14px 0; }
 .lm-personalized.lm-blocked { background: var(--peach); margin-top: -8px; margin-bottom: 14px; border-radius: 0 0 10px 10px; font-weight: 600; }
 .lm-personalized.lm-open { background: var(--mint); margin-top: -8px; margin-bottom: 14px; border-radius: 0 0 10px 10px; }

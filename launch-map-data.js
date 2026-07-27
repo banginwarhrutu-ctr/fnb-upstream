@@ -208,9 +208,9 @@ const CLEAN_LABEL_RULES = [
    ============================================================ */
 
 const STANDARD_LABEL_MUSTHAVE = [
-  "Name of food, on the front of pack",
+  "Name of the product on the front of the pack.",
   "List of ingredients in descending order by weight, with class titles used correctly (e.g. sugar for sucrose, milk solids for milk-derived ingredients)",
-  "Nutritional information per 100g/100ml and per serving: energy, protein, carbohydrate and total sugars and added sugars, total fat and saturated fat and trans fat, sodium",
+  "Nutritional information per 100 g/100 ml and per serving: Energy, protein, carbohydrates, total sugars, added sugars, total fat, saturated fat, trans fat, and sodium.",
   "Veg (green circle) or non-veg (brown triangle) symbol on the principal display panel, near the product name",
   "FSSAI logo and 14-digit license number",
   "Name and complete address of the brand owner, preceded by \"Manufactured by\" / \"Marketed by\" as applicable",
@@ -258,7 +258,7 @@ function makeCategory(cfg) {
       stateFee: "₹5,000/year",
       centralFee: "₹7,500/year",
       registrationFee: "₹100/year",
-      annualFeeNote: "Since 1 April 2026, FSSAI licenses have perpetual validity, so there is no periodic renewal application. The annual fee is still payable every year; missing a payment auto-suspends the license."
+      annualFeeNote: "Since 1 April 2026, FSSAI licenses don't expire, so there's no renewal to file. You still pay the annual fee — miss it and the license is suspended automatically."
     }, cfg.licenseLogicExtra || {}),
     mandatoryTests: cfg.mandatoryTests,
     labelRequirements: {
@@ -386,7 +386,7 @@ const LAUNCH_MAP_KB = {
       stateFee: "₹5,000/year",
       centralFee: "₹7,500/year",
       registrationFee: "₹100/year",
-      annualFeeNote: "Since 1 April 2026, FSSAI licenses have perpetual validity, so there is no periodic renewal application. The annual fee is still payable every year; missing a payment auto-suspends the license."
+      annualFeeNote: "Since 1 April 2026, FSSAI licenses don't expire, so there's no renewal to file. You still pay the annual fee — miss it and the license is suspended automatically."
     },
 
     mandatoryTests: [
@@ -402,9 +402,9 @@ const LAUNCH_MAP_KB = {
       // confirmed against FSS (Labelling and Display) Regulations, 2020,
       // regulation 5 and Schedule II.
       mustHave: [
-        "Name of food, on the front of pack",
+        "Name of the product on the front of the pack.",
         "List of ingredients in descending order by weight, with class titles used correctly (e.g. sugar for sucrose, milk solids for milk-derived ingredients)",
-        "Nutritional information per 100g/100ml and per serving: energy, protein, carbohydrate and total sugars and added sugars, total fat and saturated fat and trans fat, sodium",
+        "Nutritional information per 100 g/100 ml and per serving: Energy, protein, carbohydrates, total sugars, added sugars, total fat, saturated fat, trans fat, and sodium.",
         "Veg (green circle) or non-veg (brown triangle) symbol on the principal display panel, near the product name",
         "FSSAI logo and 14-digit license number",
         "Name and complete address of the brand owner, preceded by \"Manufactured by\" / \"Marketed by\" as applicable",
@@ -473,7 +473,7 @@ const LAUNCH_MAP_KB = {
   "snacks-extruded": makeCategory({
     displayName: "Snacks, extruded/fried (chips, namkeen, bhujia)",
     fssCategory: { code: "Category 15, Ready-to-eat savouries (cross-references Category 06 for cereal/legume-based extruded snacks). Confirmed under General Manufacturing in the FoSCoS schedule. Extruded-type products specifically fall within the official \"Breakfast Cereal\" standard at FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4.35, which explicitly covers extruded or co-extruded cereal/pulse/tuber-based products in sweet or savoury taste, alongside the dedicated Corn Flakes standard at Ch 2.4.8; namkeen/bhujia blends without a matching named standard fall back to general Category 15 treatment.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4.8 / 2.4.35" },
-    testsDisclaimer: "Where a product matches the official extruded-type breakfast cereal or corn flakes standard, moisture and acid-insoluble ash have fixed ceilings (moisture ≤10% for products with dehydrated fruit/nuts, ≤7.5% otherwise); general namkeen/bhujia without that specific product identity falls back to standard practice, not a named compositional standard.",
+    testsDisclaimer: "Moisture and acid-insoluble ash only have fixed ceilings if your product actually matches the official extruded breakfast cereal or corn flakes standard — moisture ≤10% if it has dried fruit or nuts in it, ≤7.5% otherwise. A general namkeen or bhujia that doesn't match that identity falls back to standard industry practice instead of a named legal limit.",
     ingredientTags: [
       { id: "potato-flakes", label: "Potato flakes / potato starch", group: "Bases", allergen: false },
       { id: "corn-grits", label: "Corn / maize grits", group: "Bases", allergen: false, note: "Corn Flakes standard (Ch 2.4.8) applies if presented as crisp toasted flakes: moisture ≤7.5%, total ash excluding salt ≤1.0%" },
@@ -540,7 +540,7 @@ const LAUNCH_MAP_KB = {
   "beverages-non-alcoholic": makeCategory({
     displayName: "Beverages, non-alcoholic (juices, functional drinks, kombucha)",
     fssCategory: { code: "Category 14, Beverages excluding dairy products. Confirmed under General Manufacturing in the FoSCoS schedule. Standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.10.6, which sets separate standards for Carbonated Water, Caffeinated Beverages (carbonated and non-carbonated), and Non-carbonated Water Based Beverages, each with a distinct permitted-ingredient list and, for caffeinated drinks, exact caffeine bands and mandatory warning text.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.10.6" },
-    testsDisclaimer: "Caffeinated beverages carry a hard compositional band (145-300mg caffeine/litre) and named optional-ingredient caps (taurine, D-glucurono-γ-lactone, inositol, pantothenic acid) directly in Ch 2.10.6, not just a labelling rule; test types below reflect that.",
+    testsDisclaimer: "If your drink has caffeine, the law sets a hard range for how much — 145-300mg per litre — plus caps on specific optional ingredients like taurine, D-glucurono-γ-lactone, inositol, and pantothenic acid. These are compositional limits, not just labelling rules, which is why they show up as tests below.",
     ingredientTags: [
       { id: "packaged-water-base", label: "Packaged drinking water / mineral water base", group: "Base", allergen: false, note: "Must independently conform to the Packaged Drinking Water or Mineral Water standard in Ch 2.10.7/2.10.8, not just be treated as a generic ingredient" },
       { id: "fruit-juice", label: "Fruit juice / pulp / concentrate", group: "Base", allergen: false },
@@ -620,7 +620,7 @@ const LAUNCH_MAP_KB = {
   "dry-mixes-premixes": makeCategory({
     displayName: "Dry mixes / premixes (dosa/idli mix, instant mixes)",
     fssCategory: { code: "Category 06, Cereals and cereal products (excludes bakery wares, category 07). Confirmed under General Manufacturing in the FoSCoS schedule. Several specific formats in this category carry their own dedicated standard under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4: Pasta Products (2.4.10), Instant Noodles (2.4.10), Corn Flakes (2.4.8), Custard Powder (2.4.9), Malted/Malt-Based Foods (2.4.11), and Breakfast Cereal (2.4.35). Plain dosa/idli/curry-mix blends without one of these specific product identities fall back to general Cereals and Cereal Products treatment rather than a dedicated named standard.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4" },
-    testsDisclaimer: "Instant noodles have separate fried vs non-fried moisture and acid-value limits under Ch 2.4.10, and malted/malt-based foods carry a full microbiological panel (coliform, Salmonella, Shigella, E. coli, Vibrio) not required for a plain flour blend. Test types below reflect the specific declared product identity.",
+    testsDisclaimer: "Instant noodles have different moisture and acid-value limits depending on whether they're fried or not. Malted or malt-based mixes need a full microbiological panel — coliform, Salmonella, Shigella, E. coli, Vibrio — that a plain flour blend doesn't. Which tests apply depends on exactly what you're calling the product.",
     ingredientTags: [
       { id: "rice-flour-rava", label: "Rice flour / idli rava", group: "Bases", allergen: false },
       { id: "urad-dal-flour", label: "Urad dal flour", group: "Bases", allergen: false },
@@ -690,7 +690,7 @@ const LAUNCH_MAP_KB = {
     licenseLogicExtra: { millingAlwaysState: true },
     fssCategory: { code: "Category 06, Cereals and cereal products. Confirmed under General Manufacturing in the FoSCoS schedule, with a specific carve-out for Grains/Cereals/Pulses Milling units: they stay on State License across the full 1.5cr-50cr turnover band and are not pushed to Central License by turnover alone (only by export/e-commerce/multi-state triggers); non-milling units in this category follow the standard bands. Each flour type is individually standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4 (Cereals and Cereal Products), with its own moisture/gluten/protein/ash/particle-size table, not one blanket flour standard.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.4" },
     licenseDisclaimerExtra: " Milling units specifically: the FoSCoS schedule carves out an exception where turnover alone never forces Central License, only the export/e-commerce/multi-state triggers do; confirm this applies to your specific operation before assuming State License at high turnover.",
-    testsDisclaimer: "Ch 2.4 fixes an exact gluten-content floor per flour type (atta ≥6.0%, maida ≥7.5%, durum semolina uses a separate protein-minimum test instead), not a single shared threshold, plus a uniform Uric Acid ceiling of 100mg/kg across almost every cereal standard as a grain-quality marker. Test types below reflect that.",
+    testsDisclaimer: "There's no single gluten floor for flour — atta needs ≥6.0%, maida ≥7.5%, and durum semolina is tested on protein minimum instead. Separately, almost every cereal standard shares one grain-quality marker: a uric acid ceiling of 100mg/kg.",
     ingredientTags: [
       { id: "atta", label: "Whole wheat flour (atta)", group: "Wheat flours", allergen: true, allergenType: "gluten", note: "Ch 2.4.1 standard: moisture ≤14%, gluten ≥6.0%, granularity ≥98% through 500-micron sieve, uric acid ≤100mg/kg" },
       { id: "resultant-atta", label: "Resultant wheat flour (resultant atta)", group: "Wheat flours", allergen: true, allergenType: "gluten" },
@@ -754,7 +754,7 @@ const LAUNCH_MAP_KB = {
   "staples-spices": makeCategory({
     displayName: "Staples, spices & spice blends",
     fssCategory: { code: "Category 12, Salts, spices, soups, sauces, salads and protein products. Confirmed under General Manufacturing in the FoSCoS schedule. Individually standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.9 (Salt, Spices, Condiments and Related Products), which sets a distinct compositional standard, with its own moisture, total ash, acid-insoluble ash, volatile oil, and extraneous-matter limits, for each of over 40 individual spices, not one blanket spice standard.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.9" },
-    testsDisclaimer: "Spices are a specific, active FSSAI enforcement focus for adulteration, lead chromate and metanil yellow in turmeric and chili, sudan dyes and brick powder in chili powder, papaya seed in black pepper, exhausted/spent spice re-use; test types reflect that heightened scrutiny. Turmeric's lead chromate test specifically is an explicit compositional requirement in Chapter 2.9, not just an enforcement habit.",
+    testsDisclaimer: "Spices get heavier scrutiny than most categories because adulteration is common and actively policed: lead chromate and metanil yellow dye in turmeric and chilli, Sudan dyes and brick powder in chilli powder, papaya seed in black pepper, and spent spice being resold. Turmeric's lead chromate test in particular isn't just enforcement habit — it's a written compositional requirement.",
     ingredientTags: [
       { id: "turmeric", label: "Turmeric (whole/powder)", group: "Whole/ground spices", allergen: false, note: "Ch 2.9 standard requires \"Test for lead chromate: Negative\" explicitly, plus curcumin content and volatile oil minimums" },
       { id: "red-chili", label: "Red chili / capsicum (whole/powder)", group: "Whole/ground spices", allergen: false },
@@ -837,7 +837,7 @@ const LAUNCH_MAP_KB = {
   "spreads-nut-butters": makeCategory({
     displayName: "Spreads / nut butters",
     fssCategory: { code: "Not explicitly named as its own Kind of Business line in the FoSCoS Kind of Business Eligibility schedule; likely Category 12 (protein products) or Category 04 (nuts and seeds) depending on formulation. Confirm the exact classification against the Food Product Standards Regulations, 2011 directly before filing. The raw nut kernels themselves are individually standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.47, each with its own moisture/defect/rancidity limits, though the ground spread/butter format itself has no dedicated named standard, so the input-kernel quality bar is the enforceable compositional floor.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.47" },
-    testsDisclaimer: "Ch 2.3.47 sets exact acidity-of-extracted-fat ceilings per nut (almond ≤1.25%, cashew ≤1.25% whole/≤2.0% pieces, walnut ≤1.25%) as the primary rancidity marker, plus per-nut oil-content floors (almond ≥45.0%). The finished spread/butter format itself is not separately standardized, so these input-kernel figures are the closest enforceable compositional bar.",
+    testsDisclaimer: "The two things that decide pass or fail are rancidity (acidity of the extracted fat) and oil content. Each nut has its own ceiling for rancidity — almond and walnut ≤1.25%, cashew ≤1.25% whole or ≤2.0% in pieces — plus its own oil-content floor, like almond's ≥45.0%. There's no separate standard for the finished spread or butter itself, so these raw-kernel figures are the actual bar you're tested against.",
     ingredientTags: [
       { id: "peanuts", label: "Peanuts / groundnut kernel", group: "Nuts & seeds", allergen: true, allergenType: "peanut", note: "Ch 2.3.47(1) standard: moisture ≤7.0%, damaged kernel (including slightly damaged) ≤5.0% by weight" },
       { id: "almonds", label: "Almonds", group: "Nuts & seeds", allergen: true, allergenType: "tree nuts", note: "Ch 2.3.47(6) standard: moisture ≤6.0%, oil content ≥45.0%, acidity of extracted oil ≤1.25% as oleic acid, plus 12 separate defect-category limits (rancid/rotten, chipped, doubles/twins, etc.)" },
@@ -886,7 +886,7 @@ const LAUNCH_MAP_KB = {
   "sweeteners": makeCategory({
     displayName: "Sweeteners",
     fssCategory: { code: "Category 11, Sweeteners, including honey. Confirmed under General Manufacturing in the FoSCoS schedule. Individually standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.8 (Sweetening Agents, Including Honey), which sets a distinct compositional standard for each type of sugar, jaggery, and non-nutritive sweetener, not one blanket sweetener standard.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.8" },
-    testsDisclaimer: "Ch 2.8 sets exact chemical-purity specs, molecular formula, purity percent, contaminant ppm limits, for each individual non-nutritive sweetener (saccharin, aspartame, acesulfame-K, sucralose), and a 2023 amendment added a minimum reducing-sugar requirement to the cane jaggery standard specifically. Test types below reflect that.",
+    testsDisclaimer: "Each non-nutritive sweetener — saccharin, aspartame, acesulfame-K, sucralose — has its own exact purity spec: molecular formula, purity percentage, and contaminant limits in parts per million. Cane jaggery specifically also has to meet a minimum reducing-sugar requirement, added in 2023.",
     ingredientTags: [
       { id: "sugar", label: "Plantation white sugar", group: "Traditional/cane-based", allergen: false, sugarEquivalent: true },
       { id: "refined-sugar", label: "Refined sugar", group: "Traditional/cane-based", allergen: false, sugarEquivalent: true },
@@ -953,7 +953,7 @@ const LAUNCH_MAP_KB = {
   "rte-rtc": makeCategory({
     displayName: "RTE/RTC (ready-to-eat/ready-to-cook meals)",
     fssCategory: { code: "Category 15/16.0, Ready-to-eat savouries and prepared foods. Confirmed under General Manufacturing in the FoSCoS schedule. Thermally processed curry-style RTE meals are individually named under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.4 (Thermally Processed Curried Vegetables / Ready to Eat Vegetables) for shelf-stable retort formats and Chapter 2.3.39 (Frozen Curried Vegetables / Ready-to-Eat Vegetables) for the frozen equivalent, each with its own container-fill and freezing-temperature requirement rather than a single generic RTE rule. Non-vegetarian RTE (chicken curry, egg curry, mutton, keema) falls under the separate Chapter 2.5 (Meat and Meat Products) and Chapter 2.5.3 (Egg and Egg Products), which set species-specific moisture/protein/fat bands for the meat or egg component itself, distinct from the curry-base standard.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.4 / 2.3.39 / 2.5" },
-    testsDisclaimer: "Ch 2.3.39 sets an explicit freezing completion threshold (product must reach -18°C at the thermal centre after stabilization, not just \"frozen\" by label) for frozen RTC formats, and commercial sterility testing is essential for shelf-stable retort/thermally processed RTE products specifically. Non-veg formats add Ch 2.5's own moisture/protein/fat compositional bands for the meat or egg component.",
+    testsDisclaimer: "A frozen RTC product actually has to reach -18°C at its thermal centre after stabilization — calling it \"frozen\" on the label isn't enough on its own. A shelf-stable, retort-processed RTE product needs commercial sterility testing instead. And if it's non-veg, the meat or egg component adds its own moisture/protein/fat limits on top.",
     ingredientTags: [
       { id: "chicken", label: "Chicken / poultry meat", group: "Proteins, meat & egg", allergen: false, animalDerived: true, note: "Ch 2.5.2(11) standard: boneless chicken must show moisture 60-74.86%, protein 19.50-23.20%, fat 3.50-18%; requires the brown non-veg triangle symbol on the label, not the green circle" },
       { id: "mutton", label: "Mutton / sheep meat", group: "Proteins, meat & egg", allergen: false, animalDerived: true, note: "Ch 2.5.2(10) standard: boneless mutton must show moisture 68-72%, protein 20-22%, fat 4-10%" },
@@ -1019,7 +1019,7 @@ const LAUNCH_MAP_KB = {
   "dairy-adjacent": makeCategory({
     displayName: "Dairy-adjacent (plant-based alternatives, paneer-adjacent)",
     fssCategory: { code: "Genuinely unsettled from the FoSCoS Kind of Business Eligibility schedule alone: plant-based dairy alternatives may fall under Category 14 (Beverages) in liquid form, or need a distinct dairy-analogue classification under the Food Product Standards Regulations, 2011. Confirm the exact Kind of Business and FSS Appendix code directly before filing; the schedule's Dairy Units fee row happens to match General Manufacturing's flat fees (Rs.100/5,000/7,500) regardless, so the amounts are the same either way, but the classification itself still needs checking. Coconut-based dairy analogues specifically are the one sub-segment with a real dedicated standard: FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.51 (Coconut Milk), 2.3.52 (Coconut Cream), and 2.3.63 (Coconut Milk Powder), each with hard fat-content floors by style. Soy, almond, oat, and cashew-based analogues have no equivalent named compositional standard yet and are treated as proprietary/novel food formulations, not standardized products, an important gap to flag rather than gloss over.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.51-2.3.52, 2.3.63" },
-    testsDisclaimer: "Coconut milk/cream products have hard, style-specific fat-content floors under Ch 2.3.51/2.3.52 (light coconut milk ≥5.0% fat, coconut milk ≥10.0%, coconut cream ≥20.0%, coconut cream concentrate ≥29.0%); mislabelling a lower-fat style as a richer one is a compositional violation. Soy/almond/oat/cashew analogues have no equivalent named FSSAI standard, so test types for those reflect standard industry practice, not a mandated panel.",
+    testsDisclaimer: "Coconut milk and cream have their own fat-content floors by style — light coconut milk ≥5.0%, coconut milk ≥10.0%, coconut cream ≥20.0%, coconut cream concentrate ≥29.0% — and calling a lower-fat style by a richer name is a real compositional violation, not just marketing. Soy, almond, oat, and cashew analogues have no matching FSSAI standard, so their tests follow standard industry practice instead of a mandated panel.",
     ingredientTags: [
       { id: "soy-milk", label: "Soy milk base", group: "Plant bases (no dedicated FSSAI standard)", allergen: true, allergenType: "soy" },
       { id: "almond-milk", label: "Almond milk base", group: "Plant bases (no dedicated FSSAI standard)", allergen: true, allergenType: "tree nuts" },
@@ -1080,7 +1080,7 @@ const LAUNCH_MAP_KB = {
     // i.e. Central License regardless of revenue.
     licenseLogicExtra: { proprietaryFoodRisk: true },
     fssCategory: { code: "Category 12, Salts, spices, soups, sauces, salads and protein products. Confirmed under General Manufacturing in the FoSCoS schedule. Plant-derived protein ingredients used in bars are individually standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011: Vegetable Protein Products at Chapter 2.3.59 (protein ≥40% floor), Soy Protein Products at Chapter 2.4.20 (three sub-grades: flour/concentrate/isolate, each with its own protein band), and Textured Soy Protein at Chapter 2.4.27 (protein ≥50%). The finished bar format itself has no dedicated standard, so these input-ingredient floors are the enforceable compositional bar for the protein claim.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.59 / 2.4.20 / 2.4.27" },
-    testsDisclaimer: "Ch 2.4.20 splits soy protein into three legally distinct grades by protein floor (Soy Protein Flour 50-65%, Concentrate 65-90%, Isolate >90%), so a bar's protein-source ingredient must actually match the grade named on the label, not just clear the finished-bar protein claim threshold.",
+    testsDisclaimer: "Soy protein comes in three legally distinct grades based on protein content — flour (50-65%), concentrate (65-90%), and isolate (>90%). Whichever one you name on the label has to actually match what's in the bar; clearing the finished-bar protein-claim threshold on its own isn't enough.",
     ingredientTags: [
       { id: "whey-protein", label: "Whey protein concentrate / isolate", group: "Protein sources", allergen: true, allergenType: "milk" },
       { id: "pea-protein", label: "Pea protein isolate", group: "Protein sources", allergen: false, note: "Falls under the Vegetable Protein Products standard (Ch 2.3.59): protein ≥40% on dry weight basis, total ash ≤10%" },
@@ -1129,7 +1129,7 @@ const LAUNCH_MAP_KB = {
   "pickles-chutneys": makeCategory({
     displayName: "Pickles / chutneys / relishes",
     fssCategory: { code: "Category 04, Fruits and vegetables (including mushrooms and fungi, roots and tubers, fresh pulses and legumes, aloe vera), seaweeds, nuts and seeds. Confirmed under General Manufacturing in the FoSCoS schedule. Pickles, chutneys, and mango chutney each carry their own dedicated compositional standard under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3 (Fruit & Vegetable Products), regulations 2.3.41 through 2.3.43, with distinct minimums for drained weight, total soluble solids, fruit/vegetable content, pH, and packing-medium-specific salt or acid floors.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.41-2.3.43" },
-    testsDisclaimer: "Ch 2.3.43 sets a hard pH ceiling of 4.6 for chutneys (the standard microbial-safety cutoff separating high-acid from low-acid foods) and explicit minimum salt/acid floors that differ by packing medium (brine ≥12% NaCl, citrus juice ≥1.2% citric acid, vinegar ≥2.0% acetic acid). It also explicitly bans copper, mineral acid, alum, and synthetic colours in pickles. Test types below reflect these exact figures.",
+    testsDisclaimer: "Chutneys have a hard pH ceiling of 4.6 — the standard cutoff between high-acid and low-acid foods for microbial safety. The minimum salt or acid level you need depends on what you're packed in: brine needs ≥12% salt, citrus juice ≥1.2% citric acid, vinegar ≥2.0% acetic acid. Pickles specifically can't use copper, mineral acid, alum, or synthetic colours at all.",
     ingredientTags: [
       { id: "mango", label: "Mango", group: "Produce", allergen: false, note: "Mango Chutney has its own standard (Ch 2.3.42): total soluble solids ≥50%, fruit content ≥40%, pH ≤4.6" },
       { id: "lime-lemon", label: "Lime / lemon", group: "Produce", allergen: false },
@@ -1307,7 +1307,7 @@ const LAUNCH_MAP_KB = {
   "confectionery-chocolate": makeCategory({
     displayName: "Confectionery / chocolate",
     fssCategory: { code: "Category 05, Confectionery. Confirmed under General Manufacturing in the FoSCoS schedule. The raw cocoa bean input is standardized under FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.54, and adjacent confectionery formats (candied/crystallised/glazed fruit, fruit bar/toffee) have their own dedicated standards under Chapter 2.3.19 and 2.3.26. Finished chocolate itself (cocoa-solids percentage, tempering grade) is not separately compositionally standardized in this chapter, so cocoa-bean input quality and the general confectionery labelling/additive rules are the enforceable bar.", standard: "FSS (Food Product Standards and Food Additives) Regulations, 2011, Chapter 2.3.19 / 2.3.26 / 2.3.54" },
-    testsDisclaimer: "Ch 2.3.54 sets exact cocoa-bean defect-count ceilings (moldy beans ≤4%, slaty beans ≤8%, insect-damaged ≤2%, germinated/flat ≤4%, all by count) as the input-quality bar for any chocolate product; the finished chocolate itself has no separate FSSAI cocoa-percentage standard.",
+    testsDisclaimer: "The quality bar for chocolate is actually set on the input, not the finished bar: cocoa beans are capped by defect count — moldy ≤4%, slaty ≤8%, insect-damaged ≤2%, germinated or flat ≤4%. There's no separate FSSAI standard for cocoa percentage in the finished chocolate itself.",
     ingredientTags: [
       { id: "cocoa-beans", label: "Cocoa beans (raw input)", group: "Chocolate base", allergen: false, note: "Ch 2.3.54 standard: moisture ≤8%, moldy beans ≤4% by count, slaty beans ≤8%, insect-damaged ≤2%, germinated/flat beans ≤4%" },
       { id: "cocoa-solids", label: "Cocoa solids / mass", group: "Chocolate base", allergen: false },
