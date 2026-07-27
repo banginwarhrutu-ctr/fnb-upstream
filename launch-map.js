@@ -1,8 +1,8 @@
 /* ============================================================
-   LAUNCH MAP - WIZARD LOGIC (PROTOTYPE)
+   LAUNCH MAP - WIZARD LOGIC
    Deterministic lookup only, no LLM, no free text parsing.
-   Client-side for this prototype so we can see output fast;
-   the real build moves determineLicenseTier()/buildReport() into
+   Client-side for now, for speed of iteration; a later pass moves
+   determineLicenseTier()/buildReport() into
    /api/launch-map-summarize + /api/launch-map-report per the spec,
    so the KB and pricing logic aren't sitting in view-source.
    ============================================================ */
@@ -820,7 +820,7 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     setColor('setTextColor', LM_PDF_BRAND.muted);
-    doc.text('firstbatch.in  /  Launch Map is a prototype tool, not a substitute for legal counsel', margin, pageH - 27);
+    doc.text('firstbatch.in  /  Launch Map is informational, not a substitute for legal counsel', margin, pageH - 27);
     doc.text(`${pageNum} / ${pageCount}`, pageW - margin, pageH - 27, { align: 'right' });
   }
 
@@ -1189,7 +1189,7 @@ function handleWizardSubmit(e) {
   renderSummary(kb, tierResult, answers);
 }
 
-/* Email gate. Prototype, no real submission yet. */
+/* Email gate. Client-side only for now, no real submission yet. */
 function handleEmailGateSubmit(e) {
   e.preventDefault();
   const email = $('#lm-email').value.trim();
@@ -1201,7 +1201,7 @@ function handleEmailGateSubmit(e) {
   $('#lm-email-error').classList.remove('show');
 
   // Real build: POST to /api/launch-map-report here (Airtable write + PDF + Resend).
-  // Prototype just renders the same KB data as the "full report."
+  // For now this just renders the KB data directly as the full report.
   const { kb, tierResult, answers } = window._lmLastResult;
   renderFullReport(kb, tierResult, answers);
   $('#lm-email-gate').style.display = 'none';

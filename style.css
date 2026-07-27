@@ -623,7 +623,7 @@ tbody tr:hover { background: var(--cream); }
   .hero-art svg { max-width: 300px; }
 }
 
-/* ── LAUNCH MAP (prototype) ───────────────────────────────────── */
+/* ── LAUNCH MAP ───────────────────────────────────────────────── */
 .wrap-narrow { max-width: 820px; }
 .lm-page-bg {
   background:
