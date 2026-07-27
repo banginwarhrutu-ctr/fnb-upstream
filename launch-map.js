@@ -156,6 +156,10 @@ function renderActivityChips() {
       selectedBusinessActivity = opt.id;
       grid.querySelectorAll('.lm-category-card').forEach(c => c.classList.toggle('selected', c.dataset.activity === opt.id));
       $('#lm-activity-error').classList.remove('show');
+      // Only one answer is possible here, so there's nothing to wait on
+      // Next for; auto-advance once the tick animation has had a beat to
+      // register the choice.
+      setTimeout(() => { if (currentStep === 'activity') handleNextClick(); }, 320);
     });
     grid.appendChild(card);
   });
@@ -234,6 +238,15 @@ function validateStep(key) {
       alert('Pick a category to continue.');
       return false;
     }
+  }
+  if (key === '3') {
+    const err = $('#lm-process-error');
+    if (!document.querySelector('input[name="process"]:checked')) {
+      err.textContent = 'Pick how it\'s made or stored to continue.';
+      err.classList.add('show');
+      return false;
+    }
+    err.classList.remove('show');
   }
   if (key === 'activity') {
     const err = $('#lm-activity-error');
@@ -763,7 +776,6 @@ function renderFullReport(kb, tierResult, answers) {
       <button class="btn btn-ghost" id="lm-download-pdf" type="button">Download PDF</button>
       <button type="button" class="btn btn-ghost lm-start-over" id="lm-start-over-bottom">Start over</button>
     </div>
-    <p class="lm-note">Generated in your browser. The v1 build may move this server-side per the spec, but the content and branding stay the same.</p>
   `;
   el.style.display = 'block';
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -802,13 +814,14 @@ function resetLaunchMapWizard() {
   renderCategoryCards();
   renderActivityChips();
   $('#lm-ingredients-wrap').innerHTML = '';
-  $('#lm-process').value = 'ambient';
+  document.querySelectorAll('input[name="process"]').forEach(r => { r.checked = false; });
   $('#lm-turnover').value = 'under-1.5cr';
   document.querySelectorAll('input[name="channels"]').forEach(c => { c.checked = false; });
   $('#lm-state').value = '';
   $('#lm-email').value = '';
   $('#lm-email-error').classList.remove('show');
   $('#lm-report-choice-error').classList.remove('show');
+  $('#lm-process-error').classList.remove('show');
   $('#lm-activity-error').classList.remove('show');
   $('#lm-channels-error').classList.remove('show');
 
@@ -1280,7 +1293,7 @@ function handleWizardSubmit(e) {
     reportSections: selectedReportSections.slice(),
     businessActivity: selectedBusinessActivity,
     ingredients: Array.from(document.querySelectorAll('input[name="ingredients"]:checked')).map(i => i.value),
-    process: $('#lm-process').value,
+    process: document.querySelector('input[name="process"]:checked').value,
     turnover: $('#lm-turnover').value,
     salesChannels: Array.from(document.querySelectorAll('input[name="channels"]:checked')).map(i => i.value),
     state: $('#lm-state').value
@@ -1347,6 +1360,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // not just whatever was on the page when this listener was attached.
   $('#lm-ingredients-wrap').addEventListener('change', (e) => {
     if (e.target.name === 'ingredients') updateIngredientGroupCounts();
+  });
+
+  // Process is single-select too: only one answer is possible, so advance
+  // as soon as it's picked instead of making them also click Next.
+  document.querySelectorAll('input[name="process"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      $('#lm-process-error').classList.remove('show');
+      setTimeout(() => { if (currentStep === '3') handleNextClick(); }, 220);
+    });
+  });
+
+  // Same idea for turnover: one dropdown, one answer, no reason to also
+  // require a Next click once a value's been chosen.
+  $('#lm-turnover').addEventListener('change', () => {
+    setTimeout(() => { if (currentStep === '4') handleNextClick(); }, 220);
   });
 
   $('#lm-back-btn').classList.add('lm-hidden');

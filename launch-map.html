@@ -99,15 +99,16 @@
               <h2>Process</h2>
             </div>
             <div class="field">
-              <label for="lm-process">How is it made / stored?</label>
-              <select class="input-field" id="lm-process">
-                <option value="ambient">Ambient / ready-to-eat</option>
-                <option value="refrigerated">Refrigerated</option>
-                <option value="frozen">Frozen</option>
-                <option value="retort">Retort / thermally processed</option>
-                <option value="fermented">Fermented</option>
-                <option value="dried">Dried</option>
-              </select>
+              <label>How is it made / stored?</label>
+              <div class="chip-grid">
+                <label class="chip-check"><input type="radio" name="process" value="ambient"><span>Ambient / ready-to-eat</span></label>
+                <label class="chip-check"><input type="radio" name="process" value="refrigerated"><span>Refrigerated</span></label>
+                <label class="chip-check"><input type="radio" name="process" value="frozen"><span>Frozen</span></label>
+                <label class="chip-check"><input type="radio" name="process" value="retort"><span>Retort / thermally processed</span></label>
+                <label class="chip-check"><input type="radio" name="process" value="fermented"><span>Fermented</span></label>
+                <label class="chip-check"><input type="radio" name="process" value="dried"><span>Dried</span></label>
+              </div>
+              <div class="field-error" id="lm-process-error"></div>
             </div>
           </div>
 
