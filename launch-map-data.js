@@ -37,6 +37,8 @@ const CLAIM_DEFINITIONS = {
 
   "sugar-free-no-added-sugar": {
     claim: "“Sugar-free” / “No added sugar” / “Unsweetened”",
+    group: "permitted",
+    short: "Sugar-free needs ≤0.5g sugars per 100g/100ml, no added sugar of any kind.",
     threshold: "Sugar-free: at most 0.5g sugars per 100g (solid) or 100ml (liquid). No added sugar requires all four to hold: no sugars of any type added (sucrose, glucose, honey, molasses, corn syrup, etc.), no ingredient added that itself contains sugar (jam, sweetened chocolate, sweetened fruit pieces), no ingredient added as a sugar substitute (e.g. concentrated fruit juice, dried fruit paste), and sugar content not increased by other means (e.g. enzymatic starch hydrolysis). If sugars are naturally present despite meeting all four, the label must carry the exact statement \"CONTAINS NATURALLY OCCURRING SUGARS.\"",
     whatCountsAsSugar: [
       "Sucrose (white, brown, refined, or raw sugar)",
@@ -64,6 +66,8 @@ const CLAIM_DEFINITIONS = {
 
   "low-sugar": {
     claim: "“Low sugar”",
+    group: "permitted",
+    short: "Low sugar needs ≤6g per 100g or ≤2.5g per 100ml.",
     threshold: "At most 6g total sugars per 100g (solid) or 2.5g per 100ml (liquid). Distinct from sugar-free above; a product can be low sugar without qualifying as sugar-free.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 10, as amended",
     verified: true
@@ -71,6 +75,8 @@ const CLAIM_DEFINITIONS = {
 
   "low-fat-fat-free": {
     claim: "“Low fat” / “Fat-free”",
+    group: "permitted",
+    short: "Low fat ≤3g/100g (or ≤1.5g/100ml); fat-free ≤0.5g/100g or 100ml.",
     threshold: "Low fat: at most 3g fat per 100g (solid) or 1.5g per 100ml (liquid). Fat-free: at most 0.5g per 100g or 100ml.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 2",
     verified: true
@@ -78,6 +84,8 @@ const CLAIM_DEFINITIONS = {
 
   "low-saturated-fat": {
     claim: "“Low saturated fat” / “Saturated-fat-free”",
+    group: "permitted",
+    short: "Low sat-fat ≤1.5g/100g; sat-fat-free ≤0.1g/100g or 100ml.",
     threshold: "Low: at most 1.5g saturated fat per 100g (solid) or 0.75g per 100ml (liquid), and saturated fat must provide no more than 10% of total energy. Free: saturated fatty acids at most 0.1g per 100g or 100ml.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 4",
     verified: true
@@ -85,6 +93,8 @@ const CLAIM_DEFINITIONS = {
 
   "gluten-free": {
     claim: "“Gluten-free”",
+    group: "conditional",
+    short: "Gluten-free needs an actual lab test showing ≤20ppm gluten, not a guess.",
     threshold: "At most 20 mg/kg (20ppm) gluten. Lab-substantiated, needs an actual test result rather than an ingredient-list inference. Cross-contamination counts, so a facility that also runs wheat-based products needs a batch-level test. If made in a plant that also processes gluten-containing products, the label must state \"Processed in a plant where gluten containing products are manufactured.\"",
     citation: "FSS (Labelling and Display) Regulations, 2020, regulation 2.5, and FSS (Advertising and Claims) Regulations, 2018, Schedule I Sl. No. 19",
     verified: true
@@ -92,6 +102,8 @@ const CLAIM_DEFINITIONS = {
 
   "no-preservatives": {
     claim: "“No preservatives” / “Preservative-free”",
+    group: "permitted",
+    short: "Needs zero preservatives added, or hidden in, any ingredient you use.",
     threshold: "All four must hold for the specific preservative claimed absent: not added to the food and not removed at time of manufacture, not contained in any ingredient used except where naturally present, is a substance otherwise legally permitted in that product under the Food Additives Regulations 2011, and has not been substituted with a different additive giving the food equivalent characteristics.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, regulation 6(3), as amended",
     verified: true
@@ -99,6 +111,8 @@ const CLAIM_DEFINITIONS = {
 
   "high-protein-source-of-protein": {
     claim: "“High/rich in protein” / “Source of protein”",
+    group: "permitted",
+    short: "Source of protein ≥6g/100g; high/rich in protein ≥12g/100g.",
     threshold: "Using the official adult RDA of 60g protein/day (men, sedentary): source of protein needs at least 6g protein per 100g (solid), 3g per 100ml (liquid), or 3g per 100kcal. High/rich in protein needs at least 12g per 100g, 6g per 100ml, or 6g per 100kcal. The female RDA (55g/day) gives slightly lower thresholds: 5.5g/11g per 100g.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 11, applied to the RDA published in FSSAI letter F.No. Stds/Nutra(DCGI)/FSSAI-2017, dated 7 January 2020",
     verified: true
@@ -106,6 +120,8 @@ const CLAIM_DEFINITIONS = {
 
   "high-fiber-source-of-fiber": {
     claim: "“High in fibre” / “Source of fibre”",
+    group: "permitted",
+    short: "Source of fibre ≥3g/100g; high/rich in fibre ≥6g/100g.",
     threshold: "Source: at least 3g per 100g, 1.5g per 100ml, or 1.5g per 100kcal. High/rich: at least 6g per 100g, 3g per 100ml, or 3g per 100kcal.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 14",
     verified: true
@@ -113,6 +129,8 @@ const CLAIM_DEFINITIONS = {
 
   "low-calorie-energy-free": {
     claim: "“Low calorie” / “Energy-free”",
+    group: "permitted",
+    short: "Low calorie ≤40kcal/100g (solid) or ≤20kcal/100ml (liquid).",
     threshold: "Low: at most 40 kcal per 100g (solid) or 20 kcal per 100ml (liquid). Energy-free is defined only for liquids, at most 4 kcal per 100ml; the Schedule gives no solid-food energy-free threshold, so this claim is not available for a solid bakery product.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, Schedule I, Sl. No. 1",
     verified: true
@@ -120,20 +138,26 @@ const CLAIM_DEFINITIONS = {
 
   "unsubstantiated-health-claim": {
     claim: "General “healthy” / immunity / functional-benefit claims",
+    group: "conditional",
+    short: "\"Healthy\"/immunity claims need real substantiation, not one ingredient.",
     threshold: "Health claims must include both the physiological role of the nutrient or substance and the product's actual composition relevant to that role. Foods cannot be described as \"healthy\" outright; being part of a healthy diet has to be shown against ICMR's dietary guidelines, not asserted from one ingredient. No fixed numeric threshold; judged on substantiation.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, regulations 7 and 8",
     verified: true
   },
 
   "brand-name-descriptor-disclaimer": {
-    claim: "Brand or trade names using “natural,” “fresh,” “pure,” “original,” “traditional,” “authentic,” “genuine,” or “real”",
+    claim: "Brand names using “natural,” “fresh,” “pure,” “original,” “traditional,” “authentic,” “genuine,” or “real”",
+    group: "conditional",
+    short: "Needs a 1.5mm disclaimer below the name if it could mislead about the product.",
     threshold: "If a brand or fancy name uses one of these words in a way that could mislead about the food's true nature, the label must carry the exact disclaimer \"*This is only a brand name or trade mark and does not represent its true nature,\" sized at least 1.5mm (pack under 100 sq cm) or 3mm (pack over 100 sq cm), directly below the name. If actually claimed rather than used as a brand flourish, each word carries its own bar: \"traditional\" requires the recipe to have existed materially unchanged for at least 30 years, \"original\" requires an unchanged traceable formulation, \"natural\" requires only minimal allowed processing with no chemical additions.",
     citation: "FSS (Advertising and Claims) Regulations, 2018, regulation 4(7), as amended, and Schedule V",
     verified: true
   },
 
   "hundred-percent-unqualified-claim": {
-    claim: "“100% natural” / “100% pure” / “100% fruit juice” / any bare “100%” claim",
+    claim: "Any bare “100%” claim (natural, pure, fruit juice, etc.)",
+    group: "banned",
+    short: "Banned outright by FSSAI advisory, regardless of formulation.",
     threshold: "FSSAI advisory dated 28 May 2025 directs FBOs to stop using the bare term \"100%\" on labels, packaging, and promotional content altogether, calling it inherently ambiguous and prone to misleading consumers, regardless of food category. This builds on an earlier June 2024 directive specifically against \"100% fruit juice\" on beverages containing added sugar or concentrate. Not a numeric threshold like the claims above; it is a do-not-use direction. Violations fall under the truthful/not-misleading/substantiated standard in the FSS (Advertising and Claims) Regulations, 2018, and can draw fines up to ₹10 lakh.",
     citation: "FSSAI advisory \"FBOs Advised Not to Use '100%' Claims\", dated 28 May 2025, issued under the FSS (Advertising and Claims) Regulations, 2018",
     verified: true

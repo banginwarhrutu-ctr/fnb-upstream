@@ -31,7 +31,7 @@
     <div class="mix-dots"><span></span><span></span><span></span><span></span></div>
     <div class="hero-kicker">Launch Map Tool</div>
     <h1>Before your first batch, get this sorted.</h1>
-    <p class="hero-sub">Your exact FSSAI license, lab tests, and label rules in 60 seconds.</p>
+    <p class="hero-sub">Know Your exact FSSAI license, lab tests, and label rules in 60 seconds.</p>
   </div>
 </header>
 
@@ -56,7 +56,7 @@
             <div class="form-section-head">
               <span class="form-step">01</span>
               <h2>What do you need?</h2>
-              <p class="form-section-sub">Pick one or more. We'll only put together what you actually choose.</p>
+              <p class="form-section-sub">Pick one or more</p>
             </div>
             <div class="lm-report-choice-grid" id="lm-report-choice-grid"></div>
             <div class="field-error" id="lm-report-choice-error"></div>
@@ -66,7 +66,7 @@
             <div class="form-section-head">
               <span class="form-step">02</span>
               <h2>What are you making?</h2>
-              <p class="form-section-sub">Pick a category. The rest of the wizard adapts to it.</p>
+              <p class="form-section-sub">Pick a category</p>
             </div>
             <div class="lm-category-grid" id="lm-category-grid"></div>
           </div>
@@ -115,8 +115,8 @@
           <div class="lm-step" data-step="activity">
             <div class="form-section-head">
               <span class="form-step">05</span>
-              <h2>Who makes it?</h2>
-              <p class="form-section-sub">This decides your Kind of Business on FoSCoS, which changes the licence you need.</p>
+              <h2>who manufactures it?</h2>
+              <p class="form-section-sub">This decides your Kind of Business(KOB) on FSSAI portal.</p>
             </div>
             <div class="lm-report-choice-grid" id="lm-activity-grid"></div>
             <div class="field-error" id="lm-activity-error"></div>
@@ -128,14 +128,15 @@
               <h2>Expected turnover</h2>
             </div>
             <div class="field">
-              <label for="lm-turnover">Annual turnover, realistically over the next year</label>
-              <select class="input-field" id="lm-turnover">
-                <option value="under-1.5cr">Under ₹1.5 crore</option>
-                <option value="1.5cr-10cr">₹1.5 crore – ₹10 crore</option>
-                <option value="10cr-50cr">₹10 crore – ₹50 crore</option>
-                <option value="above-50cr">Above ₹50 crore</option>
-              </select>
-              <p class="lm-note">Thresholds per the FSS (Licensing and Registration of Food Businesses) Amendment Regulations, 2026, in force since 1 April 2026: Registration up to ₹1.5cr, State ₹1.5cr–₹50cr, Central above ₹50cr.</p>
+              <label>Annual turnover, realistically over the next year</label>
+              <div class="chip-grid">
+                <label class="chip-check"><input type="radio" name="turnover" value="under-1.5cr"><span>Under ₹1.5 crore</span></label>
+                <label class="chip-check"><input type="radio" name="turnover" value="1.5cr-10cr"><span>₹1.5 crore – ₹10 crore</span></label>
+                <label class="chip-check"><input type="radio" name="turnover" value="10cr-50cr"><span>₹10 crore – ₹50 crore</span></label>
+                <label class="chip-check"><input type="radio" name="turnover" value="above-50cr"><span>Above ₹50 crore</span></label>
+              </div>
+              <div class="field-error" id="lm-turnover-error"></div>
+              <p class="lm-note">Under the FSSAI licensing amendment effective 1 April 2026, turnover up to ₹1.5cr requires only registration, ₹1.5–50cr a State license, and above ₹50cr a Central license.</p>
             </div>
           </div>
 
@@ -181,10 +182,26 @@
       <div class="lm-tier-badge lm-badge-good">Report generated</div>
       <p class="modal-sub" id="lm-gate-summary"></p>
       <form id="lm-email-gate-form" novalidate>
+        <div class="hp-wrap" aria-hidden="true"><label for="lm-website">Website</label><input id="lm-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
         <div class="field">
-          <label for="lm-email">Enter your email to access the report <span class="req-mark">*</span></label>
+          <label for="lm-name">Name <span class="req-mark">*</span></label>
+          <input class="input-field" id="lm-name" type="text" placeholder="Your name" required>
+          <div class="field-error" id="lm-name-error"></div>
+        </div>
+        <div class="field">
+          <label for="lm-email">Email <span class="req-mark">*</span></label>
           <input class="input-field" id="lm-email" type="email" placeholder="you@company.com" required>
           <div class="field-error" id="lm-email-error"></div>
+        </div>
+        <div class="field">
+          <label for="lm-whatsapp">WhatsApp number <span class="req-mark">*</span></label>
+          <input class="input-field" id="lm-whatsapp" type="tel" placeholder="98765 43210" required>
+          <div class="field-error" id="lm-whatsapp-error"></div>
+        </div>
+        <div class="field">
+          <label for="lm-linkedin">LinkedIn profile</label>
+          <input class="input-field" id="lm-linkedin" type="text" placeholder="linkedin.com/in/you (optional)">
+          <div class="field-error" id="lm-linkedin-error"></div>
         </div>
         <button type="submit" class="btn btn-primary btn-submit">Open my launch map</button>
         <p class="lm-disclaimer" id="lm-gate-disclaimer"></p>

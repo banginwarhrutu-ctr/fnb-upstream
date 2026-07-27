@@ -21,7 +21,7 @@ let selectedCategoryId = null;
    .lm-category-check chip styling and tick animation as the category
    grid, just multi-select instead of single-select. */
 const REPORT_SECTION_OPTIONS = [
-  { id: 'license', label: 'License tier', desc: 'Find the FSSAI licence that\'s right for your business.', icon: 'license', hue: 'lm-cat-peach', photo: 'img/report-choices/license.jpg' },
+  { id: 'license', label: 'License tier', desc: 'Find the FSSAI license that\'s right for your business.', icon: 'license', hue: 'lm-cat-peach', photo: 'img/report-choices/license.jpg' },
   { id: 'tests', label: 'Lab tests', desc: 'Understand the testing requirements for your product.', icon: 'tests', hue: 'lm-cat-mint' },
   { id: 'labels-clean', label: 'Labelling & Claims', desc: "Build compliant labels and make confident product claims.", icon: 'labels', hue: 'lm-cat-lilac', photo: 'img/report-choices/labels-clean.jpg' }
 ];
@@ -257,6 +257,15 @@ function validateStep(key) {
     }
     err.classList.remove('show');
   }
+  if (key === '4') {
+    const err = $('#lm-turnover-error');
+    if (!document.querySelector('input[name="turnover"]:checked')) {
+      err.textContent = 'Pick your expected turnover to continue.';
+      err.classList.add('show');
+      return false;
+    }
+    err.classList.remove('show');
+  }
   if (key === '5') {
     const checked = document.querySelectorAll('input[name="channels"]:checked').length;
     const err = $('#lm-channels-error');
@@ -434,23 +443,33 @@ function onCategoryChange() {
 }
 
 /* ── LICENSE TIER DECISION LOGIC ─────────────────────────────── */
+// reasons/caveats stay full-detail (accurate, citable); reasonsShort/
+// caveatsShort are one-line versions for the cheat-sheet summary and the
+// "[!]" warning list - built in parallel here rather than derived by
+// truncating the long text later, since a clean one-liner needs its own
+// wording, not a substring of the legal one.
 function determineLicenseTier(kb, answers) {
   const triggers = [];
+  const triggersShort = [];
 
   // Each trigger below is a Kind of Business that the official FoSCoS
   // eligibility schedule (01.04.2026) marks "No restriction on turnover
   // threshold", i.e. Central License applies no matter how small you are.
   if (answers.businessActivity === 'importing') {
     triggers.push('Importing finished food products. The Importer Kind of Business carries no turnover threshold on the FoSCoS eligibility schedule, so Central applies from the first consignment');
+    triggersShort.push('Importing');
   }
   if (answers.salesChannels.includes('export')) {
     triggers.push('Exporting. Trader/Merchant-Exporter carries no turnover threshold on the FoSCoS schedule');
+    triggersShort.push('Exporting');
   }
   if (answers.salesChannels.includes('d2c-online') || answers.salesChannels.includes('marketplaces')) {
     triggers.push('Selling via e-commerce (own website/app, or marketplaces like Amazon/Blinkit). E-Commerce is listed with no turnover threshold, so it applies regardless of revenue');
+    triggersShort.push('E-Commerce sales');
   }
   if (kb.licenseLogic.alwaysCentralTrigger) {
     triggers.push('This product category is on FSSAI’s fixed always-Central list');
+    triggersShort.push('Always-Central category');
   }
   // Proprietary Food is also a no-turnover-threshold Central row. We can't
   // assert it outright (it depends on the exact recipe), so it's flagged
@@ -461,20 +480,25 @@ function determineLicenseTier(kb, answers) {
 
   // Caveats don't change the tier, they ride along with whatever it is.
   const caveats = [];
+  const caveatsShort = [];
   if (kb.licenseLogic.proprietaryFoodRisk) {
     caveats.push('Watch this one: there is no FSS standard for a finished product in this category, so it is normally licensed as Proprietary Food. Proprietary Food sits on the FoSCoS schedule with no turnover threshold, which means Central License regardless of revenue, and the tier below may understate what you actually need. If you also market it as a health supplement, that is a separate always-Central Kind of Business again.');
+    caveatsShort.push('No FSS standard exists for this product — risk of Proprietary Food (Central, no threshold).');
   } else if (noStandardTags.length) {
     caveats.push(`Watch this one: ${noStandardTags.map(t => t.label).join(', ')} ${noStandardTags.length > 1 ? 'have' : 'has'} no standardised identity under the FSS regulations. Products without a standard are treated as Proprietary Food, and Proprietary Food sits on the FoSCoS schedule with no turnover threshold, meaning Central License regardless of revenue. Confirm your exact formulation against the standards before assuming the tier below.`);
+    caveatsShort.push(`${noStandardTags.map(t => t.label).join(', ')} — no standard, risk of Proprietary Food (Central, no threshold).`);
   }
   if (answers.businessActivity === 'contract-manufacturer') {
-    caveats.push('Using a contract manufacturer makes you a Relabeller on FoSCoS, "a food business operator who gets his product manufactured or packed from a third party manufacturer or processor". You still need your own licence, and separately your CM\'s licence has to already cover this product category, since their Kind of Business is what authorises the actual making.');
+    caveats.push('Using a contract manufacturer makes you a Relabeller on FoSCoS, "a food business operator who gets his product manufactured or packed from a third party manufacturer or processor". You still need your own license, and separately your CM\'s license has to already cover this product category, since their Kind of Business is what authorises the actual making.');
+    caveatsShort.push("You're a Relabeller — still need your own license; your CM's license must cover this category.");
   }
   if (answers.businessActivity === 'repacking') {
     caveats.push('Repacking bulk into retail packs is its own Kind of Business (Repacker) and is applied for under the Manufacturer group on FoSCoS, not as a trader.');
+    caveatsShort.push('Repacking = Repacker Kind of Business, filed under Manufacturer on FoSCoS, not as a trader.');
   }
 
   if (triggers.length > 0) {
-    return { tier: 'Central License', reasons: triggers, fee: kb.licenseLogic.centralFee, viaTrigger: true, caveats };
+    return { tier: 'Central License', reasons: triggers, reasonsShort: triggersShort, fee: kb.licenseLogic.centralFee, viaTrigger: true, caveats, caveatsShort };
   }
 
   // Milling units are their own row: the FoSCoS schedule grants them a
@@ -485,8 +509,9 @@ function determineLicenseTier(kb, answers) {
     return {
       tier: 'State License',
       reasons: ['Grains, cereals and pulses milling units are listed on the FoSCoS eligibility schedule as State License with no turnover limit, and are explicitly excluded from the Central row, so turnover doesn’t move this one'],
+      reasonsShort: ['Milling unit (always State)'],
       fee: kb.licenseLogic.stateFee,
-      caveats
+      caveats, caveatsShort
     };
   }
 
@@ -497,23 +522,28 @@ function determineLicenseTier(kb, answers) {
     return {
       tier: 'Registration',
       reasons: ['Turnover under ₹1.5 crore, and no Central-License trigger applies'],
+      reasonsShort: ['Turnover under ₹1.5cr'],
       fee: kb.licenseLogic.registrationFee,
       note: kb.licenseLogic.registrationRequiresPettyOperatorCheck
         ? 'Registration also requires meeting "petty food business operator" criteria in the Licensing Regulations, which turnover alone doesn\'t settle. The FoSCoS eligibility schedule itself sets tiers on turnover only, so confirm the petty-operator test separately before relying on Registration.'
         : null,
-      caveats
+      noteShort: kb.licenseLogic.registrationRequiresPettyOperatorCheck
+        ? 'Registration also needs the "petty food business operator" test — turnover alone doesn\'t settle it.'
+        : null,
+      caveats, caveatsShort
     };
   }
 
   if (answers.turnover === 'above-50cr') {
-    return { tier: 'Central License', reasons: ['Turnover above ₹50 crore'], fee: kb.licenseLogic.centralFee, viaTrigger: false, caveats };
+    return { tier: 'Central License', reasons: ['Turnover above ₹50 crore'], reasonsShort: ['Turnover above ₹50cr'], fee: kb.licenseLogic.centralFee, viaTrigger: false, caveats, caveatsShort };
   }
 
   return {
     tier: 'State License',
     reasons: ['Turnover between ₹1.5 crore and ₹50 crore, and no Central-License trigger applies'],
+    reasonsShort: ['Turnover ₹1.5cr–₹50cr'],
     fee: kb.licenseLogic.stateFee,
-    caveats
+    caveats, caveatsShort
   };
 }
 
@@ -538,30 +568,13 @@ function renderSummary(kb, tierResult, answers) {
 /* Claim detail renderer. Pulls from the shared glossary, not
    per-category text, so every category shows the same real
    thresholds instead of a re-written vague version each time. */
-function renderClaimDetail(def, colorIndex) {
-  if (!def) return '';
-  let extra = '';
-  if (def.whatCountsAsSugar) {
-    extra += `
-      <div class="lm-claim-sublist">
-        <div class="lm-mini-label">Counts as sugar for this claim</div>
-        <ul class="lm-nice-list lm-list-flag">${def.whatCountsAsSugar.map(x => `<li>${x}</li>`).join('')}</ul>
-      </div>
-      <div class="lm-claim-sublist">
-        <div class="lm-mini-label">Does NOT count as sugar for this claim</div>
-        <ul class="lm-nice-list lm-list-check">${def.doesNotCountAsSugar.map(x => `<li>${x}</li>`).join('')}</ul>
-      </div>`;
-  }
-  const noteBlock = def.verifiedNote ? `<p class="lm-note">${def.verifiedNote}</p>` : '';
-  const hues = ['lm-claim-butter', 'lm-claim-peach', 'lm-claim-mint', 'lm-claim-lilac'];
-  const hue = hues[(colorIndex || 0) % hues.length];
-  return `
-    <div class="lm-claim ${hue}">
-      <div class="lm-claim-name">${def.claim}</div>
-      <p class="lm-claim-threshold">${def.threshold}</p>
-      ${extra}
-      ${noteBlock}
-    </div>`;
+// Wraps any "..." required print text in a span that renders bold+caps
+// via CSS (not a JS case change - the underlying string keeps its
+// authored casing, so copy/paste and the PDF's plain-text rendering
+// aren't affected), so the exact wording a founder has to print stands
+// out from the surrounding description instead of reading as one line.
+function emphasizePrintText(str) {
+  return str.replace(/"([^"]+)"/g, '<span class="lm-print-text">"$1"</span>');
 }
 
 /* Personalized label/claims, built from the ingredients actually
@@ -586,20 +599,32 @@ function buildPersonalizedLabel(kb, selectedIngredientIds) {
   const sugarBlockers = selectedTags.filter(t => t.sugarEquivalent);
   const preservativeBlockers = selectedTags.filter(t => t.isPreservative);
 
-  const claimBlocks = kb.labelRequirements.prohibitedClaimIds.map((id, i) => {
+  // Three buckets, not one flat list: BANNED (either always-banned by
+  // regulation, e.g. bare "100%" claims, or blocked by what you actually
+  // picked), CONDITIONAL (allowed only with substantiation/a disclaimer),
+  // PERMITTED (a plain numeric bar, nothing in your selections rules it
+  // out). def.group is the static default; the two sugar claims and
+  // no-preservatives can still get bumped into "banned" dynamically.
+  const bannedClaims = [];
+  const conditionalClaims = [];
+  const permittedClaims = [];
+  kb.labelRequirements.prohibitedClaimIds.forEach(id => {
     const def = CLAIM_DEFINITIONS[id];
-    let eligibility = '';
+    if (!def) return;
     if ((id === 'sugar-free-no-added-sugar' || id === 'low-sugar') && sugarBlockers.length) {
-      eligibility = `<p class="lm-personalized lm-blocked">Not available with your current selections: ${sugarBlockers.map(t => t.label).join(', ')} count${sugarBlockers.length > 1 ? '' : 's'} as sugar for this claim.</p>`;
+      bannedClaims.push({ def, reason: `You're using ${sugarBlockers.map(t => t.label).join(', ')}, which count${sugarBlockers.length > 1 ? '' : 's'} as sugar for this claim.` });
     } else if (id === 'no-preservatives' && preservativeBlockers.length) {
-      eligibility = `<p class="lm-personalized lm-blocked">Not available: you selected ${preservativeBlockers.map(t => t.label).join(', ')}.</p>`;
-    } else if (id === 'sugar-free-no-added-sugar' || id === 'low-sugar' || id === 'no-preservatives') {
-      eligibility = `<p class="lm-personalized lm-open">Nothing in your current selections blocks this claim; still needs the actual lab/formulation check before you use it.</p>`;
+      bannedClaims.push({ def, reason: `You're using ${preservativeBlockers.map(t => t.label).join(', ')}.` });
+    } else if (def.group === 'banned') {
+      bannedClaims.push({ def, reason: def.short });
+    } else if (def.group === 'conditional') {
+      conditionalClaims.push({ def });
+    } else {
+      permittedClaims.push({ def });
     }
-    return renderClaimDetail(def, i) + eligibility;
-  }).join('');
+  });
 
-  return { allergenBlock, veganBlock, claimBlocks };
+  return { allergenBlock, veganBlock, bannedClaims, conditionalClaims, permittedClaims };
 }
 
 /* Clean Label check, built from the same selected ingredients as the
@@ -626,16 +651,16 @@ function renderCleanLabelContent(kb, selectedIngredientIds) {
   }
 
   let verdictBadgeClass = 'lm-badge-good';
-  let verdictLabel = 'Clean label: looks achievable';
+  let verdictLabel = '🟢 Clean label: looks achievable';
   let verdictText = 'Nothing in your current ingredient selections falls into the categories most clean-label programs treat as disqualifying: synthetic preservatives, artificial colours or flavours, artificial sweeteners, synthetic antioxidants.';
 
   if (flagged.length) {
     verdictBadgeClass = 'lm-badge-bad';
-    verdictLabel = 'Not currently clean label';
+    verdictLabel = '🔴 Not currently clean label';
     verdictText = `${flagged.length} of your selected ingredient${flagged.length > 1 ? 's' : ''} would typically disqualify a clean-label claim. Swap or remove ${flagged.length > 1 ? 'them' : 'it'} below if you want to make this claim.`;
   } else if (verify.length) {
     verdictBadgeClass = 'lm-badge-warn';
-    verdictLabel = 'Clean label: possible, verify a few ingredients';
+    verdictLabel = '🟡 Clean label: possible, verify a few ingredients';
     verdictText = `Nothing you selected is an outright disqualifier, but ${verify.length} ingredient${verify.length > 1 ? 's' : ''} could go either way depending on the exact compound your supplier uses.`;
   }
 
@@ -664,22 +689,28 @@ function renderFullReport(kb, tierResult, answers) {
   const el = $('#lm-report');
   const personalized = buildPersonalizedLabel(kb, answers.ingredients || []);
 
-  let feeBlock = `<p class="lm-fee">Fee: ${tierResult.fee}</p>`;
-  if (tierResult.note) feeBlock += `<p class="lm-note">${tierResult.note}</p>`;
-  if (kb.licenseLogic.annualFeeNote) feeBlock += `<p class="lm-note">${kb.licenseLogic.annualFeeNote}</p>`;
-
   const sd = kb.sectionDisclaimers || {};
 
-  const caveatBlock = (tierResult.caveats && tierResult.caveats.length)
-    ? `<ul class="lm-nice-list lm-list-flag">${tierResult.caveats.map(c => `<li>${c}</li>`).join('')}</ul>`
+  // Cheat-sheet format: one line for tier/fee/trigger, then one line per
+  // warning, each starting with a yellow "!" badge. Full legal detail
+  // (tierResult.reasons/caveats, with citations) still exists and still
+  // drives the PDF's disclaimer/sources section - this is a compressed
+  // summary line, not a replacement for the underlying data.
+  const licenseSummary = `<p class="lm-cheat-summary">Tier: <strong>${tierResult.tier}</strong> &nbsp;|&nbsp; Fee: <strong>${tierResult.fee}</strong> &nbsp;|&nbsp; Trigger: ${tierResult.reasonsShort.join(', ')}</p>`;
+
+  const allCaveatsShort = [
+    ...(tierResult.caveatsShort || []),
+    ...(tierResult.noteShort ? [tierResult.noteShort] : [])
+  ];
+  const warningsBlock = allCaveatsShort.length
+    ? `<ul class="lm-warning-list">${allCaveatsShort.map(c => `<li><span class="lm-warning-badge">!</span> ${c}</li>`).join('')}</ul>`
     : '';
 
   const licenseContent = `
-    <div class="lm-tier-badge">${tierResult.tier}</div>
-    <p class="lm-reason">${tierResult.reasons.join('; ')}.</p>
-    ${feeBlock}
-    ${caveatBlock}
+    ${licenseSummary}
+    ${warningsBlock}
     ${sd.license ? `<p class="lm-disclaimer">${sd.license}</p>` : ''}
+    ${kb.licenseLogic.annualFeeNote ? `<p class="lm-disclaimer">${kb.licenseLogic.annualFeeNote}</p>` : ''}
   `;
 
   // Tests tagged with appliesTo only show up if the founder actually
@@ -710,18 +741,48 @@ function renderFullReport(kb, tierResult, answers) {
     ${sd.mandatoryTests ? `<p class="lm-disclaimer">${sd.mandatoryTests}</p>` : ''}
   `;
 
+  const mustHaveBox = `
+    <div class="lm-callout lm-callout-do">
+      <div class="lm-callout-title">🟢 DO put this on your label</div>
+      <ul class="lm-nice-list lm-list-check">${kb.labelRequirements.mustHave.map(m => `<li>${emphasizePrintText(m)}</li>`).join('')}</ul>
+    </div>`;
+
+  const conditionalBox = (kb.labelRequirements.conditionalDeclarations && kb.labelRequirements.conditionalDeclarations.length) ? `
+    <div class="lm-callout lm-callout-caution">
+      <div class="lm-callout-title">🟡 ACTION NEEDED — only if you use these</div>
+      <ul class="lm-nice-list lm-list-flag">${kb.labelRequirements.conditionalDeclarations.map(m => `<li>${emphasizePrintText(m)}</li>`).join('')}</ul>
+    </div>` : '';
+
+  // One line per claim, grouped BANNED / CONDITIONAL / PERMITTED - the
+  // exact forbidden wording up top in BANNED, not buried in the same
+  // paragraph-length threshold detail the "permitted" bucket still shows.
+  const bannedBox = personalized.bannedClaims.length ? `
+    <div class="lm-callout lm-callout-danger">
+      <div class="lm-callout-title">🛑 BANNED CLAIMS</div>
+      <ul class="lm-nice-list lm-list-flag">${personalized.bannedClaims.map(b => `<li><strong>${b.def.claim}</strong> — ${b.reason}</li>`).join('')}</ul>
+    </div>` : '';
+
+  const conditionalClaimsBox = personalized.conditionalClaims.length ? `
+    <div class="lm-callout lm-callout-caution">
+      <div class="lm-callout-title">⚠️ CONDITIONAL CLAIMS</div>
+      <ul class="lm-nice-list lm-list-flag">${personalized.conditionalClaims.map(o => `<li><strong>${o.def.claim}</strong> — ${o.def.short}</li>`).join('')}</ul>
+    </div>` : '';
+
+  const permittedBox = personalized.permittedClaims.length ? `
+    <div class="lm-callout lm-callout-do">
+      <div class="lm-callout-title">✅ PERMITTED CLAIMS</div>
+      <ul class="lm-nice-list lm-list-check">${personalized.permittedClaims.map(o => `<li><strong>${o.def.claim}</strong> — ${o.def.short}</li>`).join('')}</ul>
+    </div>` : '';
+
   const labelsContent = `
-    <h3>Label must-haves</h3>
-    <ul class="lm-nice-list lm-list-check">${kb.labelRequirements.mustHave.map(m => `<li>${m}</li>`).join('')}</ul>
-    ${kb.labelRequirements.conditionalDeclarations ? `
-    <h3>Only if you use these</h3>
-    <p class="lm-note">Conditional declarations, only apply if you use the specific ingredient or additive named.</p>
-    <ul class="lm-nice-list lm-list-flag">${kb.labelRequirements.conditionalDeclarations.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
+    ${mustHaveBox}
+    ${conditionalBox}
     ${personalized.allergenBlock}
     ${personalized.veganBlock}
-    <h3>Claims: thresholds, not vibes</h3>
-    <p class="lm-note">If you want to make any of these claims, here's the actual bar to clear, and whether your own ingredient selections already rule it out.</p>
-    ${personalized.claimBlocks}
+    <h3>Claims you might want to make</h3>
+    ${bannedBox}
+    ${conditionalClaimsBox}
+    ${permittedBox}
     ${sd.labelRequirements ? `<p class="lm-disclaimer">${sd.labelRequirements}</p>` : ''}
   `;
 
@@ -815,14 +876,21 @@ function resetLaunchMapWizard() {
   renderActivityChips();
   $('#lm-ingredients-wrap').innerHTML = '';
   document.querySelectorAll('input[name="process"]').forEach(r => { r.checked = false; });
-  $('#lm-turnover').value = 'under-1.5cr';
+  document.querySelectorAll('input[name="turnover"]').forEach(r => { r.checked = false; });
   document.querySelectorAll('input[name="channels"]').forEach(c => { c.checked = false; });
   $('#lm-state').value = '';
+  $('#lm-name').value = '';
   $('#lm-email').value = '';
+  $('#lm-whatsapp').value = '';
+  $('#lm-linkedin').value = '';
+  $('#lm-name-error').classList.remove('show');
   $('#lm-email-error').classList.remove('show');
+  $('#lm-whatsapp-error').classList.remove('show');
+  $('#lm-linkedin-error').classList.remove('show');
   $('#lm-report-choice-error').classList.remove('show');
   $('#lm-process-error').classList.remove('show');
   $('#lm-activity-error').classList.remove('show');
+  $('#lm-turnover-error').classList.remove('show');
   $('#lm-channels-error').classList.remove('show');
 
   $('#lm-report').style.display = 'none';
@@ -847,6 +915,17 @@ function resetLaunchMapWizard() {
    straight to doc.text()/autoTable silently corrupts the *entire*
    string's character spacing (not just the bad glyph), which is
    why every text-producing helper below routes through it. */
+// Same "(...)" detail carried by formatTestName() for the on-screen table,
+// but split into { base, note } instead of an inline span: jsPDF/autoTable
+// draws a whole cell in one font, so the muted/italic treatment has to be
+// its own line rather than mid-line, done manually via didParseCell/
+// didDrawCell below.
+function splitTestNote(name) {
+  const notes = [...name.matchAll(/\([^()]*\)/g)].map(m => m[0]);
+  const base = name.replace(/\s*\([^()]*\)/g, '').trim();
+  return { base, note: notes.join(' ') };
+}
+
 const LM_PDF_BRAND = {
   black: [0x22, 0x27, 0x1F],
   white: [0xFF, 0xFF, 0xFF],
@@ -895,6 +974,14 @@ function generateReportPdf(kb, tierResult, answers) {
   const setColor = (fn, rgb) => doc[fn](rgb[0], rgb[1], rgb[2]);
 
   function drawContinuationHeader() {
+    // Runs mid-call from inside ensureSpace(), i.e. after a caller like
+    // bodyText() has already set its own font and wrapped text against it
+    // but before it's actually drawn. Without saving/restoring here, that
+    // caller's next doc.text() draws in whatever font this header last
+    // left active, which is often wider than what the wrap assumed and
+    // spills text past the right margin.
+    const prevFont = doc.getFont();
+    const prevSize = doc.getFontSize();
     doc.setFont('courier', 'bold');
     doc.setFontSize(8.5);
     setColor('setTextColor', LM_PDF_BRAND.muted);
@@ -902,6 +989,8 @@ function generateReportPdf(kb, tierResult, answers) {
     setColor('setDrawColor', LM_PDF_BRAND.muted);
     doc.setLineWidth(0.5);
     doc.line(margin, margin - 10, pageW - margin, margin - 10);
+    doc.setFont(prevFont.fontName, prevFont.fontStyle);
+    doc.setFontSize(prevSize);
   }
 
   function ensureSpace(needed) {
@@ -941,8 +1030,13 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.text(`${pageNum} / ${pageCount}`, pageW - margin, pageH - 27, { align: 'right' });
   }
 
-  function sectionTitle(text, accent) {
-    ensureSpace(34);
+  function sectionTitle(text, accent, reserveAfter) {
+    // reserveAfter lets a caller pass the real measured height of
+    // whatever immediately follows (e.g. measureCalloutBox()'s result),
+    // so heading + content get reserved as one unit and a page break
+    // (if needed) happens before the heading - never orphaning it alone
+    // above a big empty gap with its content pushed to the next page.
+    ensureSpace(34 + (reserveAfter || 0));
     setColor('setFillColor', accent);
     doc.rect(margin, y, 26, 4, 'F');
     y += 20;
@@ -1062,43 +1156,81 @@ function generateReportPdf(kb, tierResult, answers) {
     y += h + 12;
   }
 
-  // Claim card: cream box with a coloured left bar, mirroring .lm-claim.
-  function claimCard(name, threshold, eligibility, accent) {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10.5);
-    const nameLines = doc.splitTextToSize(pdfSafe(name).replace(/[“”]/g, '"'), contentW - 26);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    const threshLines = doc.splitTextToSize(pdfSafe(threshold), contentW - 26);
-    doc.setFontSize(8.5);
-    const eligLines = eligibility ? doc.splitTextToSize(pdfSafe(eligibility), contentW - 26) : [];
-    const h = 16 + nameLines.length * 13 + 4 + threshLines.length * 11.5 +
-      (eligLines.length ? 7 + eligLines.length * 11 : 0) + 14;
-    ensureSpace(h + 12);
+  // Measures a calloutBox's height without drawing it, so a caller (e.g.
+  // sectionTitle) can reserve heading + box together and never leave the
+  // heading behind alone when the box itself has to jump to a new page.
+  function measureCalloutBox(title, items) {
+    const pad = 16;
+    const innerW = contentW - pad * 2 - 26;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+    const titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
+    const titleH = titleLines.length * 13 + 10;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    const itemsH = items.reduce((sum, item) => {
+      const lines = doc.splitTextToSize(pdfSafe(item), innerW);
+      return sum + (lines.length * 13 + 8);
+    }, 0);
+    return pad * 2 + titleH + itemsH;
+  }
+
+  // Colored callout box: tinted background + bold title + glyph-bullet
+  // list, mirroring .lm-callout on the site. The WHOLE box's height is
+  // measured and reserved via one ensureSpace() call before anything is
+  // drawn, so a page break (if one's needed) happens before the box
+  // starts, rather than splitting its background rect across two pages -
+  // the same class of bug the test-table wrapping fix dealt with earlier.
+  function calloutBox(title, items, opts) {
+    opts = opts || {};
+    const bg = opts.bg;
+    const glyphBg = opts.glyphBg || LM_PDF_BRAND.black;
+    const kind = opts.kind || 'flag';
+    const pad = 16;
+    const innerW = contentW - pad * 2 - 26;
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
+    const titleLines = doc.splitTextToSize(pdfSafe(title), contentW - pad * 2);
+    const titleH = titleLines.length * 13 + 10;
+
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+    const itemData = items.map(item => {
+      const lines = doc.splitTextToSize(pdfSafe(item), innerW);
+      return { lines, h: lines.length * 13 + 8 };
+    });
+    const itemsH = itemData.reduce((sum, d) => sum + d.h, 0);
+    const totalH = pad * 2 + titleH + itemsH;
+
+    ensureSpace(totalH + 12);
     const boxY = y;
-    setColor('setFillColor', LM_PDF_BRAND.cream);
-    doc.roundedRect(margin, boxY, contentW, h, 6, 6, 'F');
-    setColor('setFillColor', accent);
-    doc.roundedRect(margin, boxY, 5, h, 2.5, 2.5, 'F');
-    let ty = boxY + 16;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10.5);
+    setColor('setFillColor', bg);
+    doc.roundedRect(margin, boxY, contentW, totalH, 10, 10, 'F');
+
+    let cy = boxY + pad + titleLines.length * 9;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
     setColor('setTextColor', LM_PDF_BRAND.black);
-    doc.text(nameLines, margin + 18, ty);
-    ty += nameLines.length * 13 + 4;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    setColor('setTextColor', LM_PDF_BRAND.black);
-    doc.text(threshLines, margin + 18, ty);
-    ty += threshLines.length * 11.5;
-    if (eligLines.length) {
-      ty += 7;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.5);
-      setColor('setTextColor', eligibility.startsWith('Not available') ? LM_PDF_BRAND.peach : LM_PDF_BRAND.mint);
-      doc.text(eligLines, margin + 18, ty);
-    }
-    y = boxY + h + 12;
+    doc.text(titleLines, margin + pad, cy);
+    cy = boxY + pad + titleH;
+
+    itemData.forEach(({ lines, h }) => {
+      const glyphCy = cy + 6.5;
+      setColor('setFillColor', glyphBg);
+      doc.circle(margin + pad + 9, glyphCy, 8, 'F');
+      if (kind === 'check') {
+        setColor('setDrawColor', LM_PDF_BRAND.white);
+        doc.setLineWidth(1.3);
+        doc.line(margin + pad + 6, glyphCy + 0.3, margin + pad + 8.2, glyphCy + 2.6);
+        doc.line(margin + pad + 8.2, glyphCy + 2.6, margin + pad + 12.4, glyphCy - 3);
+      } else {
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+        setColor('setTextColor', LM_PDF_BRAND.white);
+        doc.text('!', margin + pad + 9, glyphCy + 2.6, { align: 'center' });
+      }
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
+      setColor('setTextColor', LM_PDF_BRAND.black);
+      doc.text(lines, margin + pad + 26, cy + 7);
+      cy += h;
+    });
+
+    y = boxY + totalH + 12;
   }
 
   // ── Page 1: cover ────────────────────────────────────────
@@ -1123,13 +1255,19 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.text(tierLabel, margin + 15, y + 16);
     y += 42;
 
-    bodyText(tierResult.reasons.join('; ') + '.', { gap: 6 });
-    bodyText(`Fee: ${tierResult.fee}`, { bold: true, gap: 4 });
-    if (tierResult.note) bodyText(tierResult.note, { size: 9, color: LM_PDF_BRAND.muted });
-    if (kb.licenseLogic.annualFeeNote) bodyText(kb.licenseLogic.annualFeeNote, { size: 9, color: LM_PDF_BRAND.muted });
+    // Cheat-sheet: one line for tier/fee/trigger, then one "[!]" line
+    // per warning. Full reasons/caveats (with citations) stay the source
+    // of truth; this is a compressed summary of them, not a replacement.
+    bodyText(`Tier: ${tierResult.tier}  |  Fee: ${tierResult.fee}  |  Trigger: ${tierResult.reasonsShort.join(', ')}`, { bold: true, size: 11, gap: 8 });
+    const allCaveatsShortPdf = [
+      ...(tierResult.caveatsShort || []),
+      ...(tierResult.noteShort ? [tierResult.noteShort] : [])
+    ];
+    if (allCaveatsShortPdf.length) {
+      glyphList(allCaveatsShortPdf, { bg: LM_PDF_BRAND.butter, kind: 'flag' });
+    }
     disclaimerText((kb.sectionDisclaimers || {}).license);
-
-    bodyText(`FSS category: ${kb.fssCategory.code}`, { size: 9, color: LM_PDF_BRAND.muted, gap: 14 });
+    if (kb.licenseLogic.annualFeeNote) bodyText(kb.licenseLogic.annualFeeNote, { size: 8, color: LM_PDF_BRAND.muted, gap: 14 });
   }
 
   // ── Lab tests ────────────────────────────────────────────
@@ -1147,19 +1285,56 @@ function generateReportPdf(kb, tierResult, answers) {
       styles: { font: 'helvetica', fontSize: 8, cellPadding: 6, textColor: LM_PDF_BRAND.black, lineColor: [232, 230, 220], lineWidth: 0.5 },
       headStyles: { fillColor: LM_PDF_BRAND.black, textColor: LM_PDF_BRAND.white, fontStyle: 'bold', fontSize: 7.5 },
       alternateRowStyles: { fillColor: LM_PDF_BRAND.cream },
-      columnStyles: { 0: { cellWidth: 240 }, 1: { cellWidth: 90 }, 2: { cellWidth: 'auto' } }
+      columnStyles: { 0: { cellWidth: 240 }, 1: { cellWidth: 90 }, 2: { cellWidth: 'auto' } },
+      didParseCell: (data) => {
+        if (data.section !== 'body' || data.column.index !== 0) return;
+        const { base, note } = splitTestNote(data.cell.raw);
+        // Column widths aren't finalized yet at this phase (data.cell.width
+        // here is unreliable/near-zero), so wrap against the column's own
+        // configured width above (240) instead - that's what it'll
+        // actually render at.
+        const width = 240 - data.cell.padding('left') - data.cell.padding('right');
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+        const baseLines = doc.splitTextToSize(base, width);
+        let noteLines = [];
+        if (note) {
+          doc.setFont('helvetica', 'italic'); doc.setFontSize(7);
+          noteLines = doc.splitTextToSize(note, width);
+        }
+        data.cell._lmBaseLines = baseLines;
+        data.cell._lmNoteLines = noteLines;
+        const lineH = 9.2, noteLineH = 8.2;
+        data.cell.styles.minCellHeight = baseLines.length * lineH + noteLines.length * noteLineH
+          + data.cell.padding('top') + data.cell.padding('bottom');
+        data.cell.text = [];
+      },
+      didDrawCell: (data) => {
+        if (data.section !== 'body' || data.column.index !== 0) return;
+        const baseLines = data.cell._lmBaseLines || [];
+        const noteLines = data.cell._lmNoteLines || [];
+        const x = data.cell.x + data.cell.padding('left');
+        let cy = data.cell.y + data.cell.padding('top') + 6.4;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setColor('setTextColor', LM_PDF_BRAND.black);
+        baseLines.forEach(line => { doc.text(line, x, cy); cy += 9.2; });
+        if (noteLines.length) {
+          doc.setFont('helvetica', 'italic'); doc.setFontSize(7); setColor('setTextColor', LM_PDF_BRAND.muted);
+          noteLines.forEach(line => { doc.text(line, x, cy); cy += 8.2; });
+        }
+        doc.setFont('helvetica', 'normal'); setColor('setTextColor', LM_PDF_BRAND.black);
+      }
     });
     y = doc.lastAutoTable.finalY + 16;
     disclaimerText((kb.sectionDisclaimers || {}).mandatoryTests);
   }
 
+  const personalizedPdf = wanted.includes('labels-clean') ? buildPersonalizedLabel(kb, selectedIds) : null;
+
   if (wanted.includes('labels-clean')) {
     // ── Label must-haves + conditional declarations ─────────
-    sectionTitle('Label must-haves', LM_PDF_BRAND.lilac);
-    glyphList(kb.labelRequirements.mustHave, { bg: LM_PDF_BRAND.mint, kind: 'check' });
+    sectionTitle('Label must-haves', LM_PDF_BRAND.lilac, measureCalloutBox('DO THIS', kb.labelRequirements.mustHave));
+    calloutBox('DO THIS', kb.labelRequirements.mustHave, { bg: LM_PDF_BRAND.mintTint, glyphBg: LM_PDF_BRAND.mint, kind: 'check' });
     if (kb.labelRequirements.conditionalDeclarations && kb.labelRequirements.conditionalDeclarations.length) {
-      bodyText('Only if you use these ingredients or additives:', { bold: true, size: 9.5, gap: 6 });
-      glyphList(kb.labelRequirements.conditionalDeclarations, { bg: LM_PDF_BRAND.butter, kind: 'flag' });
+      calloutBox('ACTION NEEDED — only if you use these ingredients or additives', kb.labelRequirements.conditionalDeclarations, { bg: LM_PDF_BRAND.butterTint, glyphBg: LM_PDF_BRAND.butter, kind: 'flag' });
     }
 
     const allergenTags = selectedTags.filter(t => t.allergen);
@@ -1170,26 +1345,25 @@ function generateReportPdf(kb, tierResult, answers) {
     }
     disclaimerText((kb.sectionDisclaimers || {}).labelRequirements);
 
-    // ── Claims ────────────────────────────────────────────────
-    sectionTitle('Claims: thresholds, not vibes', LM_PDF_BRAND.lilac);
-    const claimAccents = [LM_PDF_BRAND.butter, LM_PDF_BRAND.peach, LM_PDF_BRAND.mint, LM_PDF_BRAND.lilac];
-    const sugarBlockers = selectedTags.filter(t => t.sugarEquivalent);
-    const preservativeBlockers = selectedTags.filter(t => t.isPreservative);
-    let claimIdx = 0;
-    kb.labelRequirements.prohibitedClaimIds.forEach(id => {
-      const def = CLAIM_DEFINITIONS[id];
-      if (!def) return;
-      let eligibility = null;
-      if ((id === 'sugar-free-no-added-sugar' || id === 'low-sugar') && sugarBlockers.length) {
-        eligibility = `Not available with your current selections: ${sugarBlockers.map(t => t.label).join(', ')}.`;
-      } else if (id === 'no-preservatives' && preservativeBlockers.length) {
-        eligibility = `Not available: you selected ${preservativeBlockers.map(t => t.label).join(', ')}.`;
-      } else if (id === 'sugar-free-no-added-sugar' || id === 'low-sugar' || id === 'no-preservatives') {
-        eligibility = 'Nothing in your current selections blocks this claim; still needs the actual lab/formulation check.';
-      }
-      claimCard(def.claim, def.threshold, eligibility, claimAccents[claimIdx % claimAccents.length]);
-      claimIdx++;
-    });
+    // ── Claims, one line per claim, grouped BANNED / CONDITIONAL /
+    // PERMITTED - same split and wording as the on-screen boxes. Reserve
+    // for whichever bucket draws first (they're each independently
+    // page-break-safe after that), so the heading isn't orphaned above it.
+    const firstClaimBoxItems = personalizedPdf.bannedClaims.length ? personalizedPdf.bannedClaims.map(b => b.def.claim)
+      : personalizedPdf.conditionalClaims.length ? personalizedPdf.conditionalClaims.map(o => o.def.claim)
+      : personalizedPdf.permittedClaims.length ? personalizedPdf.permittedClaims.map(o => o.def.claim)
+      : [];
+    sectionTitle('Claims you might want to make', LM_PDF_BRAND.lilac, firstClaimBoxItems.length ? measureCalloutBox('X', firstClaimBoxItems) : 0);
+
+    if (personalizedPdf.bannedClaims.length) {
+      calloutBox('BANNED CLAIMS', personalizedPdf.bannedClaims.map(b => `${b.def.claim.replace(/[“”]/g, '"')} — ${b.reason}`), { bg: LM_PDF_BRAND.peachTint, glyphBg: LM_PDF_BRAND.peach, kind: 'flag' });
+    }
+    if (personalizedPdf.conditionalClaims.length) {
+      calloutBox('CONDITIONAL CLAIMS', personalizedPdf.conditionalClaims.map(o => `${o.def.claim.replace(/[“”]/g, '"')} — ${o.def.short}`), { bg: LM_PDF_BRAND.butterTint, glyphBg: LM_PDF_BRAND.butter, kind: 'flag' });
+    }
+    if (personalizedPdf.permittedClaims.length) {
+      calloutBox('PERMITTED CLAIMS', personalizedPdf.permittedClaims.map(o => `${o.def.claim.replace(/[“”]/g, '"')} — ${o.def.short}`), { bg: LM_PDF_BRAND.mintTint, glyphBg: LM_PDF_BRAND.mint, kind: 'check' });
+    }
 
     // ── Clean label check ────────────────────────────────────
     sectionTitle('Clean label check', LM_PDF_BRAND.butter);
@@ -1203,28 +1377,28 @@ function generateReportPdf(kb, tierResult, answers) {
     if (!selectedTags.length) {
       tintedBox('No ingredients were selected.', LM_PDF_BRAND.cream, { textColor: LM_PDF_BRAND.muted });
     } else if (flagged.length) {
-      tintedBox(`Not currently clean label: ${flagged.length} selected ingredient${flagged.length > 1 ? 's' : ''} would typically disqualify a clean-label claim.`, LM_PDF_BRAND.peachTint, { bold: true, textColor: LM_PDF_BRAND.peach });
+      tintedBox(`[NOT CURRENTLY CLEAN LABEL] ${flagged.length} selected ingredient${flagged.length > 1 ? 's' : ''} would typically disqualify a clean-label claim.`, LM_PDF_BRAND.peachTint, { bold: true, textColor: LM_PDF_BRAND.peach });
       glyphList(flagged.map(f => `${f.tag.label}: ${f.reason}`), { bg: LM_PDF_BRAND.peach, kind: 'flag' });
     } else if (verify.length) {
-      tintedBox(`Clean label: possible, verify ${verify.length} ingredient${verify.length > 1 ? 's' : ''} with your supplier.`, LM_PDF_BRAND.butterTint, { bold: true, textColor: LM_PDF_BRAND.butter });
+      tintedBox(`[VERIFY A FEW INGREDIENTS] Clean label is possible, verify ${verify.length} ingredient${verify.length > 1 ? 's' : ''} with your supplier.`, LM_PDF_BRAND.butterTint, { bold: true, textColor: LM_PDF_BRAND.butter });
       glyphList(verify.map(f => `${f.tag.label}: ${f.reason}`), { bg: LM_PDF_BRAND.butter, kind: 'flag' });
     } else {
-      tintedBox('Clean label: looks achievable. Nothing in your selections falls into the commonly flagged categories.', LM_PDF_BRAND.mintTint, { bold: true, textColor: LM_PDF_BRAND.mint });
+      tintedBox('[CLEAR] Clean label looks achievable. Nothing in your selections falls into the commonly flagged categories.', LM_PDF_BRAND.mintTint, { bold: true, textColor: LM_PDF_BRAND.mint });
     }
     disclaimerText('"Clean label" has no single legal definition under Indian food law; this is not an FSSAI certification.');
   }
 
   // ── Step sequence ────────────────────────────────────────
-  sectionTitle('Step-by-step sequence', LM_PDF_BRAND.peach);
+  // numberedList checks space per item (fine to split the list itself
+  // across pages), so the heading only needs the FIRST item reserved
+  // alongside it to avoid landing alone with nothing following.
+  const firstStepLines = doc.splitTextToSize(pdfSafe(kb.stepSequence[0]), contentW - 36);
+  sectionTitle('Step-by-step sequence', LM_PDF_BRAND.peach, Math.max(firstStepLines.length * 14, 22) + 7);
   numberedList(kb.stepSequence);
-
-  // ── Sources ──────────────────────────────────────────────
-  sectionTitle('Sources', LM_PDF_BRAND.mint);
-  bulletList(kb.sources.map(s => `${s.rule}: ${s.citation}`), { gap: 2 });
-  bodyText(`Content last reviewed: ${kb.lastReviewed}`, { size: 8, color: LM_PDF_BRAND.muted });
 
   // ── Closing promo page ───────────────────────────────────
   doc.addPage();
+  const promoPageNum = doc.internal.getNumberOfPages();
   setColor('setFillColor', LM_PDF_BRAND.black);
   doc.rect(0, 0, pageW, pageH, 'F');
   setColor('setFillColor', LM_PDF_BRAND.peach);
@@ -1272,11 +1446,26 @@ function generateReportPdf(kb, tierResult, answers) {
   setColor('setTextColor', LM_PDF_BRAND.mutedOnDark);
   doc.text('This report is informational and does not replace legal counsel or official FSSAI guidance.', margin, pageH - 40);
 
-  // ── Header/footer on every page (skip the promo page) ────
+  // ── Sources, its own page, after the CTA - so the report closes on
+  // the "here's how we can help" pitch rather than a wall of citations. ──
+  doc.addPage();
+  y = margin + 16;
+  drawContinuationHeader();
+  sectionTitle('Sources', LM_PDF_BRAND.mint);
+  bodyText(`FSS category: ${kb.fssCategory.code}`, { size: 9, color: LM_PDF_BRAND.muted, gap: 10 });
+  bulletList(kb.sources.map(s => `${s.rule}: ${s.citation}`), { gap: 2 });
+  bodyText(`Content last reviewed: ${kb.lastReviewed}`, { size: 8, color: LM_PDF_BRAND.muted });
+
+  // ── Header/footer on every page except the promo page - which is now
+  // in the middle of the document, not necessarily last, since Sources
+  // moved after it. Numbered sequentially skipping the promo page. ────
   const pageCount = doc.internal.getNumberOfPages();
-  for (let p = 1; p < pageCount; p++) {
+  let displayIndex = 0;
+  for (let p = 1; p <= pageCount; p++) {
+    if (p === promoPageNum) continue;
+    displayIndex++;
     doc.setPage(p);
-    drawFooter(p, pageCount - 1);
+    drawFooter(displayIndex, pageCount - 1);
   }
 
   const fileSlug = (kb.displayName || 'launch-map').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -1293,8 +1482,11 @@ function handleWizardSubmit(e) {
     reportSections: selectedReportSections.slice(),
     businessActivity: selectedBusinessActivity,
     ingredients: Array.from(document.querySelectorAll('input[name="ingredients"]:checked')).map(i => i.value),
-    process: document.querySelector('input[name="process"]:checked').value,
-    turnover: $('#lm-turnover').value,
+    process: document.querySelector('input[name="process"]:checked')?.value || null,
+    // Skipped entirely (via stepApplies) unless "License tier" was chosen
+    // in step 1, so nothing may ever have been checked - fall back rather
+    // than crash on .value of a null querySelector result.
+    turnover: document.querySelector('input[name="turnover"]:checked')?.value || null,
     salesChannels: Array.from(document.querySelectorAll('input[name="channels"]:checked')).map(i => i.value),
     state: $('#lm-state').value
   };
@@ -1309,19 +1501,57 @@ function handleWizardSubmit(e) {
 /* Email gate. Client-side only for now, no real submission yet. */
 function handleEmailGateSubmit(e) {
   e.preventDefault();
-  const email = $('#lm-email').value.trim();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    $('#lm-email-error').textContent = 'Enter a valid email.';
-    $('#lm-email-error').classList.add('show');
-    return;
-  }
-  $('#lm-email-error').classList.remove('show');
 
-  // Real build: POST to /api/launch-map-report here (Airtable write + PDF + Resend).
-  // For now this just renders the KB data directly as the full report.
+  const name = $('#lm-name').value.trim();
+  const email = $('#lm-email').value.trim();
+  const whatsapp = $('#lm-whatsapp').value.trim();
+  const linkedin = $('#lm-linkedin').value.trim();
+  const website = $('#lm-website').value; // honeypot
+
+  let hasError = false;
+  const setErr = (id, msg) => {
+    const err = $(`#${id}-error`);
+    if (msg) { err.textContent = msg; err.classList.add('show'); hasError = true; }
+    else err.classList.remove('show');
+  };
+
+  setErr('lm-name', name.length < 2 ? 'Enter your name.' : '');
+  setErr('lm-email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'Enter a valid email.');
+  const whatsappDigits = whatsapp.replace(/\D/g, '');
+  setErr('lm-whatsapp', (whatsappDigits.length === 10 || (whatsappDigits.length === 12 && whatsappDigits.startsWith('91'))) ? '' : 'Enter a valid 10-digit WhatsApp number.');
+  if (hasError) return;
+
+  // The report itself is computed entirely client-side and already
+  // earned by finishing the wizard, so it's shown right away rather than
+  // gated on this call succeeding - the lead capture below is best-effort
+  // and fails silently (logged, not surfaced) so a network hiccup on our
+  // end never blocks a founder from the free report they just built.
   const { kb, tierResult, answers } = window._lmLastResult;
   renderFullReport(kb, tierResult, answers);
   $('#lm-email-gate').style.display = 'none';
+
+  if (website) return; // honeypot tripped - pretend success, submit nothing
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    name,
+    email,
+    whatsapp: whatsappDigits.length === 12 ? whatsappDigits.slice(2) : whatsappDigits,
+    linkedin,
+    website
+  };
+
+  try {
+    const backup = JSON.parse(localStorage.getItem('fnb_launch_map_leads') || '[]');
+    backup.push(payload);
+    localStorage.setItem('fnb_launch_map_leads', JSON.stringify(backup));
+  } catch (err) {}
+
+  fetch('/api/launch-map-submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.warn('[Launch Map] Lead submission failed:', err));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1371,10 +1601,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Same idea for turnover: one dropdown, one answer, no reason to also
+  // Same idea for turnover: one chip, one answer, no reason to also
   // require a Next click once a value's been chosen.
-  $('#lm-turnover').addEventListener('change', () => {
-    setTimeout(() => { if (currentStep === '4') handleNextClick(); }, 220);
+  document.querySelectorAll('input[name="turnover"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      $('#lm-turnover-error').classList.remove('show');
+      setTimeout(() => { if (currentStep === '4') handleNextClick(); }, 220);
+    });
   });
 
   $('#lm-back-btn').classList.add('lm-hidden');

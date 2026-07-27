@@ -834,7 +834,7 @@ tbody tr:hover { background: var(--cream); }
 .lm-category-card.has-photo:hover .lm-category-examples { opacity: 1; }
 .lm-category-card.has-photo:hover .lm-category-label-wrap { opacity: 0; }
 .lm-category-card.has-photo.selected { background-color: var(--black); }
-.lm-category-card.has-photo.selected .lm-category-scrim { background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.25) 45%, transparent 70%); }
+.lm-category-card.has-photo.selected .lm-category-scrim { background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.7) 100%); }
 @media (max-width: 640px) {
   .lm-category-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
   .lm-category-card { padding: 10px 6px 7px; gap: 6px; }
@@ -936,18 +936,35 @@ tbody tr:hover { background: var(--cream); }
 .lm-steps-list li:nth-child(4n+3)::before { background: var(--accent-mint); }
 .lm-steps-list li:nth-child(4n)::before   { background: var(--accent-lilac); }
 
-.lm-claim { background: var(--white); border: 1.5px solid var(--border); border-left: 5px solid var(--accent); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
-.lm-claim.lm-claim-butter { border-left-color: var(--accent-butter); }
-.lm-claim.lm-claim-peach  { border-left-color: var(--accent-peach); }
-.lm-claim.lm-claim-mint   { border-left-color: var(--accent-mint); }
-.lm-claim.lm-claim-lilac  { border-left-color: var(--accent-lilac); }
-.lm-claim-name { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
-.lm-claim-threshold { font-size: 14px; color: var(--text); margin-bottom: 4px; }
-.lm-claim-sublist { margin-top: 12px; }
-.lm-claim-source { font-size: 12px; color: var(--muted); margin-top: 10px; }
 .lm-personalized { font-size: 14px; background: var(--lilac); border-radius: 10px; padding: 12px 16px; margin: 14px 0; }
 .lm-personalized.lm-blocked { background: var(--peach); margin-top: -8px; margin-bottom: 14px; border-radius: 0 0 10px 10px; font-weight: 600; }
 .lm-personalized.lm-open { background: var(--mint); margin-top: -8px; margin-bottom: 14px; border-radius: 0 0 10px 10px; }
+
+/* Founder-first callout boxes: DO / ACTION NEEDED / DON'T, each a tinted
+   card with a status-emoji title, so the report reads at a glance instead
+   of requiring every line to be read to know what matters. */
+.lm-plain-lead { font-size: 16.5px; line-height: 1.55; margin-bottom: 4px; }
+
+/* Cheat-sheet license summary: one line, no wrap-and-forget paragraph. */
+.lm-cheat-summary { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.lm-warning-list { list-style: none; padding: 0; margin: 0 0 12px; }
+.lm-warning-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+.lm-warning-badge {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 4px; background: var(--accent-butter); color: var(--black);
+  font-size: 12px; font-weight: 800; margin-top: 1px;
+}
+/* Required print text called out inline (e.g. "SYNTHETIC - PREPARED
+   FROM ACETIC ACID") - the exact wording gets bold+caps, the rest of
+   the line stays normal case so it's still readable, not shouting. */
+.lm-print-text { font-weight: 700; text-transform: uppercase; letter-spacing: 0.01em; }
+.lm-callout { border-radius: 14px; padding: 18px 20px; margin: 16px 0; }
+.lm-callout-title { font-weight: 700; font-size: 14.5px; margin-bottom: 10px; }
+.lm-callout-do { background: var(--mint); }
+.lm-callout-caution { background: var(--butter); }
+.lm-callout-danger { background: var(--peach); }
+.lm-callout .lm-nice-list { margin: 0; }
+.lm-callout .lm-nice-list li:last-child { margin-bottom: 0; }
 
 /* Report sections. The founder already picked these in step 1, so they
    render stacked and open rather than behind a second picker. A coloured
