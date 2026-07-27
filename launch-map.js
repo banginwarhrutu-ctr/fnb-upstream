@@ -559,7 +559,7 @@ function renderSummary(kb, tierResult, answers) {
   $('#lm-gate-summary').innerHTML =
     `Your launch map for <strong>${kb.displayName}</strong> is ready, covering ${chosen.join(', ') || 'your selections'}.`;
   $('#lm-gate-disclaimer').textContent =
-    `This is informational, not a substitute for legal counsel or official FSSAI guidance. Content last reviewed: ${kb.lastReviewed}.`;
+    `This is informational, not a substitute for legal counsel or official FSSAI guidance.`;
   const gate = $('#lm-email-gate');
   gate.style.display = 'block';
   gate.scrollIntoView({ behavior: 'smooth', block: 'start' });
