@@ -1017,20 +1017,6 @@ tbody tr:hover { background: var(--cream); }
 .lm-step-nav .btn-ghost.lm-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .lm-step-nav .btn-primary, .lm-step-nav #lm-submit-btn { margin-left: auto; }
 
-/* Back/Next show where they actually lead, not just "Back"/"Next", so
-   nobody has to click to find out. Sub-line is empty (collapses to
-   nothing) on the first/last applicable step. */
-.lm-nav-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; line-height: 1.15; text-align: left; }
-.lm-nav-btn-main { font-size: 15px; font-weight: 700; }
-.lm-nav-btn-sub {
-  font-size: 11px; font-weight: 500; max-width: 160px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.lm-nav-btn-sub:empty { display: none; }
-#lm-next-btn .lm-nav-btn-sub { color: rgba(255,255,255,0.68); }
-#lm-back-btn .lm-nav-btn-sub { color: var(--muted); }
-#lm-back-btn:hover .lm-nav-btn-sub { color: rgba(255,255,255,0.68); }
-
 /* Launch Map mobile pass, phones specifically */
 @media (max-width: 640px) {
   .lm-wizard-card, .form-card-wide { padding: 24px 18px; }
@@ -1044,8 +1030,6 @@ tbody tr:hover { background: var(--cream); }
   .lm-category-label { font-size: 12px; }
   .lm-step-nav { flex-wrap: wrap; }
   .lm-step-nav .btn { flex: 1 1 auto; text-align: center; padding: 13px 18px; }
-  .lm-nav-btn { align-items: center; }
-  .lm-nav-btn-sub { max-width: 45vw; }
   .lm-claim { padding: 16px; }
 }
 

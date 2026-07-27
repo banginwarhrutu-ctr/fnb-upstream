@@ -184,19 +184,6 @@ function initStateOptions() {
 const STEP_ORDER = ['0', '1', '2', '3', 'activity', '4', '5', '6'];
 let currentStep = '0';
 
-// Short labels for the Back/Next sub-text, so those buttons show where
-// they actually lead instead of a plain "Back"/"Next".
-const STEP_TITLES = {
-  '0': 'What do you need?',
-  '1': 'What are you making?',
-  '2': 'Key ingredients',
-  '3': 'Process',
-  'activity': 'Who makes it?',
-  '4': 'Expected turnover',
-  '5': 'Sales channels',
-  '6': 'State'
-};
-
 // Turnover (4), sales channels (5) and business activity only feed the
 // license-tier calc; ingredients (2) only feeds tests/labels/clean-label.
 // Skip whichever of these don't matter given what was picked on step 0,
@@ -314,23 +301,13 @@ function goToStep(key, direction) {
   updateProgress();
 
   $('#lm-back-btn').classList.toggle('lm-hidden', key === '0');
-  $('#lm-next-btn').style.display = (key === '6') ? 'none' : (key === 'waitlist' ? 'none' : 'flex');
+  $('#lm-next-btn').style.display = (key === '6') ? 'none' : (key === 'waitlist' ? 'none' : 'inline-block');
   $('#lm-submit-btn').style.display = (key === '6') ? 'inline-block' : 'none';
-  updateNavLabels(key);
 
   // 'start' rather than 'nearest': nearest can decide the step is already
   // "close enough" from the previous scroll position and do nothing, which
   // leaves the new step's heading sitting behind the fixed nav.
   target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function updateNavLabels(key) {
-  const prev = prevStepKey(key);
-  $('#lm-back-btn-sub').textContent = prev ? STEP_TITLES[prev] || '' : '';
-  // nextStepKey('1') resolves to 'waitlist' once an unbuilt category is
-  // picked; that's a terminal screen so there's nothing useful to name.
-  const next = nextStepKey(key);
-  $('#lm-next-btn-sub').textContent = (next && next !== 'waitlist') ? STEP_TITLES[next] || '' : '';
 }
 
 function handleNextClick() {
@@ -1340,7 +1317,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCategoryCards();
   initStateOptions();
   initProgressDots();
-  updateNavLabels(currentStep);
   $('#lm-wizard-form').addEventListener('submit', handleWizardSubmit);
   $('#lm-email-gate-form').addEventListener('submit', handleEmailGateSubmit);
   $('#lm-next-btn').addEventListener('click', handleNextClick);
@@ -1374,7 +1350,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('#lm-back-btn').classList.add('lm-hidden');
-  $('#lm-next-btn').style.display = 'flex';
+  $('#lm-next-btn').style.display = 'inline-block';
   $('#lm-submit-btn').style.display = 'none';
   updateProgress();
 });
