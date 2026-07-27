@@ -322,7 +322,15 @@ function handleBackClick() {
   if (prev) goToStep(prev, 'back');
 }
 
-/* ── INGREDIENT CHECKLIST (rebuilt when category changes) ──────── */
+/* ── INGREDIENT CHECKLIST (rebuilt when category changes) ────────
+   Some categories run 30-50+ ingredients across several groups (e.g.
+   staples-spices: 54 across 4 groups), which turned into a long wall
+   of chips. Each group is now a native <details> accordion (collapsed
+   by default, except the first) with a live "(N selected)" count, plus
+   a search box above that filters chips across every group at once and
+   auto-opens whichever groups have a match. Unchecking never happens
+   from a hidden chip, filtering only affects display: none, so a
+   checked-then-filtered-out ingredient stays checked underneath. */
 function renderIngredients(categoryId) {
   const wrap = $('#lm-ingredients-wrap');
   wrap.innerHTML = '';
@@ -335,24 +343,73 @@ function renderIngredients(categoryId) {
     groups[tag.group].push(tag);
   });
 
-  Object.keys(groups).forEach(groupName => {
-    const groupEl = document.createElement('div');
+  Object.keys(groups).forEach((groupName, i) => {
+    const groupEl = document.createElement('details');
     groupEl.className = 'lm-ingredient-group';
-    const heading = document.createElement('div');
-    heading.className = 'lm-ingredient-group-title';
-    heading.innerHTML = `<span class="lm-group-icon">${GROUP_ICONS[groupName] || ''}</span>${groupName}`;
-    groupEl.appendChild(heading);
+    groupEl.dataset.groupName = groupName;
+    if (i === 0) groupEl.open = true;
+
+    const summary = document.createElement('summary');
+    summary.className = 'lm-ingredient-group-title';
+    summary.innerHTML = `
+      <span class="lm-group-icon">${GROUP_ICONS[groupName] || ''}</span>
+      <span class="lm-group-name">${groupName}</span>
+      <span class="lm-group-count" data-role="count"></span>
+      <span class="lm-group-caret" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>`;
+    groupEl.appendChild(summary);
 
     const grid = document.createElement('div');
     grid.className = 'chip-grid';
     groups[groupName].forEach(tag => {
       const label = document.createElement('label');
       label.className = 'chip-check';
+      label.dataset.searchText = tag.label.toLowerCase();
       label.innerHTML = `<input type="checkbox" name="ingredients" value="${tag.id}"><span>${tag.label}${tag.allergen ? ' ⚠' : ''}</span>`;
       grid.appendChild(label);
     });
     groupEl.appendChild(grid);
     wrap.appendChild(groupEl);
+  });
+
+  updateIngredientGroupCounts();
+  $('#lm-ingredient-search').value = '';
+  filterIngredients('');
+  $('#lm-ingredient-toggle-all').textContent = 'Expand all';
+}
+
+function updateIngredientGroupCounts() {
+  document.querySelectorAll('#lm-ingredients-wrap .lm-ingredient-group').forEach(groupEl => {
+    const total = groupEl.querySelectorAll('input[name="ingredients"]').length;
+    const checked = groupEl.querySelectorAll('input[name="ingredients"]:checked').length;
+    const countEl = groupEl.querySelector('[data-role="count"]');
+    countEl.textContent = checked > 0 ? `${checked} selected` : `${total}`;
+    countEl.classList.toggle('lm-group-count-active', checked > 0);
+  });
+}
+
+/* Live-filters chips by label text. Empty query restores the default
+   view (first group open, rest collapsed). Non-empty query opens every
+   group that has at least one match and hides groups with none, so the
+   list stays scannable instead of showing 50 chips with most greyed out. */
+function filterIngredients(query) {
+  const q = query.trim().toLowerCase();
+  const groupEls = document.querySelectorAll('#lm-ingredients-wrap .lm-ingredient-group');
+  groupEls.forEach((groupEl, i) => {
+    let anyMatch = false;
+    groupEl.querySelectorAll('.chip-check').forEach(chip => {
+      const match = !q || chip.dataset.searchText.includes(q);
+      chip.style.display = match ? '' : 'none';
+      if (match) anyMatch = true;
+    });
+    if (q) {
+      groupEl.style.display = anyMatch ? '' : 'none';
+      groupEl.open = anyMatch;
+    } else {
+      groupEl.style.display = '';
+      groupEl.open = (i === 0);
+    }
   });
 }
 
@@ -678,7 +735,10 @@ function renderFullReport(kb, tierResult, answers) {
     </div>`).join('');
 
   el.innerHTML = `
-    <h2>Your launch map</h2>
+    <div class="lm-report-header">
+      <h2>Your launch map</h2>
+      <button type="button" class="btn btn-ghost lm-start-over" id="lm-start-over-top">Start over</button>
+    </div>
     <p class="lm-disclaimer">${sd.overall || 'This is informational, not a substitute for legal counsel or official FSSAI guidance.'}</p>
 
     ${sectionsHtml}
@@ -699,11 +759,17 @@ function renderFullReport(kb, tierResult, answers) {
       <ul class="lm-nice-list lm-list-dot">${kb.sources.map(s => `<li>${s.rule}: ${s.citation}</li>`).join('')}</ul>
     </div>
 
-    <button class="btn btn-ghost" id="lm-download-pdf" type="button">Download PDF</button>
+    <div class="lm-report-actions">
+      <button class="btn btn-ghost" id="lm-download-pdf" type="button">Download PDF</button>
+      <button type="button" class="btn btn-ghost lm-start-over" id="lm-start-over-bottom">Start over</button>
+    </div>
     <p class="lm-note">Generated in your browser. The v1 build may move this server-side per the spec, but the content and branding stay the same.</p>
   `;
   el.style.display = 'block';
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  $('#lm-start-over-top').addEventListener('click', resetLaunchMapWizard);
+  $('#lm-start-over-bottom').addEventListener('click', resetLaunchMapWizard);
 
   $('#lm-download-pdf').addEventListener('click', (e) => {
     const btn = e.currentTarget;
@@ -720,6 +786,38 @@ function renderFullReport(kb, tierResult, answers) {
       btn.textContent = original;
     }
   });
+}
+
+/* Wipes every selection and jumps back to step 1, without a full page
+   reload. Reachable from the report itself, since once the report
+   renders the wizard card is hidden and there was previously no way
+   back to run it again for a different product without reloading. */
+function resetLaunchMapWizard() {
+  selectedReportSections = [];
+  selectedCategoryId = null;
+  selectedBusinessActivity = null;
+  window._lmLastResult = null;
+
+  renderReportChoiceChips();
+  renderCategoryCards();
+  renderActivityChips();
+  $('#lm-ingredients-wrap').innerHTML = '';
+  $('#lm-process').value = 'ambient';
+  $('#lm-turnover').value = 'under-1.5cr';
+  document.querySelectorAll('input[name="channels"]').forEach(c => { c.checked = false; });
+  $('#lm-state').value = '';
+  $('#lm-email').value = '';
+  $('#lm-email-error').classList.remove('show');
+  $('#lm-report-choice-error').classList.remove('show');
+  $('#lm-activity-error').classList.remove('show');
+  $('#lm-channels-error').classList.remove('show');
+
+  $('#lm-report').style.display = 'none';
+  $('#lm-email-gate').style.display = 'none';
+  $('.lm-wizard-card').style.display = 'block';
+
+  goToStep('0', 'back');
+  $('.lm-wizard-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ── PDF EXPORT ───────────────────────────────────────────────
@@ -1225,12 +1323,30 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#lm-back-btn').addEventListener('click', handleBackClick);
 
   // Enter advances to the next step instead of submitting early,
-  // except on the last step where Enter should submit as normal.
+  // except on the last step where Enter should submit as normal, and
+  // except while typing in the ingredient search box, where Enter
+  // should just, well, do nothing surprising rather than skip a step.
   $('#lm-wizard-form').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && currentStep !== '6') {
+    if (e.key === 'Enter' && currentStep !== '6' && e.target.id !== 'lm-ingredient-search') {
       e.preventDefault();
       handleNextClick();
     }
+  });
+
+  $('#lm-ingredient-search').addEventListener('input', (e) => filterIngredients(e.target.value));
+  $('#lm-ingredient-search').addEventListener('keydown', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+
+  $('#lm-ingredient-toggle-all').addEventListener('click', () => {
+    const btn = $('#lm-ingredient-toggle-all');
+    const expanding = btn.textContent === 'Expand all';
+    document.querySelectorAll('#lm-ingredients-wrap .lm-ingredient-group').forEach(g => { g.open = expanding; });
+    btn.textContent = expanding ? 'Collapse all' : 'Expand all';
+  });
+
+  // Delegated so it works for every category's freshly-rendered chips,
+  // not just whatever was on the page when this listener was attached.
+  $('#lm-ingredients-wrap').addEventListener('change', (e) => {
+    if (e.target.name === 'ingredients') updateIngredientGroupCounts();
   });
 
   $('#lm-back-btn').classList.add('lm-hidden');
