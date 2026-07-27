@@ -719,7 +719,7 @@ function renderFullReport(kb, tierResult, answers) {
 /* ── PDF EXPORT ───────────────────────────────────────────────
    Client-side, via jsPDF + autotable (loaded from CDN in
    launch-map.html), matching the site's no-build-step convention.
-   Branded to First Batch Co: black header bar, wordmark, accent-
+   Branded to First Batch Co.: black header bar, wordmark, accent-
    coloured section rules, and a closing promo page reusing the
    same fbcFooter.ctaCopy shown on-screen. Real build may still
    move this server-side per the spec, but this gives founders an
@@ -803,7 +803,7 @@ function generateReportPdf(kb, tierResult, answers) {
     doc.setFont('courier', 'bold');
     doc.setFontSize(16);
     setColor('setTextColor', LM_PDF_BRAND.white);
-    doc.text('First Batch Co', margin, 40);
+    doc.text('First Batch Co.', margin, 40);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     setColor('setTextColor', LM_PDF_BRAND.mutedOnDark);
@@ -1117,7 +1117,7 @@ function generateReportPdf(kb, tierResult, answers) {
   doc.setFont('courier', 'bold');
   doc.setFontSize(24);
   setColor('setTextColor', LM_PDF_BRAND.white);
-  doc.text('First Batch Co', margin, y);
+  doc.text('First Batch Co.', margin, y);
   y += 22;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10.5);
