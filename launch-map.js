@@ -129,10 +129,10 @@ function selectCategory(id) {
    eligibility on turnover alone, and an early-stage founder can't
    estimate daily output reliably anyway. */
 const BUSINESS_ACTIVITY_OPTIONS = [
-  { id: 'own-facility', label: 'In my own facility', desc: 'You own or operate the unit where it gets made.', icon: 'tests', hue: 'lm-cat-mint' },
-  { id: 'contract-manufacturer', label: 'Through a contract manufacturer', desc: "Someone else makes it, you own the brand. FoSCoS calls this a Relabeller.", icon: 'license', hue: 'lm-cat-peach' },
-  { id: 'repacking', label: 'Repacking bulk into retail packs', desc: 'You buy in bulk and repack without changing the recipe.', icon: 'labels', hue: 'lm-cat-lilac' },
-  { id: 'importing', label: 'Importing finished product', desc: 'Brought in from abroad and sold here.', icon: 'cleanlabel', hue: 'lm-cat-butter' }
+  { id: 'own-facility', label: 'My own facility', desc: 'You run the place where it gets made.', icon: 'tests', hue: 'lm-cat-mint' },
+  { id: 'contract-manufacturer', label: 'Contract manufacturer', desc: 'Someone else makes it, you own the brand.', icon: 'license', hue: 'lm-cat-peach' },
+  { id: 'repacking', label: 'Repacking bulk goods', desc: 'You buy in bulk and repack, same recipe.', icon: 'labels', hue: 'lm-cat-lilac' },
+  { id: 'importing', label: 'Importing from abroad', desc: 'Made elsewhere, you sell it here.', icon: 'cleanlabel', hue: 'lm-cat-butter' }
 ];
 let selectedBusinessActivity = null;
 

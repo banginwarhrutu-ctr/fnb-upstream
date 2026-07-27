@@ -697,6 +697,23 @@ tbody tr:hover { background: var(--cream); }
 }
 .lm-report-choice-grid .lm-category-label { font-size: 15.5px; font-weight: 700; line-height: 1.3; }
 .lm-report-choice-grid .lm-category-desc { font-size: 12.5px; line-height: 1.45; color: var(--muted); margin-top: -6px; }
+
+/* "Who makes it?" (business-activity) step only: same chip pattern, but
+   smaller/denser since it's further down the funnel and doesn't need the
+   step-1 real estate. Heading clipped to one line, description clamped to
+   two, so all four options read consistently regardless of copy length. */
+#lm-activity-grid.lm-report-choice-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+#lm-activity-grid.lm-report-choice-grid .lm-category-card { padding: 18px 16px 16px; gap: 10px; border-radius: 14px; }
+#lm-activity-grid.lm-report-choice-grid .lm-category-icon { width: 40px; height: 40px; padding: 9px; }
+#lm-activity-grid.lm-report-choice-grid .lm-category-label {
+  font-size: 14px; line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
+}
+#lm-activity-grid.lm-report-choice-grid .lm-category-desc {
+  font-size: 12px; line-height: 1.4; margin-top: -4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  min-height: calc(12px * 1.4 * 2);
+}
 .lm-report-choice-grid .lm-category-card.selected .lm-category-desc { color: var(--white); opacity: 0.75; }
 
 /* Selected state: keep the pastel background rather than inverting to
@@ -821,7 +838,11 @@ tbody tr:hover { background: var(--cream); }
 @media (max-width: 640px) {
   .lm-category-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
   .lm-category-card { padding: 10px 6px 7px; gap: 6px; }
-  .lm-category-card.has-photo:hover { transform: scale(1.4); }
+  /* No real hover on touch: a tap latches :hover indefinitely, so the
+     desktop zoom-on-hover would blow the tapped card up over its
+     neighbours and stay stuck. Tapping already selects the category
+     directly, so touch gets no zoom at all. */
+  .lm-category-card.has-photo:hover { transform: none; box-shadow: none; }
   .lm-category-check { width: 18px; height: 18px; top: 5px; right: 5px; }
   .lm-category-check svg { width: 10px; height: 10px; }
 }
